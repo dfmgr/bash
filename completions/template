@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+# bash completion for myprog
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# autocomplete for myprog
+
+_myprog() {
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -f)
+            COMPREPLY=( $(compgen -W \
+                '$(myprog -l 2>/dev/null | tail -n +2)' -- "$cur") )
+            return
+            ;;
+    esac
+
+    # relevant options completion
+    COMPREPLY=( $(compgen -W '-h --help --import --export -v --version' \
+        -- "$cur") )
+
+} &&
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# enable completions
+
+complete -F _myprog -o default myprog
