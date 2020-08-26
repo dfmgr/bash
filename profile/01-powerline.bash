@@ -123,38 +123,21 @@ bashprompt() {
   ### Node.js ####################################################
   __ifnode() {
     if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
-      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_version 2>/dev/null)" ]] && [[ $(nvm_version | grep -qv "N/A" >/dev/null 2>&1) ]]; then
-        if [[ "$(nvm_version 2>/dev/null)" =~ "system" ]]; then
-          __node_version() { printf "$(nvm_ls_current)"; }
-          __node_info() {
-            local version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf " Node: ${version}$NODE_SYMBOL"
-          }
-        else
-          __node_version() { printf "$(nvm_ls_current)"; }
-          __node_info() {
-            local version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf " NVM: ${version}$NODE_SYMBOL"
-          }
-        fi
+      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_ls_current 2>/dev/null)" ]] && [[ $(nvm_version | grep -qv "N/A" >/dev/null 2>&1) ]]; then
+        __node_version() { printf "$(node --version)"; }
+        __node_info() {
+          local version="$(__node_version)"
+          [ -z "${version}" ] && return
+          printf " NVM: ${version}$NODE_SYMBOL"
+        }
+
       elif [[ -n "$(command -v fnm)" ]]; then
-        if [[ "$(fnm current 2>/dev/null)" =~ "system" ]]; then
-          __node_version() { printf "$(fnm current)"; }
-          __node_info() {
-            local version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf " Node: ${version}$NODE_SYMBOL"
-          }
-        else
-          __node_version() { printf "$(fnm current)"; }
-          __node_info() {
-            local version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf " FNM: ${version}$NODE_SYMBOL"
-          }
-        fi
+        __node_version() { printf "$(node --version)"; }
+        __node_info() {
+          local version="$(__node_version)"
+          [ -z "${version}" ] && return
+          printf " FNM: ${version}$NODE_SYMBOL"
+        }
 
       elif [[ -n "$(command -v node)" ]]; then
         __node_version() { printf "$(node --version)"; }
