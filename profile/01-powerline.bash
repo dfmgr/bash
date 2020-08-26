@@ -123,7 +123,7 @@ bashprompt() {
   ### Node.js ####################################################
   __ifnode() {
     if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
-      if [[ "$(command -v nvm_version)" ]] && [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_version 2>/dev/null)" ]]; then
+      if [[ "$(command -v nvm_version)" ]] && [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_version 2>/dev/null)" ]] && [[ $(nvm_version | grep -v "N/A") ]]; then
         if [[ "$(nvm_version 2>/dev/null)" =~ system ]]; then
           __node_version() { printf "$(node --version)"; }
           __node_info() {
