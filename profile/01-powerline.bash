@@ -157,19 +157,19 @@ bashprompt() {
   __ifpython() {
     if [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] && [[ ! -z "$VIRTUAL_ENV" ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ]; then
       __python_info() {
-        PYTHON_VERSION="$($(command -v python3) --version)"
+        PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
         PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-        printf " $PYTHON_VERSION $PYTHON_VIRTUALENV$PYTHON_SYMBOL"
+        printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
       }
     elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
       __python_info() {
-        PYTHON_VERSION="$($(command -v python3) --version)"
-        printf " $PYTHON_VERSION $PYTHON_VIRTUALENV$PYTHON_SYMBOL"
+        PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
+        printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
       }
     elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
       __python_info() {
-        PYTHON_VERSION="$($(command -v python2) --version)"
-        printf " $PYTHON_VERSION $PYTHON_VIRTUALENV$PYTHON_SYMBOL"
+        PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
+        printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
       }
     else
       __python_info() { return; }
