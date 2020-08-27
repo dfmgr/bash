@@ -1,4 +1,4 @@
-__fd() { fd || fdfind ;}
+__fd() { command -v fd || command -v fdfind ;}
 
 open_with_fzf() {
     __fd -t f -H -I | fzf -m --preview="xdg-mime query default {}" | xargs -ro -d "\n" xdg-open 2>&-
