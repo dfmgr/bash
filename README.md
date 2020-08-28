@@ -35,7 +35,10 @@ Manual install:
 ```shell
 mv -fv "$HOME/.config/bash" "$HOME/.config/bash.bak"
 git clone https://github.com/dfmgr/bash "$HOME/.config/bash"
-ln -sf $HOME/.config/bash/.bash* "$HOME/"
+ln -sf $HOME/.config/bash/bashrc $HOME/.bashrc
+ln -sf $HOME/.config/bash/bash_logout $HOME/.bash_logout
+ln -sf $HOME/.config/bash/bash_profile $HOME/.bash_profile
+
 ```
   
   
