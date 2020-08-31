@@ -144,24 +144,6 @@ fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#pastebin.com || Usage: 'command | pastebin.com or pastebin.com filename'
-
-if ! cmd_exists pastebin.com; then
-  pastebin.com() {
-    [ "$1" = "--help" ] && printf_help "Usage: 'command | pastebin.com or pastebin.com filename'"
-    if [ ! -d "$HOME"/.local/bin ]; then mkdir "$HOME"/.local/bin; fi
-    if [ -f "$(command -v pastebin.com 2>/dev/null)" ]; then
-      command -v pastebin.com "$@"
-    else
-      curl -LSs "https://github.com/dfmgr/installer/raw/master/bin/pastebin.com" -o "$HOME/.local/bin/pastebin.com"
-      chmod 755 "$HOME"/.local/bin/pastebin.com
-      "$HOME"/.local/bin/pastebin.com "$@"
-    fi
-  }
-fi
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # generate random strings
 
 if ! cmd_exists random-string; then
