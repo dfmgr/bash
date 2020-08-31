@@ -29,6 +29,6 @@ else
   umask 022
 fi
 
-export USER MAILDIR HOSTNAME
+export USER MAILDIR LOGNAME
 
 # End
