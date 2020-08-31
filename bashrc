@@ -28,7 +28,7 @@ fi
 
 # source .profile
 
-if [ -f "$HOME/.profile" ]; then
+if [ -f "$HOME/.profile" ] && [ -z "$SRCPROFILERC" ]; then
   source "$HOME/.profile"
 fi
 
