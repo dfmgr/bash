@@ -7,9 +7,11 @@
 
 # XSet options
 
-xset s off 2>/dev/null
-xset -dpms 2>/dev/null
-xset s off -dpms 2>/dev/null
+if command -v xset >/dev/null 2>&1; then
+  xset s off 2>/dev/null
+  xset -dpms 2>/dev/null
+  xset s off -dpms 2>/dev/null
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
