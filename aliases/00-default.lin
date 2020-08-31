@@ -172,7 +172,7 @@ alias list-my-functions='typeset -F | less'
 #Fun alias
 alias tw='rainbowstream -iot'
 alias twitter='twitter'
-alias mylatlong='mylocation | grep -E "LAT | LON"'
+alias mylatlong='mylocation | grep --color=none "LAT\|LON"'
 alias emj='emojis'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
