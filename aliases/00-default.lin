@@ -174,3 +174,11 @@ alias tw='rainbowstream -iot'
 alias twitter='twitter'
 alias mylatlong='mylocation | grep -E "LAT | LON"'
 alias emj='emojis'
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# other
+[ -z $MPDSERVER ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
