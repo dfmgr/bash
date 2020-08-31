@@ -127,8 +127,8 @@ userbashprofilelocal() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-for userprofile in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashplugins userbashprofilelocal; do
-  $userprofile
+for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashplugins userbashprofilelocal; do
+  $executeuserfunct
 done
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
