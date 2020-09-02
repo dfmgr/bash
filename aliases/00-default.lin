@@ -39,7 +39,7 @@ alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
 
 # OSS code
-[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-code"
+[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
