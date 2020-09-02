@@ -98,6 +98,16 @@ bashprompt() {
     ;;
   esac
 
+if [ -f "$HOME/.noprompt" ]; then 
+__ifphp() { true; }
+__php_info() { true; }
+__ifruby() { true; }
+__ruby_info() { true; }
+__ifnode() { true; }
+__node_info() { true; }
+__ifpython() { true; }
+__python_info { true; }
+else
   ### Ruby #######################################################
   __ifruby() {
     if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
@@ -194,6 +204,7 @@ bashprompt() {
     fi
 
   }
+fi
 
   ### Git ########################################################
   __ifgit() {
