@@ -149,21 +149,12 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Media
-if [ -n "$(command -v castero 2>/dev/null)" ]; then
-  alias podcasts='castero'
-fi
-if [ -n "$(command -v spotifyd 2>/dev/null)" ]; then
-  alias spotify='spotifyd'
-fi
-if [ -n "$(command -v pianobar 2>/dev/null)" ]; then
-  alias pandora='pianobar'
-fi
-if [ -n "$(command -v tizonia 2>/dev/null)" ]; then
-  alias cloudplayer='tizonia'
-fi
-if [ -n "$(command -v youtube-viewer 2>/dev/null)" ]; then
-  alias youtube='youtube-viewer'
-fi
+[ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
+[ -n "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
+[ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
+[ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
+[ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
+[ -z $MPDSERVER ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -181,7 +172,6 @@ alias emj='emojis'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # other
-[ -z $MPDSERVER ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
