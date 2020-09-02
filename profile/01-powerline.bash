@@ -106,7 +106,7 @@ __ruby_info() { true; }
 __ifnode() { true; }
 __node_info() { true; }
 __ifpython() { true; }
-__python_info { true; }
+__python_info() { true; }
 else
   ### Ruby #######################################################
   __ifruby() {
