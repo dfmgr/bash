@@ -38,6 +38,9 @@ alias fgrep='fgrep --color=auto 2>/dev/null'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
 
+
+[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="oss-code"
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # sudo commands
