@@ -18,8 +18,10 @@ orig_command_not_found_handle() {
   if [ "$OS" = "Linux" ] || cmd_exists findInstallApp; then
     printf_green "Searching the repo for $1"
     sleep 1
-    findInstallApp "$1" &&
-      printf_green "Package $1 Installed" && return 0 ||
+    findInstallApp "$1"; exitCode="$?"
+    if [ "$exitCode" -eq 0 ]; then 
+      printf_green "Package $1 Installed"
+    else
       printf_exit "Can not locate package $1"
   fi
 }
