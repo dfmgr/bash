@@ -20,7 +20,7 @@ orig_command_not_found_handle() {
     sleep 1
     findInstallApp "$1" &&
       printf_green "Package $1 Installed" && return 0 ||
-      printf_red "Can not locate package $1" && return 1
+      printf_exit "Can not locate package $1"
   fi
 }
 
