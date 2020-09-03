@@ -15,14 +15,10 @@ orig_command_not_found_handle() {
   cmd="$1"
   args=("$@")
   printf_red "bash: $1: command not found"
-  if [ "$OS" = "Linux" ] || cmd_exists findInstallApp; then
+  if [ "$OS" = "Linux" ] || cmd_exists pkmgr; then
     printf_green "Searching the repo for $1"
     sleep 1
-    findInstallApp "$1"; exitCode="$?"
-    if [ "$exitCode" -eq 0 ]; then 
-      printf_green "Package $1 Installed"
-    else
-      printf_exit "Can not locate package $1"
+    pkmgr silent "$1" && printf_green "Package $1 Installed" ||  printf_exit "Can not locate package $1"; return $?
   fi
 }
 
