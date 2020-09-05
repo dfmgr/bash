@@ -109,119 +109,101 @@ bashprompt() {
     __python_info() { true; }
   else
     ### Ruby #######################################################
-    if [ -n "$(command -v ruby 2>/dev/null)" ]; then
-      __ifruby() {
-        if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
-          if [ $(command -v rbenv 2>/dev/null) ]; then
-            __ruby_version() { printf $(rbenv version-name); }
-          elif [ $(command -v ruby 2>/dev/null) ]; then
-            __ruby_version() { printf $(ruby --version | cut -d' ' -f2); }
-          else
-            __ruby_version() { return; }
-          fi
-
-          __ruby_info() {
-            local version=$(__ruby_version)
-            [ -z "${version}" ] && return
-            printf " Ruby: ${version}$RUBY_SYMBOL "
-          }
+    __ifruby() {
+      if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
+        if [ $(command -v rbenv 2>/dev/null) ]; then
+          __ruby_version() { printf $(rbenv version-name); }
+        elif [ $(command -v ruby 2>/dev/null) ]; then
+          __ruby_version() { printf $(ruby --version | cut -d' ' -f2); }
         else
-          __ruby_info() { return; }
+          __ruby_version() { return; }
         fi
-      }
-    else
-      __ifruby() { true; }
-      __ruby_info() { true; }
-    fi
+
+        __ruby_info() {
+          local version=$(__ruby_version)
+          [ -z "${version}" ] && return
+          printf " Ruby: ${version}$RUBY_SYMBOL "
+        }
+      else
+        __ruby_info() { return; }
+      fi
+
+    }
 
     ### Node.js ####################################################
-    if [ -n "$(command -v node 2>/dev/null)" ]; then
-      __ifnode() {
-        if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
-          if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_ls_current 2>/dev/null)" ]] && [[ $(nvm_version | grep -qv "N/A" >/dev/null 2>&1) ]]; then
-            __node_version() { printf "$(node --version)"; }
-            __node_info() {
-              local version="$(__node_version)"
-              [ -z "${version}" ] && return
-              printf " NVM: ${version}$NODE_SYMBOL"
-            }
+    __ifnode() {
+      if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
+        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ "$(command -v nvm_ls_current 2>/dev/null)" ]] && [[ $(nvm_version | grep -qv "N/A" >/dev/null 2>&1) ]]; then
+          __node_version() { printf "$(node --version)"; }
+          __node_info() {
+            local version="$(__node_version)"
+            [ -z "${version}" ] && return
+            printf " NVM: ${version}$NODE_SYMBOL"
+          }
 
-          elif [[ -n "$(command -v fnm)" ]]; then
-            __node_version() { printf "$(node --version)"; }
-            __node_info() {
-              local version="$(__node_version)"
-              [ -z "${version}" ] && return
-              printf " FNM: ${version}$NODE_SYMBOL"
-            }
+        elif [[ -n "$(command -v fnm)" ]]; then
+          __node_version() { printf "$(node --version)"; }
+          __node_info() {
+            local version="$(__node_version)"
+            [ -z "${version}" ] && return
+            printf " FNM: ${version}$NODE_SYMBOL"
+          }
 
-          elif [[ -n "$(command -v node)" ]]; then
-            __node_version() { printf "$(node --version)"; }
-            __node_info() {
-              local version="$(__node_version)"
-              [ -z "${version}" ] && return
-              printf " Node: ${version}$NODE_SYMBOL"
-            }
-          fi
-        else
-          __node_version() { return; }
-          __node_info() { return; }
+        elif [[ -n "$(command -v node)" ]]; then
+          __node_version() { printf "$(node --version)"; }
+          __node_info() {
+            local version="$(__node_version)"
+            [ -z "${version}" ] && return
+            printf " Node: ${version}$NODE_SYMBOL"
+          }
         fi
-      }
-    else
-      __ifnode() { true; }
-      __node_info() { true; }
-    fi
+      else
+        __node_version() { return; }
+        __node_info() { return; }
+      fi
+    }
+
     ### python ####################################################
-    if [ -n "$(command -v python 2>/dev/null)" ]; then
-      __ifpython() {
-        if [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] && [[ ! -z "$VIRTUAL_ENV" ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ]; then
-          __python_info() {
-            PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-            printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
-          }
-        elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
-          __python_info() {
-            PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-            printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
-          }
-        elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
-          __python_info() {
-            PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
-            printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
-          }
-        else
-          __python_info() { return; }
-        fi
-      }
-    else
-      __ifpython() { true; }
-      __python_info() { true; }
-    fi
+    __ifpython() {
+      if [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] && [[ ! -z "$VIRTUAL_ENV" ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ]; then
+        __python_info() {
+          PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
+          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+        }
+      elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
+        __python_info() {
+          PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
+          printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
+        }
+      elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
+        __python_info() {
+          PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
+          printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
+        }
+      else
+        __python_info() { return; }
+      fi
+    }
 
     ### php ####################################################
-    if [ -n "$(command -v php 2>/dev/null)" ]; then
-      __ifphp() {
-        if [[ $(ls *.php* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.php | wc -l)" -ne 0 ]; then
-          if [ $(command -v php 2>/dev/null) ]; then
-            __php_version() { printf $(php --version | awk '{print $2}' | head -n 1); }
-          else
-            __php_version() { return; }
-          fi
-          __php_info() {
-            local version=$(__php_version)
-            [ -z "$version" ] && return
-            printf " PHP: $version $BG_GRAY1$PHP_SYMBOL$RESET"
-          }
+    __ifphp() {
+      if [[ $(ls *.php* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.php | wc -l)" -ne 0 ]; then
+        if [ $(command -v php 2>/dev/null) ]; then
+          __php_version() { printf $(php --version | awk '{print $2}' | head -n 1); }
         else
-          __php_info() { return; }
+          __php_version() { return; }
         fi
+        __php_info() {
+          local version=$(__php_version)
+          [ -z "$version" ] && return
+          printf " PHP: $version $BG_GRAY1$PHP_SYMBOL$RESET"
+        }
+      else
+        __php_info() { return; }
+      fi
 
-      }
-    fi
-    else
-    __ifphp() { true; }
-    __php_info() { true; }
+    }
   fi
 
   ### Git ########################################################
@@ -296,11 +278,11 @@ bashprompt() {
 
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK \s: \v $RESET"
-    PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
-    PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
-    PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
-    PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
-    PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
+    [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET" || true
+    [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET" || true
+    [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET" || true
+    [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET" || true
+    [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET" || true
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET"
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET\n"
     PS1+="$BG_EXIT$FG_BLACK Jobs: [\j] $BG_GRAY2$PS_SYMBOL$RESET"
