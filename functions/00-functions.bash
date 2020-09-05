@@ -59,8 +59,11 @@ __whiletrue() { while true; do
 done; }
 
 cmd_exists() {
-  unalias "$1" >/dev/null 2>&1
-  command -v "$1" >/dev/null 2>&1
+  local pkg LISTARRAY
+  declare -a LISTARRAY="$*"
+  for cmd in $LISTARRAY; do
+    type -P "$1" | grep -q "/" 2>/dev/null
+  done
 }
 
 rm_rf() { devnull rm -Rf "$@"; }
