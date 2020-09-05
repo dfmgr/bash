@@ -7,22 +7,22 @@
 # @Created     : Mon, Dec 23, 2019, 14:13 EST
 # @License     : WTFPL
 # @Copyright   : Copyright (c) CasjaysDev
-# @Description : functions for bash login
+# @Description : functions for bash
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-NC="$(tput sgr0 2>/dev/null)"
-RESET="$(tput sgr0 2>/dev/null)"
-BLACK="\033[0;30m"    # Black
-RED="\033[0;31m"      # Red
-GREEN="\033[0;32m"    # Green
-YELLOW="\033[0;33m"   # Yellow
-BLUE="\033[0;34m"     # Blue
-PURPLE="\033[0;35m"   # Purple
-CYAN="\033[0;36m"     # Cyan
-WHITE="\033[0;37m"    # White
-ORANGE="\033[0;33m"   # Orange
-LIGHTRED='\033[1;31m' # Light Red
+#NC="$(tput sgr0 2>/dev/null)"
+#RESET="$(tput sgr0 2>/dev/null)"
+#BLACK="\033[0;30m"    # Black
+#RED="\033[0;31m"      # Red
+#GREEN="\033[0;32m"    # Green
+#YELLOW="\033[0;33m"   # Yellow
+#BLUE="\033[0;34m"     # Blue
+#PURPLE="\033[0;35m"   # Purple
+#CYAN="\033[0;36m"     # Cyan
+#WHITE="\033[0;37m"    # White
+#ORANGE="\033[0;33m"   # Orange
+#LIGHTRED='\033[1;31m' # Light Red
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -45,16 +45,10 @@ printf_error_stream() { while read -r line; do printf_error "↳ ERROR: $line"; 
 printf_execute_success() { printf_color "\t\t[ ✔ ] $1 [ ✔ ] \n" 2; }
 printf_execute_error() { printf_color "\t\t[ ✖ ] $1 $2 [ ✖ ] \n" 1; }
 printf_execute_error_stream() { while read -r line; do printf_execute_error "↳ ERROR: $line"; done; }
-
-printf_execute_result() {
-  if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi
-  return "$1"
-}
-
-printf_exit() {
-  printf_color "\t\t$1\n" 1
-  return 1
-}
+printf_execute_result() { if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi; return "$1"; }
+printf_custom() { [[ $1 == ?(-)+([0-9]) ]] && local color="$1" && shift 1 || local color="3"; local msg="$*"; shift; printf_color "\t\t$msg" "$color" && echo ""; }
+printf_readline() { set -o pipefail; [[ $1 == ?(-)+([0-9]) ]] && local color="$1" && shift 1 || local color="3"; while read line; do printf_custom "$color" "$line"; done; set +o pipefail; }
+printf_exit() { [[ $1 == ?(-)+([0-9]) ]] && local color="$1" && shift 1 || local color="1"; local msg="$*"; shift; printf_color "\t\t$msg " "$color"; sleep 1; exit 1; }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
