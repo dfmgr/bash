@@ -208,35 +208,27 @@ bashprompt() {
 
   ### Git ########################################################
   __ifgit() {
-    if git rev-parse --git-dir >/dev/null 2>&1; then
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       __git_version() { printf " Git "$(git --version | awk '{print $3}')" on "; }
       __git_status() {
-
         local git_eng="env LANG=C git" # force git output in English to make our work easier
-        # get current branch name or short SHA1 hash for detached head
         local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
         [ -n "$branch" ] || return # git branch not found
-
         local marks
-
-        # branch is modified?
         [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-
-        # how many commits local branch is ahead/behind of remote?
         local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
         local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
         [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
-
         printf "$branch$marks"
-
       }
       __git_info() {
         __git_version && __git_status
         printf "$GIT_BRANCH_SYMBOL"
       }
     else
+      __git_version() { return; }
       __git_info() { return; }
     fi
   }
@@ -275,11 +267,11 @@ bashprompt() {
 
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK \s: \v $RESET"
-    [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET" || true
-    [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET" || true
-    [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET" || true
-    [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET" || true
-    [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET" || true
+    [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
+    [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
+    [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
+    [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
+    [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET"
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET\n"
     PS1+="$BG_EXIT$FG_BLACK Jobs: [\j] $BG_GRAY2$PS_SYMBOL$RESET"
