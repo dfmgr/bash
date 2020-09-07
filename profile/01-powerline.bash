@@ -209,11 +209,8 @@ bashprompt() {
   ### Git ########################################################
   __ifgit() {
     if git rev-parse --git-dir >/dev/null 2>&1; then
-      if [ "$(command -v git 2>/dev/null)" ]; then
-        __git_version() { printf " Git "$(git --version | awk '{print $3}')" on "; }
-      fi
+      __git_version() { printf " Git "$(git --version | awk '{print $3}')" on "; }
       __git_status() {
-        [ -x "$(command -v git)" ] || return # git not found
 
         local git_eng="env LANG=C git" # force git output in English to make our work easier
         # get current branch name or short SHA1 hash for detached head
