@@ -112,9 +112,9 @@ bashprompt() {
     __ifruby() {
       if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
         if [ $(command -v rbenv 2>/dev/null) ]; then
-          __ruby_version() { printf "rbenv: $(rbenv version-name)"; }
-        elif [ $(command -v rvm 2>/dev/null) ]; then
-          __ruby_version() { printf "rvm: $(rvm version | awk '{print $2}')"; }
+          __ruby_version() { printf "RBENV: $(rbenv version-name)"; }
+        elif [ $(command -v rvm 2>/dev/null) ] && [ "$(rvm version | awk '{print $2}')" ]; then
+          __ruby_version() { printf "RVM: $(rvm current)"; }
         elif [ $(command -v ruby 2>/dev/null) ]; then
           __ruby_version() { printf "Ruby: $(ruby --version | cut -d' ' -f2)"; }
         else
