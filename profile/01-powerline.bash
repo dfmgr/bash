@@ -112,9 +112,11 @@ bashprompt() {
     __ifruby() {
       if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
         if [ $(command -v rbenv 2>/dev/null) ]; then
-          __ruby_version() { printf $(rbenv version-name); }
+          __ruby_version() { printf "rbenv: $(rbenv version-name)"; }
+        elif [ $(command -v rvm 2>/dev/null) ]; then
+          __ruby_version() { printf "rvm: $(rvm version | awk '{print $2}')"; }
         elif [ $(command -v ruby 2>/dev/null) ]; then
-          __ruby_version() { printf $(ruby --version | cut -d' ' -f2); }
+          __ruby_version() { printf "Ruby: $(ruby --version | cut -d' ' -f2)"; }
         else
           __ruby_version() { return; }
         fi
@@ -122,12 +124,11 @@ bashprompt() {
         __ruby_info() {
           local version=$(__ruby_version)
           [ -z "${version}" ] && return
-          printf " Ruby: ${version}$RUBY_SYMBOL "
+          printf " ${version}$RUBY_SYMBOL $RESET"
         }
       else
         __ruby_info() { return; }
       fi
-
     }
 
     ### Node.js ####################################################
@@ -138,7 +139,7 @@ bashprompt() {
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf " NVM: ${version}$NODE_SYMBOL"
+            printf " NVM: ${version}$NODE_SYMBOL$RESET"
           }
 
         elif [[ -n "$(command -v fnm)" ]]; then
@@ -146,7 +147,7 @@ bashprompt() {
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf " FNM: ${version}$NODE_SYMBOL"
+            printf " FNM: ${version}$NODE_SYMBOL$RESET"
           }
 
         elif [[ -n "$(command -v node)" ]]; then
@@ -154,7 +155,7 @@ bashprompt() {
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf " Node: ${version}$NODE_SYMBOL"
+            printf " Node: ${version}$NODE_SYMBOL$RESET"
           }
         fi
       else
@@ -170,20 +171,20 @@ bashprompt() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
           if [ -n "$PYTHON_VIRTUALENV" ]; then
-            printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+            printf " $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           else
-            printf " VENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+            printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
         }
       elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-          printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
+          printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
       elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
-          printf " Python $PYTHON_VERSION: $PYTHON_SYMBOL"
+          printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
       else
         __python_info() { return; }
@@ -201,7 +202,7 @@ bashprompt() {
         __php_info() {
           local version=$(__php_version)
           [ -z "$version" ] && return
-          printf " PHP: $version $BG_GRAY1$PHP_SYMBOL$RESET"
+          printf " PHP: $version $BG_GRAY1 $PHP_SYMBOL$RESET"
         }
       else
         __php_info() { return; }
