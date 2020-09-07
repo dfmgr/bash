@@ -165,11 +165,15 @@ bashprompt() {
 
     ### python ####################################################
     __ifpython() {
-      if [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] && [[ ! -z "$VIRTUAL_ENV" ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ]; then
+      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] || [[ $(ls ./pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-          printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+          if [ -n "$PYTHON_VIRTUALENV" ]; then
+            printf " $PYTHON_VIRTUALENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+          else
+            printf " VENV $PYTHON_VERSION: $PYTHON_SYMBOL"
+          fi
         }
       elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
         __python_info() {
