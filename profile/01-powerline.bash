@@ -249,7 +249,7 @@ bashprompt() {
     title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
   screen*)
-    title() { echo -ne "\033_$(__title_info)\033\\"; }
+    title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
   *)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
@@ -261,6 +261,7 @@ bashprompt() {
     # colors in the prompt accordingly.
     if [ $? -eq 0 ]; then
       local BG_EXIT="$BG_DARK_GREEN"
+      local PS_SYMBOL="$PS_SYMBOL"
     else
       local BG_EXIT="$BG_RED"
       local PS_SYMBOL=" 😔 "
@@ -277,13 +278,13 @@ bashprompt() {
     [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
     [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
-    PS1+=""$BG_PURPLE$FG_BLACK"${PS_TIME}"$RESET""
-    PS1+=""$BG_GRAY2$FG_BLACK"\u@\H:"$BG_DARK_GREEN"\w"$RESET\n""
-    PS1+=""$BG_EXIT$FG_BLACK"Jobs: [\j] "$BG_GRAY2$PS_SYMBOL$RESET""
+    PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
+    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET \n"
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$RESET"
 
   }
 
-  PROMPT_COMMAND="title && ps1 && history -a && history -r "
+  PROMPT_COMMAND="ps1 && title && history -a && history -r "
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
