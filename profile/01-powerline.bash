@@ -176,12 +176,12 @@ bashprompt() {
             printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
         }
-      elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
+      elif [ -n "$(command -v python3)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py *.pyc 2>/dev/null | wc -l) -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
-      elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py* 2>/dev/null | wc -l) -ne 0 ]; then
+      elif [ -n "$(command -v python2)" ] && [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.py* | wc -l)" -ne 0 ] || [ $(ls *.py *.pyc 2>/dev/null | wc -l) -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
@@ -224,8 +224,8 @@ bashprompt() {
         local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
         local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-        [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL $aheadN"
-        [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL $behindN"
+        [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
+        [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
         printf " [$branch]$marks"
       }
       __git_info() {
