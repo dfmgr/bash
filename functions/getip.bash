@@ -19,7 +19,11 @@ else
 __getip() {
   IFCONFIG="$(sudo bash -c "command -v ifconfig 2>/dev/null")"
   if [ ! -z "$IFCONFIG" ]; then
-    NETDEV="$(ip route | grep default | sed -e 's/^.*dev.//' -e 's/.proto.*//')"
+    if [[ "$OSTYPE" =~ ^darwin ]]; then
+      NETDEV="$(route get default | grep interface | awk '{print $2}')"
+    else
+      NETDEV="$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")"
+    fi
     CURRIP4="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v '127.0.0.' | grep inet | grep -v 'inet6' | awk '{print $2}' | sed 's#addr:##g' | head -n1)"
     CURRIP6="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v 'docker' | grep inet6 | grep -i 'global' | awk '{print $2}' | head -n1)"
     IFISONLINE="$(
