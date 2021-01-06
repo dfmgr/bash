@@ -58,14 +58,6 @@ __whiletrue() { while true; do
   sleep 60
 done; }
 
-cmd_exists() {
-  local pkg LISTARRAY
-  declare -a LISTARRAY="$*"
-  for cmd in $LISTARRAY; do
-    type -P "$1" | grep -q "/" 2>/dev/null
-  done
-}
-
 rm_rf() { devnull rm -Rf "$@"; }
 cp_rf() { if [ -e "$1" ]; then devnull cp -Rfa "$@"; fi; }
 mv_f() { if [ -e "$1" ]; then devnull mv -f "$@"; fi; }
