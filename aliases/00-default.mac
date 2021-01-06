@@ -97,16 +97,6 @@ alias o='open'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# Clipboard copy
-alias putclip='tr -d "\n" | pbcopy'
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Clipboard paste
-alias printclip='tr -d "\n" | pbpaste'
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #youtube-dl
 if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
   alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
