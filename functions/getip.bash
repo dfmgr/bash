@@ -13,7 +13,7 @@
 
 unset IFCONFIG NETDEV IFISONLINE CURRIP4 CURRIP6 CURRIP4WAN CURRIP6WAN
 
-if cmd_exists myip; then
+if [ -n "$(command -v myip 2>/dev/null)" ]; then
   alias __getip="myip"
 else
 __getip() {
@@ -26,10 +26,7 @@ __getip() {
     fi
     CURRIP4="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v '127.0.0.' | grep inet | grep -v 'inet6' | awk '{print $2}' | sed 's#addr:##g' | head -n1)"
     CURRIP6="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v 'docker' | grep inet6 | grep -i 'global' | awk '{print $2}' | head -n1)"
-    IFISONLINE="$(
-      timeout 0.3 ping -c1 8.8.8.8 &>/dev/null
-      echo $?
-    )"
+    IFISONLINE="$(is_online; echo $?)"
     if [ "$IFISONLINE" = 0 ]; then
       CURRIP4WAN="$(
         curl -I4qs ifconfig.co/ip 2>/dev/null | head -1 | grep 404 >/dev/null
