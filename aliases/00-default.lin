@@ -59,11 +59,13 @@ alias flushdns='sudo systemd-resolve --flush-caches'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Package management
-if [ -n "$(command -v apt 2>/dev/null)" ]; then alias apt='sudo apt '; fi
-if [ -n "$(command -v apt-get 2>/dev/null)" ]; then alias apt='sudo apt-get '; fi
-if [ -n "$(command -v dnf 2>/dev/null)" ]; then alias apt='sudo dnf '; fi
-if [ -n "$(command -v yum 2>/dev/null)" ]; then alias apt='sudo yum '; fi
-if [ -n "$(command -v pacman 2>/dev/null)" ]; then alias apt='sudo pacman '; fi
+if [[ "$OSTYPE" =~ ^linux ]]; then
+  if [ -n "$(command -v apt 2>/dev/null)" ]; then alias apt='sudo apt '; fi
+  if [ -n "$(command -v apt-get 2>/dev/null)" ]; then alias apt='sudo apt-get '; fi
+  if [ -n "$(command -v dnf 2>/dev/null)" ]; then alias apt='sudo dnf '; fi
+  if [ -n "$(command -v yum 2>/dev/null)" ]; then alias apt='sudo yum '; fi
+  if [ -n "$(command -v pacman 2>/dev/null)" ]; then alias apt='sudo pacman '; fi
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -115,16 +117,6 @@ alias afk='gnome-screensaver-command --lock'
 
 # Open command
 alias o='xdg-open'
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Clipboard copy
-alias putclip='xclip -i -sel c'
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Clipboard paste
-alias printclip='xclip -o -s'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
