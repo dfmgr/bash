@@ -10,7 +10,7 @@ if [ -n "${BASH_VERSION-}" -a -n "${PS1-}" -a -z "${BASH_COMPLETION_VERSINFO-}" 
     fi
     if [ -d /etc/bash_completion.d ]; then
       for f in /etc/bash_completion.d/*; do
-        source $f
+        source "$f"
       done
     fi
   fi
