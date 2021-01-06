@@ -2,21 +2,8 @@
 
 if [ -n "$(command -v cmd_exists 2>/dev/null)" ]; then
 cmd_exists() {
-  DIR="${BASH_SOURCE%/*}"
-  if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-  if [[ -f "$DIR/functions.bash" ]]; then
-    source "$DIR/functions.bash"
-  else
-    echo "\t\tCouldn't source the functions file"
-    exit 1
-  fi
-
-  [ ! "$1" = "--version" ] || get_app_info "$APPNAME"
 
   [ ! "$1" = "--help" ] || printf_help "Usage: cmd_exists cmd"
-
-  unalias "$1" >/dev/null 2>&1 ||
-    command -v "$1" >/dev/null 2>&1 ||
-    exit 1
+  unalias "$1" >/dev/null 2>&1 || command -v "$1" >/dev/null 2>&1 || return 1
 }
 fi
