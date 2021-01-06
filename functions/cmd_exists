@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -n "$(command -v cmd_exists 2>/dev/null)" ]; then
-cmd_exists() {
-
-  [ ! "$1" = "--help" ] || printf_help "Usage: cmd_exists cmd"
-  unalias "$1" >/dev/null 2>&1 || command -v "$1" >/dev/null 2>&1 || return 1
-}
-fi
