@@ -52,20 +52,20 @@ printf_exit() { [[ $1 == ?(-)+([0-9]) ]] && local color="$1" && shift 1 || local
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+if [ ! -n "$(command -v cmd_exists 2>/dev/null)" ]; then
+cmd_exists() { unalias "$1" >/dev/null 2>&1 || command -v "$1" >/dev/null 2>&1 || return 1; }
+fi
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 __tput() { tput $* 2>/dev/null; }
-__whiletrue() { while true; do
-  "$@"
-  sleep 60
-done; }
+__whiletrue() { while true; do "$@"; done; }
 
 rm_rf() { devnull rm -Rf "$@"; }
 cp_rf() { if [ -e "$1" ]; then devnull cp -Rfa "$@"; fi; }
 mv_f() { if [ -e "$1" ]; then devnull mv -f "$@"; fi; }
 ln_rm() { devnull find "$HOME" -xtype l -delete; }
-ln_sf() {
-  devnull ln -sf "$@"
-  ln_rm
-}
+ln_sf() { devnull ln -sf "$@"; ln_rm; }
 
 devnull() { "$@" >/dev/null 2>&1; }
 devnull1() { "$@" 1>/dev/null; }
@@ -115,8 +115,9 @@ get_answer() { printf "%s" "$REPLY"; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # use grc if it's installed or execute the command direct
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-if ! cmd_exists grc; then
+if [[ ! -n "$(command -v grc)" ]]; then
   if [[ USEGRC = "yes" ]]; then
     grc() {
       if [[ -f "$(command -v grc)" ]]; then
@@ -135,7 +136,7 @@ fi
 
 # generate random strings
 
-if ! cmd_exists random-string; then
+if [[ ! -n "$(command -v random-string)" ]]; then
   random-string() {
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-64} | head -n 1
   }
@@ -143,7 +144,7 @@ fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-if ! cmd_exists mkpasswd; then
+if [[ ! -n "$(command -v mkpasswd)" ]]; then
   mkpasswd() {
     cat /dev/urandom | tr -dc [:print:] | tr -d '[:space:]\042\047\134' | fold -w ${1:-64} | head -n 1
   }
