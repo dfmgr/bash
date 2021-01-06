@@ -167,7 +167,7 @@ is_online() {
     return_code $pingExit
   }
   test_http() {
-    curl -LSIs --max-time 1 http://1.1.1.1 | grep "HTTP/2 200" | head -n 1 &>/dev/null
+    timeout 0.3 curl -LSIs --max-time 1 http://1.1.1.1 | grep "HTTP/2 200" | head -n 1 &>/dev/null
     local httpExit=$?
     return_code $httpExit
   }
