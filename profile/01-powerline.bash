@@ -38,10 +38,11 @@ bashprompt() {
   GIT_BRANCH_CHANGED_SYMBOL=' 🌲 ' 2>/dev/null
   GIT_NEED_PUSH_SYMBOL=' 🔼 ' 2>/dev/null
   GIT_NEED_PULL_SYMBOL=' 🔽 ' 2>/dev/null
-  RUBY_SYMBOL=' ☢️ ' 2>/dev/null
+  RUBY_SYMBOL=' 💎 ' 2>/dev/null
   NODE_SYMBOL=' 🔥 ' 2>/dev/null
   PYTHON_SYMBOL=' 🐍 ' 2>/dev/null
   PHP_SYMBOL=' ♻️ ' 2>/dev/null
+  PERL_SYMBOL=' ☢️ ' 2>/dev/null
 
   FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
   FG_GRAY1="\[$(__tput setaf 15 2>/dev/null)\]"
@@ -107,6 +108,8 @@ bashprompt() {
     __node_info() { true; }
     __ifpython() { true; }
     __python_info() { true; }
+    __ifperl() { true; }
+    __perl_info() { true; }
   else
     ### Ruby #######################################################
     __ifruby() {
@@ -207,7 +210,22 @@ bashprompt() {
       else
         __php_info() { return; }
       fi
-
+    }
+    __ifperl() {
+      if [[ $(ls *.pl* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.pl | wc -l)" -ne 0 ]; then
+        if [ $(command -v perl 2>/dev/null) ]; then
+          __perl_version() { printf $(perl -V | grep "libperl=lib" | sed 's#libperl=libperl.so.##g;s#    ##g' | tail -1); }
+        else
+          __perl_version() { return; }
+        fi
+        __perl_info() {
+          local version=$(__perl_version)
+          [ -z "$version" ] && return
+          printf " Perl: $version $BG_GRAY1 $PERL_SYMBOL$RESET"
+        }
+      else
+        __perl_info() { return; }
+      fi
     }
   fi
 
@@ -276,6 +294,7 @@ bashprompt() {
     [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
     [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
     [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
+    [ -n "$(command -v perl 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifperl && __perl_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET \n"
