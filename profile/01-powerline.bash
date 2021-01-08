@@ -250,7 +250,7 @@ bashprompt() {
   else
     __ifgit() {
       if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-        __git_version() { printf " Git $(git --version | awk '{print $3}' | head -n 1)"; }
+        __git_version() { printf " Git: $(git --version | awk '{print $3}' | head -n 1)"; }
         __git_status() {
           local git_eng="env LANG=C git" # force git output in English to make our work easier
           local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
