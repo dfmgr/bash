@@ -212,7 +212,7 @@ bashprompt() {
         __php_info() {
           local version=$(__php_version)
           [ -z "$version" ] && return
-          printf " PHP: $version $BG_GRAY1$PHP_SYMBOL$RESET"
+          printf " PHP: $version$PHP_SYMBOL$RESET"
         }
       else
         __php_info() { return; }
@@ -235,7 +235,7 @@ bashprompt() {
         __perl_info() {
           local version=$(__perl_version)
           [ -z "$version" ] && return
-          printf " Perl: $version $BG_GRAY1$PERL_SYMBOL$RESET"
+          printf " Perl: $version$PERL_SYMBOL$RESET"
         }
       else
         __perl_info() { return; }
