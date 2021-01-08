@@ -86,16 +86,16 @@ bashprompt() {
   # what OS?
   case "$(uname)" in
   Darwin)
-    PS_SYMBOL=$PS_SYMBOL_DARWIN
+    PS_SYMBOL="$PS_SYMBOL_DARWIN"
     ;;
   Linux)
-    PS_SYMBOL=$PS_SYMBOL_LINUX
+    PS_SYMBOL="$PS_SYMBOL_LINUX"
     ;;
   msys* | Win* | MINGW* | CYGWIN*)
-    PS_SYMBOL=$PS_SYMBOL_WIN
+    PS_SYMBOL="$PS_SYMBOL_WIN"
     ;;
   *)
-    PS_SYMBOL=$PS_SYMBOL_OTHER
+    PS_SYMBOL="$PS_SYMBOL_OTHER"
     ;;
   esac
 
