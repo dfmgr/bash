@@ -27,16 +27,16 @@ fi
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 
 prompt_git_message() {
-if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ] && \
-   [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
-   if [ ! -f "$HOME/.config/bash/noprompt/git" ]; then
-     printf_red "This message will only appear once:"
-     printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
-     printf_custom "3" "echo ignoredirmessage >> .gitignore"
-     touch "$HOME/.config/bash/noprompt/git"
-   fi
-   pull_prompt() { printf_custom "3" "Dont forget to do a pull"; }
-fi
+  if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ] &&
+    [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
+    if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
+      printf_red "This message will only appear once:"
+      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+      printf_custom "3" "echo ignoredirmessage >> .gitignore"
+      touch "$HOME/.config/bash/noprompt/git_message"
+    fi
+    pull_prompt() { printf_custom "3" "Dont forget to do a pull"; }
+  fi
 }
 
 bashprompt() {
@@ -111,12 +111,12 @@ bashprompt() {
     PS_SYMBOL=$PS_SYMBOL_OTHER
     ;;
   esac
-  
-    ### Ruby #######################################################
-    if [ -f "$HOME/.config/bash/noprompt/ruby" ]; then
+
+  ### Ruby #######################################################
+  if [ -f "$HOME/.config/bash/noprompt/ruby" ]; then
     __ifruby() { true; }
     __ruby_info() { true; }
-    else
+  else
     __ifruby() {
       if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
         if [ $(command -v rbenv 2>/dev/null) ]; then
@@ -137,14 +137,14 @@ bashprompt() {
       else
         __ruby_info() { return; }
       fi
-      fi
     }
+  fi
 
-    ### Node.js ####################################################
-    if [ -f "$HOME/.config/bash/noprompt/node" ]; then
+  ### Node.js ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/node" ]; then
     __ifnode() { true; }
     __node_info() { true; }
-    else
+  else
     __ifnode() {
       if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]]; then
@@ -175,14 +175,14 @@ bashprompt() {
         __node_version() { return; }
         __node_info() { return; }
       fi
-      fi
     }
+  fi
 
-    ### python ####################################################
-    if [ -f "$HOME/.config/bash/noprompt/python" ]; then
+  ### python ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/python" ]; then
     __ifpython() { true; }
     __python_info() { true; }
-    else
+  else
     __ifpython() {
       if [[ -n "$VIRTUAL_ENV" ]] && [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] || [[ $(ls ./pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]]; then
         __python_info() {
@@ -207,14 +207,14 @@ bashprompt() {
       else
         __python_info() { return; }
       fi
-      fi
     }
+  fi
 
-    ### php ####################################################
-    if [ -f "$HOME/.config/bash/noprompt/php" ]; then
+  ### php ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/php" ]; then
     __ifphp() { true; }
     __php_info() { true; }
-    else
+  else
     __ifphp() {
       if [[ $(ls *.php* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.php | wc -l)" -ne 0 ]; then
         if [ $(command -v php 2>/dev/null) ]; then
@@ -231,12 +231,13 @@ bashprompt() {
         __php_info() { return; }
       fi
     }
-    
-    ### perl ####################################################
-    if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+  fi
+
+  ### perl ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
     __ifperl() { true; }
     __perl_info() { true; }
-    else
+  else
     __ifperl() {
       if [[ $(ls *.pl* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.pl | wc -l)" -ne 0 ]; then
         if [ $(command -v perl 2>/dev/null) ]; then
@@ -252,34 +253,38 @@ bashprompt() {
       else
         __perl_info() { return; }
       fi
-      fi
     }
+  fi
 
   ### Git ########################################################
-  __ifgit() {
-    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      __git_version() { printf " Git $(git --version | awk '{print $3}' | head -n 1)"; }
-      __git_status() {
-        local git_eng="env LANG=C git" # force git output in English to make our work easier
-        local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-        [ -n "$branch" ] || return # git branch not found
-        local marks
-        [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-        local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
-        local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-        local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-        [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
-        [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
-        printf " [$branch]$marks"
-      }
-      __git_info() {
-        __git_version && __git_status && printf "$GIT_BRANCH_SYMBOL"
-      }
-    else
-      __git_version() { return; }
-      __git_info() { return; }
-    fi
-  }
+  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+    __ifget() { true; }
+    __git_info() { true; }
+    __ifgit() {
+      if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+        __git_version() { printf " Git $(git --version | awk '{print $3}' | head -n 1)"; }
+        __git_status() {
+          local git_eng="env LANG=C git" # force git output in English to make our work easier
+          local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
+          [ -n "$branch" ] || return # git branch not found
+          local marks
+          [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
+          local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
+          local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
+          local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
+          [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
+          [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
+          printf " [$branch]$marks"
+        }
+        __git_info() {
+          __git_version && __git_status && printf "$GIT_BRANCH_SYMBOL"
+        }
+      else
+        __git_version() { return; }
+        __git_info() { return; }
+      fi
+    }
+  fi
 
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
@@ -300,7 +305,7 @@ bashprompt() {
   esac
 
   ps1() {
-    
+
     # Check the exit code of the previous command and display different
     # colors in the prompt accordingly.
     if [ $? -eq 0 ]; then
