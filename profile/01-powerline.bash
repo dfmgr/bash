@@ -26,6 +26,14 @@ fi
 
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 
+prompt_git_message() {
+if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ] && \
+  [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
+   printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+   printf_custom "3" "Dont forget to do a pull"
+fi
+}
+
 bashprompt() {
   function __tput() { tput $* 2>/dev/null; }
 
@@ -274,6 +282,9 @@ bashprompt() {
   esac
 
   ps1() {
+  
+    prompt_git_message
+  
     # Check the exit code of the previous command and display different
     # colors in the prompt accordingly.
     if [ $? -eq 0 ]; then
