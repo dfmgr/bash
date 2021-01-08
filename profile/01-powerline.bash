@@ -247,7 +247,6 @@ bashprompt() {
   if [ -f "$HOME/.config/bash/noprompt/git" ]; then
     __ifgit() { true; }
     __git_info() { true; }
-    prompt_git_message_warn() { true; }
   else
     __ifgit() {
       if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
@@ -255,14 +254,14 @@ bashprompt() {
         __git_status() {
           local git_eng="env LANG=C git" # force git output in English to make our work easier
           local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-          [ -n "$branch" ] || return # git branch not found
+          [ -n $branch ] || return # git branch not found
           local marks
           [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
           local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
           local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
           local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-          [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
-          [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
+          [ -n $aheadN ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
+          [ -n $behindN ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
           printf " [$branch]$marks"
         }
         __git_info() {
@@ -277,7 +276,7 @@ bashprompt() {
 
   prompt_git_message() {
     if [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | wc -l)" -eq 0 ]; then
-      touch $(echo $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore)
+      touch $(echo $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore 2>/dev/null)
     fi
     if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
       printf_red "This message will only appear once:"
@@ -288,9 +287,8 @@ bashprompt() {
   }
 
   prompt_git_message_warn() {
-    if [ "$(grep ignoredirmessage $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null)" ]; then
-      return
-    else
+    if [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | wc -l)" -eq 0 ] &&
+      [ "$(grep -v ignoredirmessage $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore)" ]; then
       printf "Dont forget to do a pull"
     fi
   }
@@ -338,12 +336,12 @@ bashprompt() {
     [ -n "$(command -v perl 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET \n"
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$(prompt_git_message_warn) $RESET"
-
+    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $(prompt_git_message_warn)$RESET \n"
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL $RESET"
+    prompt_git_message
   }
 
-  PROMPT_COMMAND="ps1 && title && history -a && history -r; prompt_git_message "
+  PROMPT_COMMAND="ps1 && title && history -a && history -r "
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
