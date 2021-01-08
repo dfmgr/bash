@@ -28,9 +28,14 @@ fi
 
 prompt_git_message() {
 if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ] && \
-  [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
-   printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
-   printf_custom "3" "Dont forget to do a pull"
+   [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
+   if [ ! -f "$HOME/.config/bash/noprompt/git" ]; then
+     printf_red "This message will only appear once:"
+     printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+     printf_custom "3" "echo ignoredirmessage >> .gitignore"
+     touch "$HOME/.config/bash/noprompt/git"
+   fi
+   pull_prompt() { printf_custom "3" "Dont forget to do a pull"; }
 fi
 }
 
@@ -106,20 +111,12 @@ bashprompt() {
     PS_SYMBOL=$PS_SYMBOL_OTHER
     ;;
   esac
-
-  if [ -f "$HOME/.noprompt" ]; then
-    __ifphp() { true; }
-    __php_info() { true; }
+  
+    ### Ruby #######################################################
+    if [ -f "$HOME/.config/bash/noprompt/ruby" ]; then
     __ifruby() { true; }
     __ruby_info() { true; }
-    __ifnode() { true; }
-    __node_info() { true; }
-    __ifpython() { true; }
-    __python_info() { true; }
-    __ifperl() { true; }
-    __perl_info() { true; }
-  else
-    ### Ruby #######################################################
+    else
     __ifruby() {
       if [ $(ls *.rb 2>/dev/null | wc -l) -ne 0 ] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.rb | wc -l)" -ne 0 ]; then
         if [ $(command -v rbenv 2>/dev/null) ]; then
@@ -140,9 +137,14 @@ bashprompt() {
       else
         __ruby_info() { return; }
       fi
+      fi
     }
 
     ### Node.js ####################################################
+    if [ -f "$HOME/.config/bash/noprompt/node" ]; then
+    __ifnode() { true; }
+    __node_info() { true; }
+    else
     __ifnode() {
       if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]]; then
@@ -173,9 +175,14 @@ bashprompt() {
         __node_version() { return; }
         __node_info() { return; }
       fi
+      fi
     }
 
     ### python ####################################################
+    if [ -f "$HOME/.config/bash/noprompt/python" ]; then
+    __ifpython() { true; }
+    __python_info() { true; }
+    else
     __ifpython() {
       if [[ -n "$VIRTUAL_ENV" ]] && [[ $(ls $VIRTUAL_ENV/pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]] || [[ $(ls ./pyvenv.cfg 2>/dev/null | wc -l) -ne 0 ]]; then
         __python_info() {
@@ -200,9 +207,14 @@ bashprompt() {
       else
         __python_info() { return; }
       fi
+      fi
     }
 
     ### php ####################################################
+    if [ -f "$HOME/.config/bash/noprompt/php" ]; then
+    __ifphp() { true; }
+    __php_info() { true; }
+    else
     __ifphp() {
       if [[ $(ls *.php* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.php | wc -l)" -ne 0 ]; then
         if [ $(command -v php 2>/dev/null) ]; then
@@ -219,6 +231,12 @@ bashprompt() {
         __php_info() { return; }
       fi
     }
+    
+    ### perl ####################################################
+    if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+    __ifperl() { true; }
+    __perl_info() { true; }
+    else
     __ifperl() {
       if [[ $(ls *.pl* 2>/dev/null | wc -l) -ne 0 ]] || [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/*.pl | wc -l)" -ne 0 ]; then
         if [ $(command -v perl 2>/dev/null) ]; then
@@ -234,8 +252,8 @@ bashprompt() {
       else
         __perl_info() { return; }
       fi
+      fi
     }
-  fi
 
   ### Git ########################################################
   __ifgit() {
@@ -307,7 +325,7 @@ bashprompt() {
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET \n"
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$RESET"
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$RESET $(pull_prompt)"
 
   }
 
