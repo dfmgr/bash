@@ -26,19 +26,6 @@ fi
 
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 
-prompt_git_message() {
-  if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ] &&
-    [ "$(cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -v ignoredirmessage))" ]; then
-    if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
-      printf_red "This message will only appear once:"
-      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
-      printf_custom "3" "echo ignoredirmessage >> .gitignore"
-      touch "$HOME/.config/bash/noprompt/git_message"
-    fi
-    pull_prompt() { printf_custom "3" "Dont forget to do a pull"; }
-  fi
-}
-
 bashprompt() {
   function __tput() { tput $* 2>/dev/null; }
 
@@ -258,10 +245,11 @@ bashprompt() {
 
   ### Git ########################################################
   if [ -f "$HOME/.config/bash/noprompt/git" ]; then
-    __ifget() { true; }
+    __ifgit() { true; }
     __git_info() { true; }
+    prompt_git_message_warn() { true; }
+  else
     __ifgit() {
-      else
       if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
         __git_version() { printf " Git $(git --version | awk '{print $3}' | head -n 1)"; }
         __git_status() {
@@ -287,6 +275,26 @@ bashprompt() {
     }
   fi
 
+  prompt_git_message() {
+    if [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | wc -l)" -eq 0 ]; then
+      touch $(echo $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore)
+    fi
+    if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
+      printf_red "This message will only appear once:"
+      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+      printf_custom "3" "echo ignoredirmessage >> .gitignore"
+      touch "$HOME/.config/bash/noprompt/git_message"
+    fi
+  }
+
+  prompt_git_message_warn() {
+    if [ "$(grep ignoredirmessage $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null)" ]; then
+      return
+    else
+      printf "Dont forget to do a pull"
+    fi
+  }
+
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
 
@@ -306,10 +314,10 @@ bashprompt() {
   esac
 
   ps1() {
-
+    EXIT=$?
     # Check the exit code of the previous command and display different
     # colors in the prompt accordingly.
-    if [ $? -eq 0 ]; then
+    if [ $EXIT -eq 0 ]; then
       local BG_EXIT="$BG_DARK_GREEN"
       local PS_SYMBOL="$PS_SYMBOL"
     else
@@ -331,7 +339,7 @@ bashprompt() {
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w$RESET \n"
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$RESET $(pull_prompt)"
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY2$PS_SYMBOL$(prompt_git_message_warn) $RESET"
 
   }
 
