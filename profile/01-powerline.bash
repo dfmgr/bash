@@ -282,9 +282,7 @@ bashprompt() {
   esac
 
   ps1() {
-  
-    prompt_git_message
-  
+    
     # Check the exit code of the previous command and display different
     # colors in the prompt accordingly.
     if [ $? -eq 0 ]; then
@@ -313,7 +311,7 @@ bashprompt() {
 
   }
 
-  PROMPT_COMMAND="ps1 && title && history -a && history -r "
+  PROMPT_COMMAND="ps1 && title && history -a && history -r; prompt_git_message "
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
