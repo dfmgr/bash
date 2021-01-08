@@ -12,6 +12,11 @@ PATH="/usr/local/bin:$PATH"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+# Create directories
+mkdir -p $HOME/.config/bash/noprompt >/dev/null 2>&1
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Source System Bash
 
 # Fedora/Redhat/CentOS
