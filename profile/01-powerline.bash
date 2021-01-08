@@ -257,10 +257,11 @@ bashprompt() {
   fi
 
   ### Git ########################################################
-  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/git" ]; then
     __ifget() { true; }
     __git_info() { true; }
     __ifgit() {
+      else
       if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
         __git_version() { printf " Git $(git --version | awk '{print $3}' | head -n 1)"; }
         __git_status() {
