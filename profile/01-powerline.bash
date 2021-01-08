@@ -254,14 +254,14 @@ bashprompt() {
         __git_status() {
           local git_eng="env LANG=C git" # force git output in English to make our work easier
           local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-          [ -n $branch ] || return # git branch not found
+          [ -n "$branch" ] || return # git branch not found
           local marks
           [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
           local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
           local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
           local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-          [ -n $aheadN ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
-          [ -n $behindN ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
+          [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
+          [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
           printf " [$branch]$marks"
         }
         __git_info() {
