@@ -91,6 +91,32 @@ userbashaliases() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+# Source additional PS1 prompt scripts
+
+userbashprompt() {
+  local d=$(ls "$HOME"/.config/bash/prompt/*.bash 2>/dev/null | wc -l)
+  if [ "$d" != "0" ]; then
+    for f in "$HOME"/.config/bash/prompt/*.bash; do
+      source "$f" >/dev/null 2>&1
+    done
+  fi
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Source OS specific
+
+userbashos() {
+  local d=$(ls "$HOME"/.config/bash/*/*.load 2>/dev/null | wc -l)
+  if [ "$d" != "0" ]; then
+    for f in "$HOME"/.config/bash/*/*.load; do
+      source "$f" >/dev/null 2>&1
+    done
+  fi
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Source additional completion scripts
 
 userbashcompletions() {
@@ -132,8 +158,9 @@ userbashprofilelocal() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashplugins userbashprofilelocal; do
-  $executeuserfunct
+for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashprompt \
+   userbashos userbashplugins userbashprofilelocal; do
+  $executeuserfunct 
 done
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
