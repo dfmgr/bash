@@ -274,9 +274,9 @@ bashprompt() {
     }
   fi
 
-  prompt_git_message() {
-    if [ -d "$(ls $(git rev-parse --show-toplevel)/.gitconfig 2>/dev/null | wc -l)" -eq 0 ]; then
-      touch $(git rev-parse --show-toplevel 2>/dev/null)/.gitconfig)
+  __git_prompt_message() {
+    if [ "$(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | wc -l)" -eq 0 ]; then
+      touch $(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null)
     fi
     if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
       printf_red "This message will only appear once:"
@@ -284,13 +284,16 @@ bashprompt() {
       printf_custom "3" "echo ignoredirmessage >> .gitignore"
       touch "$HOME/.config/bash/noprompt/git_message"
     fi
+    return 0
   }
 
-  prompt_git_message_warn() {
-    if [ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/.git | wc -l)" -eq 0 ] &&
-      [ "$(grep -v ignoredirmessage $(ls $(git rev-parse --show-toplevel 2>/dev/null)/.gitconfig))" ]; then
-      printf "Dont forget to do a pull"
+  __git_prompt_message_warn() {
+    if [ "$(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | wc -l)" -eq 0 ]; then
+      if   [ "$(cat $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | grep -q ignoredirmessage)" ]; then
+         printf "Dont forget to do a pull"
+      fi
     fi
+    return 0
   }
 
   ### PROMPT #####################################################
@@ -338,11 +341,11 @@ bashprompt() {
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET\n"
     #PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$RESET "
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$(prompt_git_message_warn)$RESET "
-    prompt_git_message
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$(__git_prompt_message_warn)$RESET "
+    
   }
 
-  PROMPT_COMMAND="ps1 && title && history -a && history -r "
+  PROMPT_COMMAND="ps1 && title && history -a && history -r; __git_prompt_message "
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
