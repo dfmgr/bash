@@ -275,9 +275,6 @@ bashprompt() {
   fi
 
   __git_prompt_message() {
-    if [ "$(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | wc -l)" -eq 0 ]; then
-      touch $(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null)
-    fi
     if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
       printf_red "This message will only appear once:"
       printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
@@ -288,8 +285,8 @@ bashprompt() {
   }
 
   __git_prompt_message_warn() {
-    if [ "$(ls $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | wc -l)" -eq 0 ]; then
-      if   [ "$(cat $(git rev-parse --show-toplevel)/.gitignore 2>/dev/null | grep -q ignoredirmessage)" ]; then
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+      if [ "$(cat $(git rev-parse --show-toplevel  2>/dev/null)/.gitignore 2>/dev/null | grep -vq ignoredirmessage)" ]; then
          printf "Dont forget to do a pull"
       fi
     fi
@@ -339,9 +336,9 @@ bashprompt() {
     [ -n "$(command -v perl 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET\n"
+    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET $(__git_prompt_message_warn)\n"
     #PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$RESET "
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$(__git_prompt_message_warn)$RESET "
+    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$RESET "
     
   }
 
