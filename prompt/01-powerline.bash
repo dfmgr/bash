@@ -286,11 +286,10 @@ bashprompt() {
 
   __git_prompt_message_warn() {
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      if [ "$(cat $(git rev-parse --show-toplevel  2>/dev/null)/.gitignore 2>/dev/null | grep -vq ignoredirmessage)" ]; then
-         printf "Dont forget to do a pull"
+      if cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -vFiq ignoredirmessage; then
+         printf "${BG_GREEN}${FG_BLACK} Dont forget to do a git pull ${NC}"
       fi
     fi
-    return 0
   }
 
   ### PROMPT #####################################################
