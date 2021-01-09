@@ -135,7 +135,7 @@ bashprompt() {
     __ifnode() {
       if [[ "$(ls $(git rev-parse --show-toplevel 2>/dev/null)/package*.json *.js package*.json 2>/dev/null | wc -l)" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]]; then
-          __node_version() { printf "$(nvm --version)"; }
+          __node_version() { printf "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
