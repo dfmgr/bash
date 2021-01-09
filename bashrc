@@ -91,6 +91,33 @@ userbashaliases() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+# Source additional completion scripts
+
+userbashcompletions() {
+  local d=$(ls "$HOME"/.config/bash/completions/*.bash 2>/dev/null | wc -l)
+  if [ "$d" != "0" ]; then
+    for f in "$HOME"/.config/bash/completions/*.bash; do
+      source "$f" >/dev/null 2>&1
+    done
+  fi
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Source plugins
+
+userbashplugins() {
+  local d=$(ls "$HOME"/.config/bash/plugins/*.bash 2>/dev/null | wc -l)
+  if [ "$d" != "0" ]; then
+    for f in "$HOME"/.config/bash/plugins/*.bash; do
+      source "$f" >/dev/null 2>&1
+    done
+  fi
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Source additional PS1 prompt scripts
 
 userbashprompt() {
@@ -117,34 +144,6 @@ userbashos() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# Source additional completion scripts
-
-userbashcompletions() {
-  local d=$(ls "$HOME"/.config/bash/completions/*.bash 2>/dev/null | wc -l)
-  if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/completions/*.bash; do
-      source "$f" >/dev/null 2>&1
-    done
-  fi
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Source plugins
-
-userbashplugins() {
-  local d=$(ls "$HOME"/.config/bash/plugins/*.bash 2>/dev/null | wc -l)
-  if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/plugins/*.bash; do
-      source "$f" >/dev/null 2>&1
-    done
-  fi
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Source additional user bash scripts
 
 userbashprofilelocal() {
@@ -158,8 +157,8 @@ userbashprofilelocal() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashprompt \
-   userbashos userbashplugins userbashprofilelocal; do
+for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashplugins \
+    userbashprompt userbashos userbashprofilelocal; do
   $executeuserfunct 
 done
 
