@@ -27,7 +27,7 @@ fi
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 
 bashprompt() {
-  function __tput() { tput $* 2>/dev/null; }
+  function __tput() { tput "$@" 2>/dev/null; }
 
   # Unicode symbols
   PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
@@ -338,7 +338,7 @@ bashprompt() {
     #PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET $(__git_prompt_message_warn)\n"
     PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET\n"
     PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$RESET "
-    
+
   }
 
   PROMPT_COMMAND="ps1 && title && history -a && history -r "

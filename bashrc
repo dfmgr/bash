@@ -33,8 +33,8 @@ fi
 
 # source .profile
 
-if [ -f "$HOME/.profile" ]; then
-  source "$HOME/.profile"
+if [ -f ~/.profile ]; then
+  source ~/.profile
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -42,9 +42,9 @@ fi
 #source users functions
 
 userbashfunctions() {
-  local d=$(ls "$HOME"/.config/bash/functions/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/functions/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/functions/*.bash; do
+    for f in ~/.config/bash/functions/*.bash; do
       source "$f"
     done
   fi
@@ -55,9 +55,9 @@ userbashfunctions() {
 #ensure the exports get loaded
 
 userbashexports() {
-  local d=$(ls "$HOME"/.config/bash/exports/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/exports/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/exports/*.bash; do
+    for f in ~/.config/bash/exports/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -68,9 +68,9 @@ userbashexports() {
 # Source additional bash scripts
 
 userbashprofile() {
-  local d=$(ls "$HOME"/.config/bash/profile/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/profile/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/profile/*.bash; do
+    for f in ~/.config/bash/profile/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -81,9 +81,9 @@ userbashprofile() {
 # Source additional aliases scripts
 
 userbashaliases() {
-  local d=$(ls "$HOME"/.config/bash/aliases/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/aliases/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/aliases/*.bash; do
+    for f in ~/.config/bash/aliases/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -94,23 +94,22 @@ userbashaliases() {
 # Source additional completion scripts
 
 userbashcompletions() {
-  local d=$(ls "$HOME"/.config/bash/completions/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/completions/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/completions/*.bash; do
+    for f in ~/.config/bash/completions/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
 }
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Source plugins
 
 userbashplugins() {
-  local d=$(ls "$HOME"/.config/bash/plugins/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/plugins/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/plugins/*.bash; do
+    for f in ~/.config/bash/plugins/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -121,9 +120,9 @@ userbashplugins() {
 # Source additional PS1 prompt scripts
 
 userbashprompt() {
-  local d=$(ls "$HOME"/.config/bash/prompt/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/prompt/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/prompt/*.bash; do
+    for f in ~/.config/bash/prompt/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -134,9 +133,9 @@ userbashprompt() {
 # Source OS specific
 
 userbashos() {
-  local d=$(ls "$HOME"/.config/bash/*/*.load 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/*/*.load 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/*/*.load; do
+    for f in ~/.config/bash/*/*.load; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -147,9 +146,9 @@ userbashos() {
 # Source additional user bash scripts
 
 userbashprofilelocal() {
-  local d=$(ls "$HOME"/.config/bash/local/*.bash 2>/dev/null | wc -l)
+  local d=$(ls ~/.config/bash/local/*.bash 2>/dev/null | wc -l)
   if [ "$d" != "0" ]; then
-    for f in "$HOME"/.config/bash/local/*.bash; do
+    for f in ~/.config/bash/local/*.bash; do
       source "$f" >/dev/null 2>&1
     done
   fi
@@ -158,34 +157,34 @@ userbashprofilelocal() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases userbashcompletions userbashplugins \
-    userbashprompt userbashos userbashprofilelocal; do
-  $executeuserfunct 
+  userbashprompt userbashos userbashprofilelocal; do
+  $executeuserfunct
 done
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #Local file
-if [ -f "$HOME/.config/local/bash.local" ]; then
-  source "$HOME/.config/local/bash.local"
+if [ -f ~/.config/local/bash.local ]; then
+  source ~/.config/local/bash.local
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #Servers specific
-if [ -f "$HOME/.config/local/bash.servers.local" ]; then
-  source "$HOME/.config/local/bash.servers.local"
+if [ -f ~/.config/local/bash.servers.local ]; then
+  source ~/.config/local/bash.servers.local
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #System specific
-if [ -f "$HOME/.config/local/bash."$(hostname)".local" ]; then
-  source "$HOME/.config/local/bash."$(hostname)".local"
+if [ -f ~/.config/local/bash."$(hostname)".local ]; then
+  source ~/.config/local/bash."$(hostname)".local
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export SRCBASHRC="$HOME/.bashrc"
+export BASHRCSRC=~/.bashrc
 export PATH="$(echo $PATH | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

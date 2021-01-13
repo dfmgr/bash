@@ -9,7 +9,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # include .profile if it exists
-#if [ -z "$SRCPROFILERC" ]; then
+#if [ -z "$PROFILERCSRC" ]; then
 #    if [ -f "$HOME/.profile" ]; then
 #        source "$HOME/.profile"
 #    fi
