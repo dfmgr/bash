@@ -13,6 +13,7 @@
 
 show_welcome() {
   if [ ! -f $HOME/.config/bash/welcome.msg ]; then
+    printf_green "\n\n\n"
     printf_green "Welcome to your system!"
     printf_green "It would appear that it"
     printf_green "has been setup successfully."
@@ -27,6 +28,7 @@ show_welcome() {
     if ! answer_is_yes; then
       touch $HOME/.config/bash/welcome.msg
     fi
+    printf_green "\n\n\n"
   fi
 }
 
