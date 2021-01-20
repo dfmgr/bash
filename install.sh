@@ -24,12 +24,12 @@ SCRIPTSFUNCTFILE="${SCRIPTSAPPFUNCTFILE:-app-installer.bash}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 if [ -f "$SCRIPTSFUNCTDIR/functions/$SCRIPTSFUNCTFILE" ]; then
-    . "$SCRIPTSFUNCTDIR/functions/$SCRIPTSFUNCTFILE"
+  . "$SCRIPTSFUNCTDIR/functions/$SCRIPTSFUNCTFILE"
 elif [ -f "$HOME/.local/share/CasjaysDev/functions/$SCRIPTSFUNCTFILE" ]; then
-    . "$HOME/.local/share/CasjaysDev/functions/$SCRIPTSFUNCTFILE"
+  . "$HOME/.local/share/CasjaysDev/functions/$SCRIPTSFUNCTFILE"
 else
-    curl -LSs "$SCRIPTSFUNCTURL/$SCRIPTSFUNCTFILE" -o "/tmp/$SCRIPTSFUNCTFILE" || exit 1
-    . "/tmp/$SCRIPTSFUNCTFILE"
+  curl -LSs "$SCRIPTSFUNCTURL/$SCRIPTSFUNCTFILE" -o "/tmp/$SCRIPTSFUNCTFILE" || exit 1
+  . "/tmp/$SCRIPTSFUNCTFILE"
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -137,15 +137,18 @@ ensure_perms
 
 # Main progam
 
+if [ -d "$APPDIR" ]; then
+  execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
+fi
+
 if [ -d "$DOWNLOADED_TO/.git" ]; then
-    execute \
-        "git_update $DOWNLOADED_TO" \
-        "Updating $APPNAME configurations"
+  execute \
+    "git_update $DOWNLOADED_TO" \
+    "Updating $APPNAME configurations"
 else
-    execute \
-        "backupapp && \
-        git_clone -q $REPO/$APPNAME $DOWNLOADED_TO" \
-        "Installing $APPNAME configurations"
+  execute \
+    "git_clone -q $REPO/$APPNAME $DOWNLOADED_TO" \
+    "Installing $APPNAME configurations"
 fi
 
 # exit on fail
@@ -156,36 +159,36 @@ failexitcode
 # Plugins
 
 if __am_i_online; then
-if [ "$PLUGNAMES" != "" ]; then
+  if [ "$PLUGNAMES" != "" ]; then
     if [ -d "$PLUGDIR"/basher/.git ]; then
-        execute \
-            "git_update $PLUGDIR/basher" \
-            "Updating plugin basher"
+      execute \
+        "git_update $PLUGDIR/basher" \
+        "Updating plugin basher"
     else
-        execute \
-            "git_clone https://github.com/basherpm/basher $PLUGDIR/basher" \
-            "Installing plugin basher"
+      execute \
+        "git_clone https://github.com/basherpm/basher $PLUGDIR/basher" \
+        "Installing plugin basher"
     fi
-fi
-fi
+  fi
 
-# exit on fail
-failexitcode
+  # exit on fail
+  failexitcode
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # run post install scripts
 
 run_postinst() {
-    dfmgr_run_post
-    ln_sf $APPDIR/bashrc $HOME/.bashrc
-    ln_sf $APPDIR/bash_logout $HOME/.bash_logout
-    ln_sf $APPDIR/bash_profile $HOME/.bash_profile
+  dfmgr_run_post
+  ln_sf $APPDIR/bashrc $HOME/.bashrc
+  ln_sf $APPDIR/bash_logout $HOME/.bash_logout
+  ln_sf $APPDIR/bash_profile $HOME/.bash_profile
 }
 
 execute \
-    "run_postinst" \
-    "Running post install scripts"
+  "run_postinst" \
+  "Running post install scripts"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
