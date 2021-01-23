@@ -95,9 +95,8 @@ alias nvim='nvim -u $HOME/.config/neovim/init.vim'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(command -v trash)" ] && alias rm='trash rm '
-[ -f "$(command -v trash)" ] && alias trash-restore='trash restore '
-[ -f "$(command -v trash)" ] && alias trash-empty='trash empty ' || alias empty-trash='rm -rf ~/.local/share/Trash/files/*'
+[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || \
+  alias empty-trash='rm -rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
