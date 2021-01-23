@@ -106,7 +106,8 @@ alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-deskto
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lock Screen
-[ -f "$(command -v xflock4)" ] && alias afk='xflock4' || [ -f "$(command -v gnome-screensaver-command)" ] && alias afk='gnome-screensaver-command --lock'
+[ -f "$(command -v gnome-screensaver-command)" ] && alias afk='gnome-screensaver-command --lock'
+[ -f "$(command -v xflock4)" ] && alias afk='xflock4'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # logout
