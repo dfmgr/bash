@@ -33,31 +33,30 @@ alias sort='LC_ALL=C sort'
 alias uniq='LC_ALL=C uniq'
 alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.lss'
 alias grep='grep --color=auto 2>/dev/null'
-alias egrep='egrep --color=auto 2>/dev/null'
-alias fgrep='fgrep --color=auto 2>/dev/null'
+alias egrep='grep -E --color=auto 2>/dev/null'
+alias fgrep='grep -F --color=auto 2>/dev/null'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OSS code
 [ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # sudo commands
 alias sudo='sudo -H '
-alias svi='sudo vim'
-alias adb='sudo adb'
-alias npmg='sudo npm -g'
-alias docker='sudo docker'
-alias netstat='sudo netstat'
-alias fastboot='sudo fastboot'
-alias ipconfig='sudo ifconfig'
-alias systemctl='sudo systemctl'
-alias ports='sudo netstat -taupln | grep --color=auto LISTEN'
-alias flushdns='sudo systemd-resolve --flush-caches'
+alias svi='sudo vim '
+alias adb='sudo adb '
+alias npmg='sudo npm -g '
+alias docker='sudo docker '
+alias netstat='sudo netstat '
+alias fastboot='sudo fastboot '
+alias ipconfig='sudo ifconfig '
+alias systemctl='sudo systemctl '
+alias ports='sudo netstat -taupln | grep --color=auto LISTEN '
+alias flushdns='sudo systemd-resolve --flush-caches '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Package management
 if [[ "$OSTYPE" =~ ^linux ]]; then
   if [ -n "$(command -v apt 2>/dev/null)" ]; then alias apt='sudo apt '; fi
@@ -68,15 +67,14 @@ if [[ "$OSTYPE" =~ ^linux ]]; then
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # ls
 alias ll='ls -l --color=auto 2>/dev/null'
 alias l.='ls -d .* --color=auto 2>/dev/null'
 alias ls='ls --color=auto 2>/dev/null'
 alias la='ls -a --color=auto'
+alias lla='ls -a --color=auto '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # CD Aliases
 alias ~='cd "$HOME"'
 alias ..='cd ..'
@@ -86,40 +84,39 @@ alias .....='cd ../../../..'
 alias cd..='cd ..'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Set vim
-alias vi='vim'
-alias vim='vim'
-alias vis='vim +set si'
+alias vi='vim '
+alias vim='vim '
+alias vis='vim +set si '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Set neovim
 alias nvim='nvim -u $HOME/.config/neovim/init.vim'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Empty trash.
-alias empty-trash='rm -rf ~/.local/share/Trash/files/*'
+# trash aliases.
+[ -f "$(command -v trash)" ] && alias rm='trash rm '
+[ -f "$(command -v trash)" ] && alias trash-restore='trash restore '
+[ -f "$(command -v trash)" ] && alias trash-empty='trash empty ' || alias empty-trash='rm -rf ~/.local/share/Trash/files/*'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Hide/show icons.
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons true'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Lock Screen
-alias afk='gnome-screensaver-command --lock'
+[ -f "$(command -v xflock4)" ] && alias afk='xflock4' || [ -f "$(command -v gnome-screensaver-command)" ] && alias afk='gnome-screensaver-command --lock'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# logout
+[ -f "$(command -v xfce4-session-logout)" ] && alias logout='xfce4-session-logout'
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Open command
 alias o='xdg-open'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #youtube-dl
 if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
   alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
@@ -139,7 +136,6 @@ if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Media
 [ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
 [ -n "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
@@ -149,12 +145,10 @@ fi
 [ -z $MPDSERVER ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # list functions
 alias list-my-functions='typeset -F | less'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Fun alias
 alias tw='rainbowstream -iot'
 alias twitter='twitter'
@@ -162,8 +156,8 @@ alias mylatlong='mylocation | grep --color=none "LAT\|LON"'
 alias emj='emojis'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # other
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # end

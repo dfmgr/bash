@@ -36,19 +36,19 @@ alias sort='LC_ALL=C sort'
 alias uniq='LC_ALL=C uniq'
 alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.lss'
 alias grep='grep --color=auto 2>/dev/null'
-alias egrep='egrep --color=auto 2>/dev/null'
-alias fgrep='fgrep --color=auto 2>/dev/null'
+alias egrep='grep -E --color=auto 2>/dev/null'
+alias fgrep='grep -F --color=auto 2>/dev/null'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-alias ls='ls -G 2>/dev/null'
-alias ll='ls -lG 2>/dev/null'
-alias l.='ls -dG .* 2>/dev/null'
+alias ll='ls -l --color=auto 2>/dev/null'
+alias l.='ls -d .* --color=auto 2>/dev/null'
+alias ls='ls --color=auto 2>/dev/null'
+alias la='ls -a --color=auto'
+alias lla='ls -a --color=auto '
 alias readlink='greadlink 2>/dev/null'
 alias dircolors='gdircolors 2>/dev/null'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # CD Aliases
 alias ~='cd $HOME'
 alias ..='cd ..'
@@ -57,7 +57,6 @@ alias ....='cd ../../..'
 alias cd..='cd ..'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Set vim
 alias vi='/usr/local/bin/vim'
 alias vim='/usr/local/bin/vim'
@@ -65,38 +64,31 @@ alias vis='/usr/local/bin/vim +set si'
 alias svi='sudo /usr/local/bin/vim'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Set neovim
 alias nvim='/usr/local/bin/nvim -u $HOME/.config/neovim/init.vim'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Empty trash.
 alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; sudo rm -frv ~/.Trash; sudo rm -frv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* "delete from LSQuarantineEvent"'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Hide/show icons.
 alias desktop-icons-hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
 alias desktop-icons-hide='defaults write com.apple.finder CreateDesktop -bool true  && killall Finder'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Flush dns
 alias flushdns='dscacheutil -flushcache && killall -HUP mDNSResponder'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Lock Screen
 alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Open command
 alias o='open'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #youtube-dl
 if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
   alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
@@ -116,45 +108,37 @@ if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Media
-if [ -n "$(command -v castero 2>/dev/null)" ]; then
-  alias podcasts='castero'
-fi
-if [ -n "$(command -v spotifyd 2>/dev/null)" ]; then
-  alias spotify='spotifyd'
-fi
-if [ -n "$(command -v pianobar 2>/dev/null)" ]; then
-  alias pandora='pianobar'
-fi
-if [ -n "$(command -v tizonia 2>/dev/null)" ]; then
-  alias cloudplayer='tizonia'
-fi
-if [ -n "$(command -v youtube-viewer 2>/dev/null)" ]; then
-  alias youtube='youtube-viewer'
-fi
+[ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
+[ -n "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
+[ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
+[ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
+[ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # android dev
 alias fastboot='sudo fastboot'
 alias adb='sudo adb'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # netstat aliases
 alias ports='sudo netstat -taupln | grep LISTEN'
 alias netstat='sudo netstat'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # list functions
 alias list-my-functions='typeset -F | less'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Fun alias
 alias tw='rainbowstream -iot'
 alias twitter='twitter'
 alias mylatlong='mylocation | grep -E "LAT | LON"'
 alias emj='emojis'
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# other
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# end
