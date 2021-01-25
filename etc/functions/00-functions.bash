@@ -103,7 +103,7 @@ printf_custom_question() {
 
 printf_answer() {
   read -e -r -n "${2:-120}" -s "${1:-__ANSWER}"
-  history -s "${1:-__ANSWER}"
+  history -s "${1:-$__ANSWER}"
 }
 
 #printf_read_question "color" "message" "maxLines" "answerVar"
@@ -116,7 +116,7 @@ printf_read_question() {
   printf_answer "$reply" "$lines"
 }
 
-printf_answer_yes() { [[ "${1:-__ANSWER}" =~ ${2:-^[Yy]$} ]] && return 0 || return 1; }
+printf_answer_yes() { [[ "${1:-$__ANSWER}" =~ ${2:-^[Yy]$} ]] && return 0 || return 1; }
 
 printf_head() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
