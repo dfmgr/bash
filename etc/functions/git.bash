@@ -33,20 +33,19 @@ get_git_repository_details() {
 
 function git() {
   command git "$@"
-  if [[ "$1" == "init" && "$@" != *"--help"* ]]; then
+  if [[ "$1" == "init" && "$*" != *"--help"* ]]; then
     git symbolic-ref HEAD refs/heads/main
   fi
 }
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function hub() {
-  if [[ "$1" == "default-branch" && "$@" != *"--help"* ]]; then
+  if [[ "$1" == "default-branch" && "$*" != *"--help"* ]]; then
     local BRANCH="${2:-main}"
     git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
     git push origin "$BRANCH:$BRANCH" 1>/dev/null
-    hub api repos/{owner}/{repo} -X PATCH -F default_branch="$BRANCH" 1> /dev/null
+    hub api repos/{owner}/{repo} -X PATCH -F default_branch="$BRANCH" 1>/dev/null
     git branch -D master 2>/dev/null
     git push origin :master 2>/dev/null
   else
