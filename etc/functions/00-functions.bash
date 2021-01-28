@@ -47,7 +47,7 @@ printf_exit() {
   shift
   printf_color "\t\t$msg" "$color"
   echo ""
-  exit $?
+  exit 0
 }
 
 printf_help() {
