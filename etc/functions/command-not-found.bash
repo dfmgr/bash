@@ -13,7 +13,7 @@
 
 orig_command_not_found_handle() {
   cmd="$1"
-  args="$*"
+  args="$@"
   printf_red "bash: $1: command not found"
   if [ "$OS" = "Linux" ] && cmd_exists pkmgr; then
     printf_green "Searching the repo for $1"
