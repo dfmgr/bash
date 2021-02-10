@@ -145,7 +145,6 @@ run_postinst() {
   ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
   ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
   ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
-
 }
 #
 execute "run_postinst" "Running post install scripts"
