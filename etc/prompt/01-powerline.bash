@@ -336,8 +336,8 @@ bashprompt() {
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     #PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET $(__git_prompt_message_warn)\n"
-    PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET\n"
-    PS1+="$BG_EXIT$FG_BLACK Jobs: [\j]$BG_GRAY1$PS_SYMBOL$RESET "
+    PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w$RESET\n "
+    PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1$PS_SYMBOL$RESET "
 
   }
 
