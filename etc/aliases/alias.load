@@ -2,27 +2,18 @@
 
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if [ -f "$HOME/.config/shell/aliases/00-default.win" ]; then
-    source "$HOME/.config/shell/aliases/00-default.win"
-  elif [ -f "$HOME/.config/bash/aliases/00-default.win" ]; then
-    source "$HOME/.config/bash/aliases/00-default.win"
-  fi
+  [ -f "$HOME/.config/bash/aliases/00-default.win" ] &&
+    . "$HOME/.config/bash/aliases/00-default.win"
   ;;
 Darwin)
-  if [ -f "$HOME/.config/shell/aliases/00-default.mac" ]; then
-    source "$HOME/.config/shell/aliases/00-default.mac"
-  elif [ -f "$HOME/.config/bash/aliases/00-default.mac" ]; then
-    source "$HOME/.config/bash/aliases/00-default.mac"
-  fi
+  [ -f "$HOME/.config/bash/aliases/00-default.mac" ] &&
+    . "$HOME/.config/bash/aliases/00-default.mac"
   ;;
 Linux)
-  if [ -f "$HOME/.config/shell/aliases/00-default.lin" ]; then
-    source "$HOME/.config/shell/aliases/00-default.lin"
-  elif [ -f "$HOME/.config/bash/aliases/00-default.lin" ]; then
-    source "$HOME/.config/bash/aliases/00-default.lin"
-  fi
+  [ -f "$HOME/.config/bash/aliases/00-default.lin" ] &&
+    . "$HOME/.config/bash/aliases/00-default.lin"
   ;;
 *)
-  echo -e "\t\tUnknown OS or OS not supported"
+  printf "\t\tUnknown OS or OS not supported\n"
   ;;
 esac

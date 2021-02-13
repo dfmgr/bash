@@ -40,13 +40,16 @@ alias egrep='grep -E --color=auto 2>/dev/null'
 alias fgrep='grep -F --color=auto 2>/dev/null'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-alias ll='ls -l --color=auto 2>/dev/null'
-alias l.='ls -d .* --color=auto 2>/dev/null'
-alias ls='ls --color=auto 2>/dev/null'
-alias la='ls -a --color=auto'
-alias lla='ls -a --color=auto '
-alias readlink='greadlink 2>/dev/null'
-alias dircolors='gdircolors 2>/dev/null'
+[ -f "$(command -v gls 2>/dev/null)" ] && alias ll='gls -l --color=auto 2>/dev/null'
+[ -f "$(command -v gls 2>/dev/null)" ] && alias l.='gls -d .* --color=auto 2>/dev/null'
+[ -f "$(command -v gls 2>/dev/null)" ] && alias ls='gls --color=auto 2>/dev/null'
+[ -f "$(command -v gls 2>/dev/null)" ] && alias la='gls -a --color=auto'
+[ -f "$(command -v gls 2>/dev/null)" ] && alias lla='gls -a --color=auto '
+[ -f "$(command -v gdir 2>/dev/null)" ] && alias dir='gdir '
+[ -f "$(command -v greadlink 2>/dev/null)" ] && alias readlink='greadlink '
+[ -f "$(command -v gbasename 2>/dev/null)" ] && alias gbasename='gbasename '
+[ -f "$(command -v grealpath 2>/dev/null)" ] && alias grealpath='gbasgrealpathename '
+[ -f "$(command -v gdircolors 2>/dev/null)" ] && alias dircolors='gdircolors '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
