@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # System Aliases
-[ -f "$(command -v gdate 2>/dev/null)" ] && alias gdate='gdate '
+[ -f "$(command -v gdate 2>/dev/null)" ] && alias date='gdate '
 alias q='exit'
 alias :q='exit'
 alias :q!='exit'
@@ -48,8 +48,8 @@ alias fgrep='grep -F --color=auto 2>/dev/null'
 [ -f "$(command -v gls 2>/dev/null)" ] && alias lla='gls -a --color=auto '
 [ -f "$(command -v gdir 2>/dev/null)" ] && alias dir='gdir '
 [ -f "$(command -v greadlink 2>/dev/null)" ] && alias readlink='greadlink '
-[ -f "$(command -v gbasename 2>/dev/null)" ] && alias gbasename='gbasename '
-[ -f "$(command -v grealpath 2>/dev/null)" ] && alias grealpath='gbasgrealpathename '
+[ -f "$(command -v gbasename 2>/dev/null)" ] && alias basename='gbasename '
+[ -f "$(command -v grealpath 2>/dev/null)" ] && alias realpath='gbasgrealpathename '
 [ -f "$(command -v gdircolors 2>/dev/null)" ] && alias dircolors='gdircolors '
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,8 +77,8 @@ alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; sudo rm -frv ~/.Trash; sudo
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
+alias desktop-icons-show='defaults write com.apple.finder CreateDesktop -bool true  && killall Finder'
 alias desktop-icons-hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
-alias desktop-icons-hide='defaults write com.apple.finder CreateDesktop -bool true  && killall Finder'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Flush dns
@@ -126,7 +126,7 @@ alias adb='sudo adb'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # netstat aliases
-alias ports='sudo netstat -taupln | grep LISTEN'
+alias ports='sudo netstat -tau | grep LISTEN'
 alias netstat='sudo netstat'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
