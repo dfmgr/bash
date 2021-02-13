@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # System Aliases
+[ -f "$(command -v gdate 2>/dev/null)" ] && alias gdate='gdate '
 alias q='exit'
 alias :q='exit'
 alias :q!='exit'
