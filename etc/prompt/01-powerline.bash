@@ -43,7 +43,8 @@ bashprompt() {
   PYTHON_SYMBOL=' 🐍 ' 2>/dev/null
   PHP_SYMBOL=' ♻️ ' 2>/dev/null
   PERL_SYMBOL=' ☢️ ' 2>/dev/null
-
+  LUA_SYMBOL=' ⚠️ ' 2>/dev/null
+  # Foreground Colors
   FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
   FG_GRAY1="\[$(__tput setaf 15 2>/dev/null)\]"
   FG_GRAY2="\[$(__tput setaf 7 2>/dev/null)\]"
@@ -60,7 +61,7 @@ bashprompt() {
   FG_NAVY="\[$(__tput setaf 4 2>/dev/null)\]"
   FG_PURPLE="\[$(__tput setaf 5 2>/dev/null)\]"
   FG_TURQUOISE="\[$(__tput setaf 6 2>/dev/null)\]"
-
+  # Background Colors
   BG_BLACK="\[$(__tput setab 0 2>/dev/null)\]"
   BG_GRAY1="\[$(__tput setab 15 2>/dev/null)\]"
   BG_GRAY2="\[$(__tput setab 7 2>/dev/null)\]"
@@ -248,6 +249,30 @@ bashprompt() {
     }
   fi
 
+  ### lua ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/lua" ]; then
+    __iflua() { true; }
+    __lua_info() { true; }
+  else
+    __iflua() {
+      local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+      if [[ "$(__find "$gitdir" "1" "-iname *.lua*")" -ne 0 ]]; then
+        if [ "$(command -v lua 2>/dev/null)" ]; then
+          __lua_version() { printf "%s" "$(lua -v | awk '{print $2}')"; }
+        else
+          __lua_version() { return; }
+        fi
+        __lua_info() {
+          local version=$(__lua_version)
+          [ -z "$version" ] && return
+          printf "%s" " lua: $version$LUA_SYMBOL $RESET"
+        }
+      else
+        __lua_info() { return; }
+      fi
+    }
+  fi
+
   ### Git ########################################################
   if [ -f "$HOME/.config/bash/noprompt/git" ]; then
     __ifgit() { true; }
@@ -338,6 +363,7 @@ bashprompt() {
     [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
     [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
     [ -n "$(command -v perl 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
+    [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     #PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET $(__git_prompt_message_warn)\n"
