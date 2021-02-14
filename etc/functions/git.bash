@@ -11,6 +11,21 @@
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+git_prompt_message() {
+  if [ -f "$HOME/.config/bash/noprompt/git_message" ]; then
+    return 0
+  else
+    if [ "$(git rev-parse --is-inside-git-dir)" == "true" ]; then
+      printf_red "This message will only appear once per repo:"
+      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+      printf_custom "3" "echo ignoredirmessage >> .gitignore or by running"
+      printf_custom "3" 'touch "$HOME/.config/bash/noprompt/git_message"'
+    fi
+  fi
+  }
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 get_git_repository_details() {
   local branchName=""
   local tmp=""

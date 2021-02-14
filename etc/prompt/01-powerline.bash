@@ -303,17 +303,6 @@ bashprompt() {
       fi
     }
   fi
-  ### Move to function file
-#  __git_prompt_message() {
-#    if [ -f "$HOME/.config/bash/noprompt/git_message" ]; then
-#      return 0
-#    else
-#      printf_red "This message will only appear once:"
-#      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
-#      printf_custom "3" "echo ignoredirmessage >> .gitignore"
-#      touch "$HOME/.config/bash/noprompt/git_message"
-#    fi
-#  }
 
 if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
   __git_prompt_message_warn() { return; }
