@@ -28,7 +28,7 @@ fi
 
 bashprompt() {
   __tput() { tput "$@" 2>/dev/null; }
-  __find() { find "${1:-./}" -maxdepth "${2:-0}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
+  __find() { find "${1:-./}" -maxdepth "${2:-1}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
   # Unicode symbols
   PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
   PS_SYMBOL_LINUX=' 🐧 ' >/dev/null
@@ -185,12 +185,12 @@ bashprompt() {
             printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
         }
-      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py -o -iname *.pyc")" -ne 0 ]; then
+      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname '*.py' -o -iname '*.pyc'")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
-      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py -o -iname *.pyc")" -ne 0 ]; then
+      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname '*.py' -o -iname '*.pyc'")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
