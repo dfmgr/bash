@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # bash completion for myprog
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6,25 +6,23 @@
 # autocomplete for myprog
 
 _myprog() {
-    local cur prev words cword
-    _init_completion || return
+  local cur prev words cword
+  local HELP="--help --version"
+  local ARRAY=""
 
-    case $prev in
-        -f)
-            COMPREPLY=( $(compgen -W \
-                '$(myprog -l 2>/dev/null | tail -n +2)' -- "$cur") )
-            return
-            ;;
-    esac
+  _init_completion || return
 
-    # relevant options completion
-    COMPREPLY=( $(compgen -W '-h --help --import --export -v --version' \
-        -- "$cur") )
-
+  case $prev in
+  -)
+    COMPREPLY=($(compgen -W '$HELP' -- "$cur"))
+    return
+    ;;
+  *)
+    COMPREPLY=($(compgen -W '$ARRAY' -- "$cur"))
+    return
+    ;;
+  esac
 } &&
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# enable completions
-
-complete -F _myprog -o default myprog
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # enable completions
+  complete -F _myprog -o default myprog

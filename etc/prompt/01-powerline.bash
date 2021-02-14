@@ -185,12 +185,12 @@ bashprompt() {
             printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
         }
-      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py* -o -iname *.pyc")" -ne 0 ]; then
+      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py -o -iname *.pyc")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
-      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py* -o -iname *.pyc")" -ne 0 ]; then
+      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py -o -iname *.pyc")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"

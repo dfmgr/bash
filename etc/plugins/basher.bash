@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # basher
-
 if [ -n "$BASH_VERSION" ]; then
   if [ -d "$HOME/.local/share/bash/basher" ]; then
     export BASHER_ROOT="$HOME/.local/share/bash/basher"
@@ -12,4 +10,3 @@ if [ -n "$BASH_VERSION" ]; then
     fi
   fi
 fi
-

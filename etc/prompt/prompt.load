@@ -2,26 +2,26 @@
 
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if [ "$(ls $HOME/.config/bash/prompt/*.win 2>/dev/null | wc -l)" != 0 ]; then
-    for f in $HOME/.config/bash/prompt/*.win; do
-      source "$f"
-    done    
+  if [ "$(find ~/.config/bash/prompt/*.win 2>/dev/null | wc -l)" != 0 ]; then
+    for f in ~/.config/bash/prompt/*.win; do
+      . "$f"
+    done
   fi
   ;;
 Darwin)
-  if [ "$(ls $HOME/.config/bash/prompt/*.mac 2>/dev/null | wc -l)" != 0 ]; then
-    for f in $HOME/.config/bash/prompt/*.mac; do
-      source "$f"
+  if [ "$(find ~/.config/bash/prompt/*.mac 2>/dev/null | wc -l)" != 0 ]; then
+    for f in ~/.config/bash/prompt/*.mac; do
+      . "$f"
     done
   fi
   ;;
 Linux)
-  if [ "$(ls $HOME/.config/bash/prompt/*.lin 2>/dev/null | wc -l)" != 0 ]; then
-    for f in $HOME/.config/bash/prompt/*.lin; do
-      source "$f"
+  if [ "$(find ~/.config/bash/prompt/*.lin 2>/dev/null | wc -l)" != 0 ]; then
+    for f in ~/.config/bash/prompt/*.lin; do
+      . "$f"
     done
   fi
   ;;
-*)
-  ;;
+*) ;;
+
 esac

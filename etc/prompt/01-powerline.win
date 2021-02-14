@@ -41,7 +41,7 @@ __powerline() {
   readonly PYTHON_SYMBOL='🐍' 2>/dev/null
   readonly PHP_SYMBOL='🕸️' 2>/dev/null
 
-  function __tput() { tput $* 2>/dev/null; }
+  function __tput() { tput "$*" 2>/dev/null; }
 
   readonly FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
 

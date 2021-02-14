@@ -63,7 +63,7 @@ function _setvcomplete_() {
   local word=${COMP_WORDS[COMP_CWORD]} # Words thats being completed
   local xpat='${word}'                 # Filter pattern. Include
   # only words in variable '$names'
-  local names=$(ls -l "${SETV_VIRTUAL_DIR_PATH}" | egrep '^d' | awk -F " " '{print $NF}') # Virtual environment names
+  local names=$(ls -l "${SETV_VIRTUAL_DIR_PATH}" | grep -E '^d' | awk -F " " '{print $NF}') # Virtual environment names
 
   COMPREPLY=($(compgen -W "$names" -X "$xpat" -- "$word")) # compgen generates the results
 }

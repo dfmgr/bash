@@ -2,11 +2,11 @@
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
+alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias cd..='cd ..'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
 alias :q='exit'
@@ -26,7 +26,6 @@ alias bashrc='source ~/.bashrc && clear'
 alias tailf='tail -f'
 alias ipconfig='/c/Windows/System32/ipconfig.exe'
 alias ifconfig='/c/Windows/System32/ipconfig.exe'
-alias systemctl='sudo systemctl'
 alias mount='mount'
 alias h='history'
 alias j='jobs -l'
@@ -53,13 +52,11 @@ alias httpd='winpty /c/Progra~1/Apache/bin/httpd.exe'
 alias gpg='winpty /c/Progra~2/GnuPG/bin/gpg.exe'
 alias gpg-agent='winpty /c/Progra~2/GnuPG/bin/gpg-agent.exe'
 alias vim='winpty vim.exe'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim as default
 alias vi='vim'
 alias vis='vim "+set si"'
 alias edit='vim'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
 alias tw='rainbowstream -iot'
@@ -68,3 +65,4 @@ alias weather='wttrin'
 alias weather2='wttrin2'
 alias command-not-found='fuck'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

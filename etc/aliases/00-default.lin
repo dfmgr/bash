@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
 alias q='exit'
 alias :q='exit'
@@ -37,25 +37,22 @@ alias egrep='grep -E --color=auto 2>/dev/null'
 alias fgrep='grep -F --color=auto 2>/dev/null'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OSS code
 [ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
 alias sudo='sudo -H '
 alias svi='sudo vim '
 alias adb='sudo adb '
 alias npmg='sudo npm -g '
-alias docker='sudo docker '
 alias netstat='sudo netstat '
 alias fastboot='sudo fastboot '
 alias ipconfig='sudo ifconfig '
 alias systemctl='sudo systemctl '
 alias ports='sudo netstat -taupln | grep --color=auto LISTEN '
 alias flushdns='sudo systemd-resolve --flush-caches '
-
+[ -f "$(command -v docker)" ] && alias docker='sudo docker '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Package management
 if [[ "$OSTYPE" =~ ^linux ]]; then
@@ -65,7 +62,6 @@ if [[ "$OSTYPE" =~ ^linux ]]; then
   if [ -n "$(command -v yum 2>/dev/null)" ]; then alias apt='sudo yum '; fi
   if [ -n "$(command -v pacman 2>/dev/null)" ]; then alias apt='sudo pacman '; fi
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ls
 alias ll='ls -l --color=auto 2>/dev/null'
@@ -73,49 +69,41 @@ alias l.='ls -d .* --color=auto 2>/dev/null'
 alias ls='ls --color=auto 2>/dev/null'
 alias la='ls -a --color=auto'
 alias lla='ls -a --color=auto '
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
-alias ~='cd "$HOME"'
+alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias cd..='cd ..'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
 alias vi='vim '
 alias vim='vim '
 alias vis='vim +set si '
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-alias nvim='nvim -u $HOME/.config/neovim/init.vim'
-
+[ -f "$(command -v nvim)" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || \
-  alias empty-trash='rm -rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
-
+if [ -f "$(command -v trash)" ]; then alias empty-trash='trash empty'; else
+  alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons true'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lock Screen
 [ -f "$(command -v gnome-screensaver-command)" ] && alias afk='gnome-screensaver-command --lock'
 [ -f "$(command -v xflock4)" ] && alias afk='xflock4'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # logout
 [ -f "$(command -v xfce4-session-logout)" ] && alias logout='xfce4-session-logout'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Open command
 alias o='xdg-open'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #youtube-dl
 if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
@@ -134,7 +122,6 @@ if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
   alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
   alias ytstream='ytstream '
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Media
 [ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
@@ -142,22 +129,18 @@ fi
 [ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
 [ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
 [ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
-[ -z $MPDSERVER ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
-
+if [ -z "$MPDSERVER" ]; then alias mpc='mpc '; else alias mpc='mpc -h "$MPDSERVER" '; fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
 alias tw='rainbowstream -iot'
 alias twitter='twitter'
 alias mylatlong='mylocation | grep --color=none "LAT\|LON"'
 alias emj='emojis'
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # other
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # end

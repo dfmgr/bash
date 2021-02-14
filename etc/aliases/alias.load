@@ -2,16 +2,16 @@
 
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  [ -f "$HOME/.config/bash/aliases/00-default.win" ] &&
-    . "$HOME/.config/bash/aliases/00-default.win"
+  [ -f ~/.config/bash/aliases/00-default.win ] &&
+    . ~/.config/bash/aliases/00-default.win
   ;;
 Darwin)
-  [ -f "$HOME/.config/bash/aliases/00-default.mac" ] &&
-    . "$HOME/.config/bash/aliases/00-default.mac"
+  [ -f ~/.config/bash/aliases/00-default.mac ] &&
+    . ~/.config/bash/aliases/00-default.mac
   ;;
 Linux)
-  [ -f "$HOME/.config/bash/aliases/00-default.lin" ] &&
-    . "$HOME/.config/bash/aliases/00-default.lin"
+  [ -f ~/.config/bash/aliases/00-default.lin ] &&
+    . ~/.config/bash/aliases/00-default.lin
   ;;
 *)
   printf "\t\tUnknown OS or OS not supported\n"

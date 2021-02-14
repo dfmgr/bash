@@ -10,7 +10,6 @@
 # @Description : command not found function
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 orig_command_not_found_handle() {
   cmd="$1"
   args=("$@")
@@ -23,9 +22,7 @@ orig_command_not_found_handle() {
       printf_red "Can not locate package $1" && return 1
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 command_not_found_handle() {
   cmd="$1"
   args=("$@")
@@ -45,10 +42,8 @@ command_not_found_handle() {
   alias cnf="command_not_found_handle"
   orig_command_not_found_handle "${args[@]}"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 alias cnf="command_not_found_handle"
 alias command-not-found="command_not_found_handle"
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

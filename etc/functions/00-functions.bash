@@ -141,7 +141,6 @@ printf_head() {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use grc if it's installed or execute the command direct
-
 if [[ -z "$(command -v grc)" ]]; then
   if [[ "$USEGRC" = "yes" ]]; then
     grc() {
@@ -154,44 +153,31 @@ if [[ -z "$(command -v grc)" ]]; then
     }
   fi
 fi
-
-#
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate random strings
-
 if [[ -z "$(command -v random-string)" ]]; then
   random-string() {
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1
   }
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 if [[ -z "$(command -v mkpasswd)" ]]; then
   mkpasswd() {
     cat /dev/urandom | tr -dc [:print:] | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
   }
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # the fuck
-
 fuck() {
   TF_CMD=$(
     TF_ALIAS=fuck \
       PYTHONIOENCODING=utf-8 \
       TF_SHELL_ALIASES=$(alias)
-    thefuck $(fc -ln -1)
-  ) &&
-    eval $TF_CMD && history -s $TF_CMD
+    thefuck "$(fc -ln -1)"
+  ) && eval "$TF_CMD" && history -s "$TF_CMD"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Set OS TYPE
-
 detectos() {
   OS="$(uname)"
   case $OS in
@@ -214,11 +200,8 @@ detectos() {
   *) ;;
   esac
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #Set OS Detection
-
 detectostype() {
   arch=$(uname -m)
   kernel=$(uname -r)
@@ -233,7 +216,6 @@ detectostype() {
   else
     distroname="$(uname -s) $(uname -r)"
   fi
-
   #Various Arch Distros
   if [[ "$distroname" =~ "ArcoLinux" ]] || [[ "$distroname" =~ "Arch" ]] || [[ "$distroname" =~ "BlackArch" ]]; then
     DISTRO=Arch
@@ -261,17 +243,12 @@ detectostype() {
   elif [[ "$distroname" =~ "Fedora" ]]; then
     DISTRO=Fedora
   fi
-
   if [ -f /etc/os-release ]; then
     DISTROID="$(grep ID_LIKE /etc/os-release | sed 's/^.*=//')"
   fi
-
 }
-
 # - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 detectos
 detectostype
 unset -f detectos detectostype
-
 # - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
