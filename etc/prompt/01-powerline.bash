@@ -175,7 +175,8 @@ bashprompt() {
   else
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] || [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
+      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] || \
+        [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
@@ -185,12 +186,12 @@ bashprompt() {
             printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
         }
-      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname '*.py' -o -iname '*.pyc'")" -ne 0 ]; then
+      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
-      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname '*.py' -o -iname '*.pyc'")" -ne 0 ]; then
+      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
           printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
