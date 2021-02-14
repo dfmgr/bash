@@ -137,14 +137,14 @@ bashprompt() {
     __ifnode() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.js")" -ne 0 ]]; then
-        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]]; then
+        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] && \
+           [[ "$(nvm current)" != "system" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
             printf "%s" " NVM: ${version}$NODE_SYMBOL${RESET}"
           }
-
         elif [[ -n "$(command -v fnm)" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
@@ -152,7 +152,6 @@ bashprompt() {
             [ -z "${version}" ] && return
             printf "%s" " FNM: ${version}$NODE_SYMBOL${RESET}"
           }
-
         elif [[ -n "$(command -v node)" ]]; then
           __node_version() { printf "$(node --version)"; }
           __node_info() {
@@ -176,7 +175,7 @@ bashprompt() {
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] || \
-        [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
+         [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
@@ -304,27 +303,34 @@ bashprompt() {
       fi
     }
   fi
+  ### Move to function file
+#  __git_prompt_message() {
+#    if [ -f "$HOME/.config/bash/noprompt/git_message" ]; then
+#      return 0
+#    else
+#      printf_red "This message will only appear once:"
+#      printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
+#      printf_custom "3" "echo ignoredirmessage >> .gitignore"
+#      touch "$HOME/.config/bash/noprompt/git_message"
+#    fi
+#  }
 
-  #__git_prompt_message() {
-  #  if [ ! -f "$HOME/.config/bash/noprompt/git_message" ]; then
-  #    printf_red "This message will only appear once:"
-  #    printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
-  #    printf_custom "3" "echo ignoredirmessage >> .gitignore"
-  #    touch "$HOME/.config/bash/noprompt/git_message"
-  #  fi
-  #  return 0
-  #}
-
-  #__git_prompt_message_warn() {
-  #  if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-  #    if cat $(git rev-parse --show-toplevel 2>/dev/null)/.gitignore | grep -vFiq ignoredirmessage; then
-  #       printf "${BG_GREEN}${FG_BLACK} Dont forget to do a git pull ${NC}"
-  #    fi
-  #  fi
-  #}
+if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
+  __git_prompt_message_warn() { return; }
+else
+  __git_prompt_message_warn() {
+  if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
+    local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+    local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" && echo 0 || echo 1)"
+    if [ "$grepgitignore" -ne 0 ]; then
+      printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+    fi
+  fi
+}
+fi
 
   ### PROMPT #####################################################
-  __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
+  __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}|${APPNAME:-}"; }
 
   case $TERM in
   *-256color)
@@ -343,8 +349,6 @@ bashprompt() {
 
   ps1() {
     EXIT=$?
-    # Check the exit code of the previous command and display different
-    # colors in the prompt accordingly.
     if [ $EXIT -eq 0 ]; then
       local BG_EXIT="$BG_DARK_GREEN"
       local PS_SYMBOL="$PS_SYMBOL"
@@ -367,10 +371,10 @@ bashprompt() {
     [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    #PS1+="$BG_GRAY2$FG_BLACK \u@\H:$BG_DARK_GREEN\w $RESET $(__git_prompt_message_warn)\n"
-    PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w$RESET \n"
+    [ -n "$(command -v __git_prompt_message_warn 2>/dev/null)" ] && \
+      PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w $(__git_prompt_message_warn)$RESET \n" || \
+      PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w$RESET \n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1$PS_SYMBOL$RESET "
-
   }
 
   PROMPT_COMMAND="ps1 && title && history -a && history -r "
