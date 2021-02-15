@@ -304,6 +304,7 @@ bashprompt() {
     }
   fi
 
+  ### Git reminder ###############################################
   if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
     __git_prompt_message_warn() { return; }
   else
