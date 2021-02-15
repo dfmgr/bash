@@ -352,7 +352,7 @@ bashprompt() {
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
 
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
-    PS1+="$BG_BLUE$FG_BLACK \s: \v $RESET"
+    PS1+="$BG_BLUE$FG_BLACK\s: \v $RESET"
     [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
     [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
     [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
