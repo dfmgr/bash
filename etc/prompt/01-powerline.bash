@@ -137,8 +137,8 @@ bashprompt() {
     __ifnode() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.js")" -ne 0 ]]; then
-        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] && \
-           [[ "$(nvm current)" != "system" ]]; then
+        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
+          [[ "$(nvm current)" != "system" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
@@ -174,8 +174,8 @@ bashprompt() {
   else
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] || \
-         [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
+      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] ||
+        [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
@@ -304,22 +304,22 @@ bashprompt() {
     }
   fi
 
-if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
-  __git_prompt_message_warn() { return; }
-else
-  __git_prompt_message_warn() {
-  if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
-    local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-    local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" && echo 0 || echo 1)"
-    if [ "$grepgitignore" -ne 0 ]; then
-      printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
-    fi
+  if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
+    __git_prompt_message_warn() { return; }
+  else
+    __git_prompt_message_warn() {
+      if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
+        local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+        local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" && echo 0 || echo 1)"
+        if [ "$grepgitignore" -ne 0 ]; then
+          printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+        fi
+      fi
+    }
   fi
-}
-fi
 
   ### PROMPT #####################################################
-  __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}|${APPNAME:-}"; }
+  __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
 
   case $TERM in
   *-256color)
@@ -360,8 +360,8 @@ fi
     [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    [ -n "$(command -v __git_prompt_message_warn 2>/dev/null)" ] && \
-      PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w $(__git_prompt_message_warn)$RESET \n" || \
+    [ -n "$(command -v __git_prompt_message_warn 2>/dev/null)" ] &&
+      PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w $(__git_prompt_message_warn)$RESET \n" ||
       PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w$RESET \n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1$PS_SYMBOL$RESET "
   }
