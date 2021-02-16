@@ -141,6 +141,9 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
+  for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
+    __rm_rf "$APPDIR/$file"
+  done
   dfmgr_run_post
   ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
   ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
