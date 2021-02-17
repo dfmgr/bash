@@ -25,18 +25,19 @@ alias df='df -H'
 alias du='du -ch'
 alias setver='date +"%m%d%Y%H%M-git"'
 alias setverfile='date +"%m%d%Y%H%M-git" > version.txt'
-alias ssh='ssh -X'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
 alias mutt='neomutt'
 alias sort='LC_ALL=C sort'
 alias uniq='LC_ALL=C uniq'
 alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.lss'
-alias grep='grep --color=auto 2>/dev/null'
-alias egrep='grep -E --color=auto 2>/dev/null'
-alias fgrep='grep -F --color=auto 2>/dev/null'
+alias grep='grep --color=auto'
+alias egrep='grep -E --color=auto'
+alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[ -n "$DISPLAY" ] && alias ssh='ssh -X'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OSS code
 [ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
