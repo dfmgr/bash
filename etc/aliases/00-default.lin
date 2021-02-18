@@ -37,7 +37,7 @@ alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -n "$DISPLAY" ] && alias ssh='ssh -X'
+[ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OSS code
 [ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
