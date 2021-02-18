@@ -130,7 +130,8 @@ fi
 [ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
 [ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
 [ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
-if [ -z "$MPDSERVER" ]; then alias mpc='mpc '; else alias mpc='mpc -h "$MPDSERVER" '; fi
+[ -f "$(command -v mpc)" ] && \
+  if [ -z "$MPDSERVER" ]; then alias mpc='mpc '; else alias mpc='mpc -h "$MPDSERVER" '; fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
