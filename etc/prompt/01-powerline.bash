@@ -23,9 +23,57 @@ if [ "$POWERLINE" ]; then
   export POWERLINE_BASH_CONTINUATION=1
   export POWERLINE_BASH_SELECT=1
 fi
-
+# bash completion
+_noprompt_completion() {
+  local cur prev words cword
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  local ARRAY="--help lua node ruby python perl git reminder"
+  _init_completion || return
+  case $prev in
+  *)
+    COMPREPLY=($(compgen -W '$ARRAY' -- "$cur"))
+    return 0
+    ;;
+  esac
+}
+# Disable prompt versions
+noprompt() {
+  if [ $1 = --help ]; then
+    printf_blue "Disable prompt messages"
+    printf_blue "lua node ruby python perl git reminder"
+    return
+  fi
+  while true; do case $1 in
+  lua)
+    touch $HOME/.config/bash/noprompt/lua
+    ;;
+  node)
+    touch $HOME/.config/bash/noprompt/node
+    ;;
+  ruby)
+    touch $HOME/.config/bash/noprompt/ruby
+    ;;
+  perl)
+    touch $HOME/.config/bash/noprompt/perl
+    ;;
+  python)
+    touch $HOME/.config/bash/noprompt/python
+    ;;
+  php)
+    touch $HOME/.config/bash/noprompt/php
+    ;;
+  git)
+    touch $HOME/.config/bash/noprompt/git
+    ;;
+  reminder)
+    touch $HOME/.config/bash/noprompt/git_reminder
+    ;;
+  *) break ;;
+esac; shift; done
+return
+complete -F _noprompt_completion -o default noprompt
+}
 # Borrowed and customized from https://github.com/riobard/bash-powerline
-
 bashprompt() {
   __tput() { tput "$@" 2>/dev/null; }
   __find() { find "${1:-./}" -maxdepth "${2:-1}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
