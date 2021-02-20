@@ -23,7 +23,7 @@ if [ "$POWERLINE" ]; then
   export POWERLINE_BASH_CONTINUATION=1
   export POWERLINE_BASH_SELECT=1
 fi
-# bash completion
+# noprompt completion
 _noprompt_completion() {
   local cur prev words cword
   local cur="${COMP_WORDS[COMP_CWORD]}"
@@ -71,7 +71,6 @@ noprompt() {
   *) break ;;
 esac; shift; done
 return
-complete -F _noprompt_completion -o default noprompt
 }
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 bashprompt() {
@@ -444,3 +443,4 @@ bashprompt() {
 }
 
 bashprompt 2>/dev/null
+complete -F _noprompt_completion -o default noprompt
