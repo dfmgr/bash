@@ -311,7 +311,7 @@ bashprompt() {
     __git_prompt_message_warn() {
       if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
         local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-        local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" && echo 0 || echo 1)"
+        local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
         if [ "$grepgitignore" -ne 0 ]; then
           printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
         fi
