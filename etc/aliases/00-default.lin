@@ -67,8 +67,8 @@ fi
 # ls
 alias ls='ls --color=auto '
 alias l.='ls -LA --color=auto '
-alias la='ls -a --color=auto'
-alias lla='ls -la --color=auto '
+alias la='ls -A --color=auto'
+alias lla='ls -lA --color=auto '
 alias ll='ls -l --color=auto '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
