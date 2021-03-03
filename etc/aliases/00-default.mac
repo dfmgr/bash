@@ -29,7 +29,6 @@ alias df='df -H'
 alias du='du -ch'
 alias setver='date +"%m%d%Y%H%M-git"'
 alias setverfile='date +"%m%d%Y%H%M-git" > version.txt'
-alias ssh='ssh -qX'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
 alias mutt='neomutt'
@@ -39,6 +38,8 @@ alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.l
 alias grep='grep --color=auto'
 alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -f "$(command -v gls 2>/dev/null)" ] && alias ll='gls -l --color=auto'
 [ -f "$(command -v gls 2>/dev/null)" ] && alias l.='gls -LA --color=auto'
@@ -56,16 +57,17 @@ alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
+alias .....='cd ../../../..'
 alias cd..='cd ..'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
-alias vi='/usr/local/bin/vim'
-alias vim='/usr/local/bin/vim'
-alias vis='/usr/local/bin/vim +set si'
-alias svi='sudo /usr/local/bin/vim'
+[ -f "/usr/local/bin/vim" ] && alias vi='/usr/local/bin/vim'
+[ -f "/usr/local/bin/vim" ] && alias vim='/usr/local/bin/vim'
+[ -f "/usr/local/bin/vim" ] && alias vis='/usr/local/bin/vim +set si'
+[ -f "/usr/local/bin/vim" ] && alias svi='sudo /usr/local/bin/vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-[ -f "$(command -v nvim)" ] && alias nvim='/usr/local/bin/nvim -u $HOME/.config/neovim/init.vim'
+[ -f "/usr/local/bin/nvim" ] && alias nvim='/usr/local/bin/nvim -u $HOME/.config/neovim/init.vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set docker
 [ -f "$(command -v docker)" ] && alias docker='sudo docker'
@@ -74,7 +76,7 @@ alias svi='sudo /usr/local/bin/vim'
 alias empty-trash='sudo rm -frv /Volumes/*/.Trashes; sudo rm -frv ~/.Trash; sudo rm -frv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* "delete from LSQuarantineEvent"'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
-alias desktop-icons-show='defaults write com.apple.finder CreateDesktop -bool true  && killall Finder'
+alias desktop-icons-show='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
 alias desktop-icons-hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Flush dns
@@ -87,29 +89,28 @@ alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resource
 alias o='open'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #youtube-dl
-if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
-  alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
-  alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
-  alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
-  alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
-  alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
-  alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
-  alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
-  alias yta-mp3='youtube-dl --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-  alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
-  alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
-  alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
-  alias ytda='youtube-dl -f bestaudio  --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-  alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
-  alias ytstream='ytstream '
-fi
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-mp3='youtube-dl --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytda='youtube-dl -f bestaudio  --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytstream='ytstream '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Media
-[ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
-[ -n "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
-[ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
-[ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
-[ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
+[ -f "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
+[ -f "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
+[ -f "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
+[ -f "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
+[ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
+[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # android dev
 alias fastboot='sudo fastboot'

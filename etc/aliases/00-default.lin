@@ -40,7 +40,7 @@ alias less='less -r'
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # OSS code
-[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code="code-oss"
+[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code='code-oss'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
 alias sudo='sudo -H '
@@ -56,13 +56,11 @@ alias flushdns='sudo systemd-resolve --flush-caches '
 [ -f "$(command -v docker)" ] && alias docker='sudo docker '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Package management
-if [[ "$OSTYPE" =~ ^linux ]]; then
-  if [ -n "$(command -v apt 2>/dev/null)" ]; then alias apt='sudo apt '; fi
-  if [ -n "$(command -v apt-get 2>/dev/null)" ]; then alias apt='sudo apt-get '; fi
-  if [ -n "$(command -v dnf 2>/dev/null)" ]; then alias apt='sudo dnf '; fi
-  if [ -n "$(command -v yum 2>/dev/null)" ]; then alias apt='sudo yum '; fi
-  if [ -n "$(command -v pacman 2>/dev/null)" ]; then alias apt='sudo pacman '; fi
-fi
+[ "$(uname -s)" = Linux ] && [ -f "$(command -v apt 2>/dev/null)" ] && alias apt='sudo apt '
+[ "$(uname -s)" = Linux ] && [ -f "$(command -v apt-get 2>/dev/null)" ] && alias apt='sudo apt-get '
+[ "$(uname -s)" = Linux ] && [ -f "$(command -v dnf 2>/dev/null)" ] && alias apt='sudo dnf '
+[ "$(uname -s)" = Linux ] && [ -f "$(command -v yum 2>/dev/null)" ] && alias apt='sudo yum '
+[ "$(uname -s)" = Linux ] && [ -f "$(command -v pacman 2>/dev/null)" ] && alias apt='sudo pacman '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ls
 alias ls='ls --color=auto '
@@ -88,9 +86,7 @@ alias vis='vim +set si '
 [ -f "$(command -v nvim)" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-if [ -f "$(command -v trash)" ]; then alias empty-trash='trash empty'; else
-  alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
-fi
+[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
@@ -107,31 +103,28 @@ alias desktop-icons-show='gsettings set org.gnome.desktop.background show-deskto
 alias o='xdg-open'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #youtube-dl
-if [ -n "$(command -v youtube-dl 2>/dev/null)" ]; then
-  alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
-  alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
-  alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
-  alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
-  alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
-  alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
-  alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
-  alias yta-mp3='youtube-dl --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-  alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
-  alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
-  alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
-  alias ytda='youtube-dl -f bestaudio  --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-  alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
-  alias ytstream='ytstream '
-fi
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-mp3='youtube-dl --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytda='youtube-dl -f bestaudio  --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
+[ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias ytstream='ytstream '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Media
-[ -n "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
-[ -n "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
-[ -n "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
-[ -n "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
-[ -n "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
-[ -f "$(command -v mpc)" ] && \
-  if [ -z "$MPDSERVER" ]; then alias mpc='mpc '; else alias mpc='mpc -h "$MPDSERVER" '; fi
+[ -f "$(command -v castero 2>/dev/null)" ] && alias podcasts='castero'
+[ -f "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
+[ -f "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
+[ -f "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
+[ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
+[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
