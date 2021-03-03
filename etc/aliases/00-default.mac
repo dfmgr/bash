@@ -49,7 +49,7 @@ alias fgrep='grep -F --color=auto'
 [ -f "$(command -v gdir 2>/dev/null)" ] && alias dir='gdir '
 [ -f "$(command -v greadlink 2>/dev/null)" ] && alias readlink='greadlink '
 [ -f "$(command -v gbasename 2>/dev/null)" ] && alias basename='gbasename '
-[ -f "$(command -v grealpath 2>/dev/null)" ] && alias realpath='gbasgrealpathename '
+[ -f "$(command -v grealpath 2>/dev/null)" ] && alias realpath='grealpath '
 [ -f "$(command -v gdircolors 2>/dev/null)" ] && alias dircolors='gdircolors '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
