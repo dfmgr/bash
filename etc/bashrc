@@ -63,8 +63,8 @@ userbashaliases() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
-  if [ "$(find ~/.config/bash/completions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/completions/*.bash; do
+  if [ "$(find $BASH_COMPLETION_USER_DIR/* 2>/dev/null | wc -l)" != "0" ]; then
+    for f in $BASH_COMPLETION_USER_DIR/*; do
       . "$f" >/dev/null 2>&1
     done
   fi
