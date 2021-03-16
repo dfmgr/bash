@@ -27,8 +27,8 @@ alias nowdate='date +"%m-%d-%Y"'
 alias wget='wget -c'
 alias df='df -H'
 alias du='du -ch'
-alias setver='date +"%m%d%Y%H%M-git"'
-alias setverfile='date +"%m%d%Y%H%M-git" > version.txt'
+alias setver='setver'
+alias setverfile='setver --file'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
 alias mutt='neomutt'
@@ -46,7 +46,7 @@ alias fgrep='grep -F --color=auto'
 [ -f "$(command -v gls 2>/dev/null)" ] && alias ls='gls --color=auto'
 [ -f "$(command -v gls 2>/dev/null)" ] && alias la='gls -A --color=auto'
 [ -f "$(command -v gls 2>/dev/null)" ] && alias lla='gls -lA --color=auto '
-[ -f "$(command -v gdir 2>/dev/null)" ] && alias dir='gdir '
+[ -f "$(command -v gls 2>/dev/null)" ] && alias dir='gls -D --color=auto '
 [ -f "$(command -v greadlink 2>/dev/null)" ] && alias readlink='greadlink '
 [ -f "$(command -v gbasename 2>/dev/null)" ] && alias basename='gbasename '
 [ -f "$(command -v grealpath 2>/dev/null)" ] && alias realpath='grealpath '
@@ -122,6 +122,7 @@ alias netstat='sudo netstat'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
+alias list-my-aliases='alias | less'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
 alias tw='rainbowstream -iot'
@@ -133,3 +134,4 @@ alias emj='emojis'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
+

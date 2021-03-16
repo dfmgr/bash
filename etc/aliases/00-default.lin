@@ -23,8 +23,8 @@ alias nowdate='date +"%m-%d-%Y"'
 alias wget='wget -c'
 alias df='df -H'
 alias du='du -ch'
-alias setver='date +"%m%d%Y%H%M-git"'
-alias setverfile='date +"%m%d%Y%H%M-git" > version.txt'
+alias setver='setver'
+alias setverfile='setver --file'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
 alias mutt='neomutt'
@@ -68,6 +68,7 @@ alias l.='ls -LA --color=auto '
 alias la='ls -A --color=auto'
 alias lla='ls -lA --color=auto '
 alias ll='ls -l --color=auto '
+alias dir='ls -D --color=auto'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
 alias ~='cd ~'
@@ -128,6 +129,7 @@ alias o='xdg-open'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
+alias list-my-aliases="alias | less"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
 alias tw='rainbowstream -iot'
@@ -139,3 +141,4 @@ alias emj='emojis'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
+

@@ -14,6 +14,6 @@ Linux)
     . ~/.config/bash/aliases/00-default.lin
   ;;
 *)
-  printf "\t\tUnknown OS or OS not supported\n"
+  printf '\t\t%s\n' "Unknown OS or OS not supported"
   ;;
 esac
