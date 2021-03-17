@@ -23,7 +23,6 @@ alias nowdate='date +"%m-%d-%Y"'
 alias wget='wget -c'
 alias df='df -H'
 alias du='du -ch'
-alias setver='setver'
 alias setverfile='setver --file'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
@@ -36,6 +35,7 @@ alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
+alias cd_testing='mkdir -p '$TMP/testing' && cd '$TMP/testing''
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,7 +101,8 @@ alias desktop-icons-show='gsettings set org.gnome.desktop.background show-deskto
 [ -f "$(command -v xfce4-session-logout)" ] && alias logout='xfce4-session-logout'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Open command
-alias o='xdg-open'
+alias o='xdg-open '
+alias open='xdg-open '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #youtube-dl
 [ -f "$(command -v youtube-dl 2>/dev/null)" ] && alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
@@ -129,7 +130,7 @@ alias o='xdg-open'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
-alias list-my-aliases="alias | less"
+alias list-my-aliases='alias | less'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
 alias tw='rainbowstream -iot'

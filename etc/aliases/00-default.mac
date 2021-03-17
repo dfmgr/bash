@@ -27,7 +27,6 @@ alias nowdate='date +"%m-%d-%Y"'
 alias wget='wget -c'
 alias df='df -H'
 alias du='du -ch'
-alias setver='setver'
 alias setverfile='setver --file'
 alias userlist='cut -d: -f1 /etc/passwd'
 alias muttsync='__muttsync'
@@ -38,6 +37,7 @@ alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.l
 alias grep='grep --color=auto'
 alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
+alias cd_testing='mkdir -p '$TMP/testing' && cd '$TMP/testing''
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
