@@ -10,6 +10,7 @@ alias cd..='cd ..'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
 alias :q='exit'
+alias :w='history -a'
 alias c='clear'
 alias ch='history -c && > ~/.bash_history'
 alias e='vim --'
