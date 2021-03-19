@@ -7,7 +7,7 @@ PATH="/usr/local/bin:$PATH"
 [[ $- != *i* ]] && return
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create directories
-[ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt" >/dev/null 2>&1
+[ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt" &>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source System Bash
 if [ -f /etc/bashrc ]; then # Fedora/Redhat/CentOS
@@ -63,8 +63,8 @@ userbashaliases() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
-  if [ "$(find $BASH_COMPLETION_USER_DIR/* 2>/dev/null | wc -l)" != "0" ]; then
-    for f in $BASH_COMPLETION_USER_DIR/*; do
+  if [ "$(find "$BASH_COMPLETION_USER_DIR"/* 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$BASH_COMPLETION_USER_DIR"/*; do
       . "$f" >/dev/null 2>&1
     done
   fi
