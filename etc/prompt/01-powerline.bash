@@ -371,7 +371,7 @@ bashprompt() {
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
-      printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-} ${RESET:-$ADD_RESET}"
+      printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-}${RESET:-$ADD_RESET} "
     fi
 }
 __additional_msg() {
@@ -420,8 +420,8 @@ __additional_msg() {
     [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w $(__additional_msg)$RESET \n"
-    PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1$PS_SYMBOL${PS1_ADD_PROMPT:-} $RESET"
+    PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
+    PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
 
   PROMPT_COMMAND="ps1 && title && history -a && history -r "
