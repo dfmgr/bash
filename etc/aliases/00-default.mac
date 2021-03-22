@@ -8,7 +8,7 @@ alias :q='exit'
 alias :q!='exit'
 alias :w='history -a'
 alias c='clear'
-alias ch='history -c && > ~/.bash_history'
+alias ch='history -c &>/dev/null'
 alias g='git'
 alias m='man'
 alias map='xargs -n1'
@@ -38,7 +38,6 @@ alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.l
 alias grep='grep --color=auto'
 alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
-alias cd_testing='mkdir -p '$TMP/testing' && cd '$TMP/testing''
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
