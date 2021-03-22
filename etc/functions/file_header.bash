@@ -1,21 +1,22 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env zsh
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# @Author      : Jason
-# @Contact     : casjaysdev@casjay.net
-# @File        : file_header.bash
-# @Created     : Mon, Dec 31, 2019, 00:00 EST
-# @License     : WTFPL
-# @Copyright   : Copyright (c) CasjaysDev
-# @Description : get header information for my scripts
-# @Requires    :
-#
+##@Version       : 202103212035-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : WTFPL
+# @ReadME        : file_header.bash
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Sunday, Mar 21, 2021 20:35 EDT
+# @File          : file_header.bash
+# @Description   : get header information for my scripts
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 file_header() {
-  grep "# @.*: " "$1" >/tmp/file_header
-  printf_green "$(cat /tmp/file_header)"
-  rm -Rf /tmp/file_header
+  printf '# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n'
+  grep ^'?*#.@.*  :' "$1" | grep '  :' | grep -Ev 'GEN_SCRIPTS_*_' | head -n${2:-12} | grep '^'
+  printf '# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n'
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
