@@ -14,7 +14,7 @@
 if ! cmd_exists celcius2f f2celcius; then
   celcius2f() {
     if [ -z "$1" ] || [ $# -ne 1 ]; then
-      printf "\t\tUsage: celsius2f 40\n"
+      printf "\t\tUsage: celcius2f 40\n"
       return 1
     fi
     math="$1"
