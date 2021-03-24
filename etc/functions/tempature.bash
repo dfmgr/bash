@@ -12,7 +12,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 if ! cmd_exists celcius2f f2celcius; then
-  celsius2f() {
+  celcius2f() {
     if [ -z "$1" ] || [ $# -ne 1 ]; then
       printf "\t\tUsage: celsius2f 40\n"
       return 1
