@@ -36,6 +36,7 @@ alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
+alias tmux_ssh='tmux -f '$HOME/.config/tmux/tmux.ssh.conf' new-session -D -A -s ssh'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
