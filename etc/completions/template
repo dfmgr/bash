@@ -23,3 +23,5 @@ _myprog() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # enable completions
   complete -F _myprog -o default myprog
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

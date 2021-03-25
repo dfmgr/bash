@@ -29,7 +29,6 @@ userbashfunctions() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
 userbashexports() {
@@ -39,7 +38,6 @@ userbashexports() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional bash scripts
 userbashprofile() {
@@ -49,7 +47,6 @@ userbashprofile() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional aliases scripts
 userbashaliases() {
@@ -59,7 +56,6 @@ userbashaliases() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
@@ -69,7 +65,6 @@ userbashcompletions() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source plugins
 userbashplugins() {
@@ -79,7 +74,6 @@ userbashplugins() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
@@ -89,7 +83,6 @@ userbashprompt() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source OS specific
 userbashos() {
@@ -99,7 +92,6 @@ userbashos() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional user bash scripts
 userbashprofilelocal() {
@@ -109,38 +101,32 @@ userbashprofilelocal() {
     done
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases \
   userbashcompletions userbashplugins userbashprompt userbashos userbashprofilelocal; do
   $executeuserfunct
 done
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Local file
 if [ -f ~/.config/local/bash.local ]; then
   . ~/.config/local/bash.local
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Servers specific
 if [ -f ~/.config/local/bash.servers.local ]; then
   . ~/.config/local/bash.servers.local
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #System specific
 if [ -f ~/.config/local/bash."$(hostname)".local ]; then
   . ~/.config/local/bash."$(hostname)".local
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 BASHRCSRC=~/.bashrc
 PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 show_welcome
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run neofetch
 #if echo "$-" | grep i >/dev/null; then
@@ -148,11 +134,8 @@ show_welcome
 #    neofetch
 #  fi
 #fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Send an e-mail every time you login
 #echo "ALERT - Shell Access on $HOSTNAME from $USER on: `date`" | mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # end

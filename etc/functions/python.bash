@@ -10,7 +10,6 @@
 # @Description : set python version function
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 getpythonver() {
   if [[ "$(python3 -V 2>/dev/null)" =~ "Python 3" ]]; then
     PYTHONVER="python3"
@@ -22,5 +21,5 @@ getpythonver() {
     export PATH="${PATH}:$(python -c 'import site; print(site.USER_BASE)')/bin"
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

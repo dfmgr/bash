@@ -1,24 +1,19 @@
 #!/usr/bin/env bash
-
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Powerline check
 if [ "$POWERLINE" ]; then
-
   #Debian/Ubuntu/Arch
   if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
     source /usr/share/powerline/bindings/bash/powerline.sh
   fi
-
   #Redhat/CentOS
   if [ -f /usr/share/powerline/bash/powerline.sh ]; then
     source /usr/share/powerline/bash/powerline.sh
   fi
-
   #MacOS
   if [ -f /usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh ]; then
     source /usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh
   fi
-
   powerline-daemon -q
   export POWERLINE_BASH_CONTINUATION=1
   export POWERLINE_BASH_SELECT=1
@@ -43,34 +38,37 @@ noprompt() {
     printf_blue "lua node ruby python perl git reminder"
     return
   fi
-  while true; do case $1 in
-  lua)
-    touch $HOME/.config/bash/noprompt/lua
-    ;;
-  node)
-    touch $HOME/.config/bash/noprompt/node
-    ;;
-  ruby)
-    touch $HOME/.config/bash/noprompt/ruby
-    ;;
-  perl)
-    touch $HOME/.config/bash/noprompt/perl
-    ;;
-  python)
-    touch $HOME/.config/bash/noprompt/python
-    ;;
-  php)
-    touch $HOME/.config/bash/noprompt/php
-    ;;
-  git)
-    touch $HOME/.config/bash/noprompt/git
-    ;;
-  reminder)
-    touch $HOME/.config/bash/noprompt/git_reminder
-    ;;
-  *) break ;;
-esac; shift; done
-return
+  while true; do
+    case $1 in
+    lua)
+      touch "$HOME/.config/bash/noprompt/lua"
+      ;;
+    node)
+      touch "$HOME/.config/bash/noprompt/node"
+      ;;
+    ruby)
+      touch "$HOME/.config/bash/noprompt/ruby"
+      ;;
+    perl)
+      touch "$HOME/.config/bash/noprompt/perl"
+      ;;
+    python)
+      touch "$HOME/.config/bash/noprompt/python"
+      ;;
+    php)
+      touch "$HOME/.config/bash/noprompt/php"
+      ;;
+    git)
+      touch "$HOME/.config/bash/noprompt/git"
+      ;;
+    reminder)
+      touch "$HOME/.config/bash/noprompt/git_reminder"
+      ;;
+    *) break ;;
+    esac
+    shift
+  done
+  return
 }
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 bashprompt() {
@@ -130,7 +128,6 @@ bashprompt() {
   REVERSE="\[$(__tput rev 2>/dev/null)\]"
   RESET="\[$(__tput sgr0 2>/dev/null)\]"
   BOLD="\[$(__tput bold 2>/dev/null)\]"
-
   # what OS?
   case "$(uname)" in
   Darwin)
@@ -146,7 +143,6 @@ bashprompt() {
     PS_SYMBOL="$PS_SYMBOL_OTHER"
     ;;
   esac
-
   ### Ruby #######################################################
   if [ -f "$HOME/.config/bash/noprompt/ruby" ]; then
     __ifruby() { true; }
@@ -175,7 +171,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### Node.js ####################################################
   if [ -f "$HOME/.config/bash/noprompt/node" ]; then
     __ifnode() { true; }
@@ -213,7 +208,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### python ####################################################
   if [ -f "$HOME/.config/bash/noprompt/python" ]; then
     __ifpython() { true; }
@@ -247,7 +241,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### php ####################################################
   if [ -f "$HOME/.config/bash/noprompt/php" ]; then
     __ifphp() { true; }
@@ -271,7 +264,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### perl ####################################################
   if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
     __ifperl() { true; }
@@ -295,7 +287,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### lua ####################################################
   if [ -f "$HOME/.config/bash/noprompt/lua" ]; then
     __iflua() { true; }
@@ -319,7 +310,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### Git ########################################################
   if [ -f "$HOME/.config/bash/noprompt/git" ]; then
     __ifgit() { true; }
@@ -350,7 +340,6 @@ bashprompt() {
       fi
     }
   fi
-
   ### Git reminder ###############################################
   if [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ]; then
     __git_prompt_message_warn() { true; }
@@ -373,14 +362,13 @@ bashprompt() {
     if [ -n "$PS1_ADD" ]; then
       printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-}${RESET:-$ADD_RESET} "
     fi
-}
-__additional_msg() {
-  __git_prompt_message_warn
-  __ps1_additional
-}
+  }
+  __additional_msg() {
+    __git_prompt_message_warn
+    __ps1_additional
+  }
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
-
   case $TERM in
   *-256color)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
@@ -395,7 +383,6 @@ __additional_msg() {
     title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
   esac
-
   ps1() {
     EXIT=$?
     if [ $EXIT -eq 0 ]; then
@@ -405,11 +392,9 @@ __additional_msg() {
       local BG_EXIT="$BG_RED"
       local PS_SYMBOL=" 😔 "
     fi
-
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$COLUMNS}"
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
-
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK\s: \v $RESET"
     [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
@@ -423,34 +408,26 @@ __additional_msg() {
     PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-
   PROMPT_COMMAND="ps1 && title && history -a && history -r "
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
   # ------------------------------------------------------------------
-
   PS2="⚡ "
-
   export PS2
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   # ------------------------------------------------------------------
   # | PS4 - debug interactive prompt                          |
   # ------------------------------------------------------------------
-
   PS4="$(
     tput cr 2>/dev/null
     tput cuf 6 2>/dev/null
     printf "${GREEN}+%s ($LINENO) +" " $RESET"
   )"
-
   export PS4
-
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bashprompt 2>/dev/null
 complete -F _noprompt_completion -o default noprompt
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

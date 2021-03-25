@@ -10,13 +10,10 @@
 # @Description : show system information
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 showcputemp() {
   awk -v t="$(cat /sys/class/thermal/thermal_zone0/temp)" 'BEGIN{print t/1000}'
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 showsysteminfo() {
   echo ""
   echo -e "\t\t${LIGHTRED}   CPU:$NC"
@@ -38,9 +35,7 @@ showsysteminfo() {
   df -h | grep -e"/dev/sd" -e"/mnt/" | awk '{print "\t"$0}'
   echo ""
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 showkernelgraph() {
   lsmod | perl -e 'print "digraph \"lsmod\" {";
                  <>;
@@ -50,5 +45,5 @@ showkernelgraph() {
                  }
                  print "}"' | dot -Tsvg | rsvg-view-3 /dev/stdin
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

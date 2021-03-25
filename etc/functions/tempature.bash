@@ -10,7 +10,6 @@
 # @Description : tempature conversion
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 if ! cmd_exists celcius2f f2celcius; then
   celcius2f() {
     if [ -z "$1" ] || [ $# -ne 1 ]; then
@@ -21,9 +20,7 @@ if ! cmd_exists celcius2f f2celcius; then
     tf=$(echo "scale=2;((9/5) * $math) + 32" | bc)
     printf "\t\t$tf\n"
   }
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   f2celcius() {
     if [ -z "$1" ] || [ $# -ne 1 ]; then
       printf "\t\tUsage: f2celcius 75\n"
@@ -35,3 +32,4 @@ if ! cmd_exists celcius2f f2celcius; then
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

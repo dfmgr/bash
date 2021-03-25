@@ -10,28 +10,21 @@
 # @Description : weather functions
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 wttrin() {
-  curl -LSs http://wttr.in/$1?AFu$2 | grep -v "Location" && echo -e "\n\n"
+  curl -q -LSs "http://wttr.in/$1?AFu$2" | grep -v "Location" && echo -e "\n\n"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 wttrin2() {
-  curl -LSs http://v2.wttr.in/$1?AFu$2 | grep -v "Location" && echo -e "\n\n"
+  curl -q -LSs "http://v2.wttr.in/$1?AFu$2" | grep -v "Location" && echo -e "\n\n"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # shows weather in a city
 wttrcity() {
   wttrfull "$@" | head -n 7
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 wttrfull() {
-  wget -q -O - http://wttr.in/$1?AFu$2
+  wget -q -O - "http://wttr.in/$1?AFu$2"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

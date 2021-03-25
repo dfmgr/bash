@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
   if find ~/.config/shell/profile/*.win 1>/dev/null 2>&1; then
@@ -38,3 +38,5 @@ Linux)
   printf "\t\tUnknown OS or OS not supported"
   ;;
 esac
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

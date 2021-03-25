@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
 alias ~='cd ~'
@@ -68,4 +67,3 @@ alias weather2='wttrin2'
 alias command-not-found='fuck'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-

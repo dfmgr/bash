@@ -10,7 +10,6 @@
 # @Description : shows battery status
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 showbattery() {
   local dir=/sys/class/power_supply/BAT0/
   if [[ -e "$dir"/charge_now ]]; then
@@ -19,12 +18,10 @@ showbattery() {
     echo "$(<"$dir"/status) $(($(<"$dir"/energy_now) * 100 / $(<"$dir"/energy_full)))%"
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # shows battery full statistics
 showbatteryfull() {
   upower -i $(upower -e | grep BAT)
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

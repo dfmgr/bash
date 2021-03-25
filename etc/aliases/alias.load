@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
   [ -f ~/.config/bash/aliases/00-default.win ] &&
@@ -17,3 +17,5 @@ Linux)
   printf '\t\t%s\n' "Unknown OS or OS not supported"
   ;;
 esac
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

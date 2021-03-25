@@ -10,7 +10,6 @@
 # @Description : functions for git
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 git_prompt_message() {
   if [ -f "$HOME/.config/bash/noprompt/git_message" ]; then
     return 0
@@ -22,10 +21,8 @@ git_prompt_message() {
       printf_custom "3" 'touch "$HOME/.config/bash/noprompt/git_message"'
     fi
   fi
-  }
-
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 get_git_repository_details() {
   local branchName=""
   local tmp=""
@@ -43,18 +40,14 @@ get_git_repository_details() {
     printf " (unknown)")" | tr -d "\n")"
   printf "%s" "$1$branchName$tmp"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 function git() {
   command git "$@"
   if [[ "$1" == "init" && "$*" != *"--help"* ]]; then
     git symbolic-ref HEAD refs/heads/main
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 function hub() {
   if [[ "$1" == "default-branch" && "$*" != *"--help"* ]]; then
     local BRANCH="${2:-main}"
@@ -67,5 +60,5 @@ function hub() {
     command hub "$@"
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

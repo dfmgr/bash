@@ -1,7 +1,5 @@
-
-
+#!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 if ! type tree >&/dev/null; then
   tree() { # {{{
     opt=""
@@ -30,5 +28,5 @@ if ! type tree >&/dev/null; then
     find "$directory" $opt | sort | sed '1d;s,[^/]*/,|    ,g;s/..//;s/[^ ]*$/|-- &/'
   }
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

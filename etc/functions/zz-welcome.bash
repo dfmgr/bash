@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # @Author      : Jason
 # @Contact     : casjaysdev@casjay.net
@@ -10,7 +9,6 @@
 # @Description : welcome message
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 show_welcome() {
   if [ ! -f "$HOME/.config/bash/welcome.msg" ]; then
     printf_green "\n\n\n"
@@ -30,9 +28,7 @@ show_welcome() {
     printf_green "\n\n\n"
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 show_welcome_tor() {
   if [ ! -f "$HOME/.config/bash/welcome_tor.msg" ]; then
     if [ ! -f /usr/local/etc/tor/install.sh ]; then
@@ -55,5 +51,5 @@ show_welcome_tor() {
     fi
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # @Author      : Jason
 # @Contact     : casjaysdev@casjay.net
@@ -10,14 +9,12 @@
 # @Description : functions for bash
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # Icons
 ICON_INFO="[ ℹ️ ]"
 ICON_GOOD="[ ✔ ]"
 ICON_WARN="[ ❗ ]"
 ICON_ERROR="[ ✖ ]"
 ICON_QUESTION="[ ❓ ]"
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_color() { printf "%b" "$(tput setaf "$2" 2>/dev/null)" "$1" "$(tput sgr0 2>/dev/null)"; }
 printf_normal() { printf_color "\t\t$1\n" "0"; }
@@ -146,10 +143,9 @@ printf_head() {
   [ -z "$msg7" ] || printf_color "\t\t$msg7\n" "$color"
   [ -z "$msg1" ] || printf_color "\t\t##################################################\n" "$color"
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use grc if it's installed or execute the command direct
-if [[ -z "$(command -v grc)" ]]; then
+if [[ -f "$(command -v grc)" ]]; then
   if [[ "$USEGRC" = "yes" ]]; then
     grc() {
       if [[ -f "$(command -v grc)" ]]; then
@@ -259,4 +255,5 @@ detectostype() {
 detectos
 detectostype
 unset -f detectos detectostype
-# - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

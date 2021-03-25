@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
 [ -f "$(command -v gdate 2>/dev/null)" ] && alias date='gdate '
@@ -134,4 +133,3 @@ alias emj='emojis'
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-

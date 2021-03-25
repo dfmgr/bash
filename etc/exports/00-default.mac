@@ -70,3 +70,4 @@ eval "$(gdircolors "$DIRCOLOR")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

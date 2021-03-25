@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
   if [ -f ~/.config/shell/exports/00-default.win ]; then
@@ -26,3 +26,5 @@ Linux)
   printf "\t\tUnknown OS or OS not supported"
   ;;
 esac
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

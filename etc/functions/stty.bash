@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # @Author      : Jason
 # @Contact     : casjaysdev@casjay.net
@@ -10,11 +9,10 @@
 # @Description : stty, disable terminal lock
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 _set_stty() {
   tty -s && stty stop undef
   tty -s && stty start undef
   [[ "$OSTYPE" = darwin* ]] && tty -s && stty discard undef
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
