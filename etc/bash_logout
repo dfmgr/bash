@@ -1,5 +1,17 @@
-# ~/.bash_logout: executed by bash(1) when login shell exits.
-# when leaving the console clear the screen to increase privacy
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202103251632-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : bash_logout --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 25, 2021 18:03 EDT
+# @File          : bash_logout
+# @Description   :  ~/.bash_logout: executed by bash(1) when login shell exits.
+# @TODO          : 
+# @Other         : 
+# @Resource      : 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [ "$SHLVL" = 1 ]; then
     [ -x /usr/bin/clear_console ] && /usr/bin/clear_console -q
 else

@@ -1,4 +1,16 @@
-# ~/.bash_profile: executed by bash at login.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202103251632-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : bash_profile --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 25, 2021 18:02 EDT
+# @File          : bash_profile
+# @Description   : ~/.bash_profile: executed by bash at login.
+# @TODO          : 
+# @Other         : 
+# @Resource      : 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Ensure we are running interactively
 [[ $- != *i* ]] && return

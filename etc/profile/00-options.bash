@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
-# Bash options.
-# https://www.gnu.org/software/bash/manual/bashref.html#The-Shopt-Builtin
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202103251632-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : 00-options.bash --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 25, 2021 17:59 EDT
+# @File          : 00-options.bash
+# @Description   : Bash options file
+# @TODO          :
+# @Other         :
+# @Resource      : https://www.gnu.org/software/bash/manual/bashref.html#The-Shopt-Builtin
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # XSet options
 if command -v xset >/dev/null 2>&1; then

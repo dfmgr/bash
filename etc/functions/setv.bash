@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# @Author      : Sachin (psachin)
-# @Contact     : iclcoolster@gmail.com
-# @File        : show_wifi_clients.bash
-# @Created     : Mon, Dec 31, 2019, 00:00 EST
-# @License     : WTFPL
-# @Copyright   : Copyright (c) CasjaysDev
-# @Description : shows connected stations in hotspot mode
-#
+##@Version       : 202103251632-git
+# @Author        : Sachin (psachin)
+# @Contact       : iclcoolster@gmail.com
+# @License       : GPLv3
+# @ReadME        : setv --help
+# @Copyright     : Copyright: (c) 2021 Sachin, psachin
+# @Created       : Thursday, Mar 25, 2021 16:44 EDT
+# @File          : setv.bash
+# @Description   : A Lightweight Python virtual environment manager
+# @TODO          :
+# @Other         :
+# @Resource      : https://psachin.gitlab.io/about
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 # setV - A Lightweight Python virtual environment manager.
 # Author: Sachin (psachin) <iclcoolster@gmail.com>
 # Author's URL: https://psachin.gitlab.io/about
