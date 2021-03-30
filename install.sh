@@ -144,13 +144,13 @@ fi
 # run post install scripts
 run_postinst() {
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
-    __rm_rf "$APPDIR/$file"
+    rm_rf "$APPDIR/$file"
   done
   dfmgr_run_post
   ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
   ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
   ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
-  [ -f "$COMPDIR/README.md" ] && __rm_rf "$COMPDIR/README.md"
+  [ -f "$COMPDIR/README.md" ] && rm_rf "$COMPDIR/README.md"
 }
 #
 execute "run_postinst" "Running post install scripts"
