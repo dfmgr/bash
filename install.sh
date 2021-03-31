@@ -150,7 +150,7 @@ run_postinst() {
   ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
   ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
   ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
-  [ -f "$COMPDIR/README.md" ] && rm_rf "$COMPDIR/README.md"
+  [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
 }
 #
 execute "run_postinst" "Running post install scripts"
@@ -161,4 +161,3 @@ dfmgr_install_version
 # exit
 run_exit
 # end
-
