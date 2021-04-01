@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202103251632-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : completions.load --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 25, 2021 18:00 EDT
+# @File          : completions.load
+# @Description   :
+# @TODO          :
+# @Other         :
+# @Resource      :
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+case "$(uname -s)" in
+CYGWIN* | MINGW32* | MSYS* | MINGW*)
+  if find ~/.config/bash/completions/*.win 1>/dev/null 2>&1; then
+    for f in ~/.config/bash/completions/*.win; do
+      . "$f"
+    done
+  fi
+  ;;
+Darwin)
+  if find ~/.config/bash/completions/*.mac 1>/dev/null 2>&1; then
+    for f in ~/.config/bash/completions/*.mac; do
+      . "$f"
+    done
+  fi
+  ;;
+Linux)
+  if find ~/.config/bash/completions/*.lin 1>/dev/null 2>&1; then
+    for f in ~/.config/bash/completions/*.lin; do
+      . "$f"
+    done
+  fi
+  ;;
+*)
+  printf "\t\tUnknown OS or OS not supported"
+  ;;
+esac
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
+
