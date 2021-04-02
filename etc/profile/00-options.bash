@@ -32,7 +32,6 @@ shopt -s checkwinsize 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Save all lines of a multiple-line command in the same history entry.
 shopt -s cmdhist 2>/dev/null
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Include filenames beginning with a "." in the filename expansion.
 shopt -s dotglob 2>/dev/null
@@ -56,6 +55,6 @@ shopt -s expand_aliases 2>/dev/null
 # Set mouse type - changes to blinking bar
 echo -e -n "\x1b[\x35 q"
 echo -e -n "\x6b[\x35 q"
-echo -e -n "\e]12;white\a"
+echo -e -n "\e]12;cyan\a"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
