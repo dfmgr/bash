@@ -15,33 +15,33 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if find ~/.config/shell/profile/*.win 1>/dev/null 2>&1; then
+  if find ~/.config/shell/profile/*.win >/dev/null 2>&1; then
     for f in ~/.config/shell/profile/*.win; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.win 1>/dev/null 2>&1; then
+  elif find ~/.config/bash/profile/*.win >/dev/null 2>&1; then
     for f in ~/.config/bash/profile/*.win; do
       . "$f"
     done
   fi
   ;;
 Darwin)
-  if find ~/.config/shell/profile/*.mac 1>/dev/null 2>&1; then
+  if find ~/.config/shell/profile/*.mac >/dev/null 2>&1; then
     for f in ~/.config/shell/profile/*.mac; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.mac 1>/dev/null 2>&1; then
+  elif find ~/.config/bash/profile/*.mac >/dev/null 2>&1; then
     for f in ~/.config/bash/profile/*.mac; do
       . "$f"
     done
   fi
   ;;
 Linux)
-  if find ~/.config/shell/profile/*.lin 1>/dev/null 2>&1; then
+  if find ~/.config/shell/profile/*.lin >/dev/null 2>&1; then
     for f in ~/.config/shell/profile/*.lin; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.lin 1>/dev/null 2>&1; then
+  elif find ~/.config/bash/profile/*.lin >/dev/null 2>&1; then
     for f in ~/.config/bash/profile/*.lin; do
       . "$f"
     done

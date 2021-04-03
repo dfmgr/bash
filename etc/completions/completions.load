@@ -13,23 +13,29 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [ "$(find "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/* 2>/dev/null | wc -l)" != "0" ]; then
+  for f in "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/*; do
+    . "$f" >/dev/null 2>&1
+  done
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if find ~/.config/bash/completions/*.win 1>/dev/null 2>&1; then
+  if find ~/.config/bash/completions/*.win >/dev/null 2>&1; then
     for f in ~/.config/bash/completions/*.win; do
       . "$f"
     done
   fi
   ;;
 Darwin)
-  if find ~/.config/bash/completions/*.mac 1>/dev/null 2>&1; then
+  if find ~/.config/bash/completions/*.mac >/dev/null 2>&1; then
     for f in ~/.config/bash/completions/*.mac; do
       . "$f"
     done
   fi
   ;;
 Linux)
-  if find ~/.config/bash/completions/*.lin 1>/dev/null 2>&1; then
+  if find ~/.config/bash/completions/*.lin >/dev/null 2>&1; then
     for f in ~/.config/bash/completions/*.lin; do
       . "$f"
     done
@@ -41,4 +47,3 @@ Linux)
 esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-

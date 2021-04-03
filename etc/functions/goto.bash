@@ -237,14 +237,14 @@ _goto_directory_push() {
     return
   fi
 
-  { pushd . || return; } 1>/dev/null 2>&1
+  { pushd . || return; } >/dev/null 2>&1
 
   _goto_directory "$@"
 }
 
 # Pops the top directory from the stack, then goto
 _goto_directory_pop() {
-  { popd || return; } 1>/dev/null 2>&1
+  { popd || return; } >/dev/null 2>&1
 }
 
 # Unregisters aliases whose directories no longer exist.
