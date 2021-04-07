@@ -51,7 +51,7 @@ scripts_check
 # Defaults
 APPNAME="${APPNAME:-bash}"
 APPDIR="${APPDIR:-$HOME/.config/$APPNAME}"
-INSTDIR="${INSTDIR}"
+INSTDIR="${INSTDIR:-$HOME/.local/share/CasjaysDev/dfmgr/$APPNAME}"
 REPO="${DFMGRREPO:-https://github.com/dfmgr/$APPNAME}"
 REPORAW="${REPORAW:-$REPO/raw}"
 APPVERSION="$(__appversion "$REPORAW/master/version.txt")"
