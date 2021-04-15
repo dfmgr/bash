@@ -17,10 +17,10 @@ orig_command_not_found_handle() {
   cmd="$1"
   args=("$@")
   printf_red "bash: $1: command not found"
-  if [ "$OS" = "Linux" ] || cmd_exists findInstallApp; then
+  if [ "$OS" = "Linux" ] || cmd_exists pkmg; then
     printf_green "Searching the repo for $1"
     sleep 1
-    findInstallApp "$1" &&
+    pkmgr "$1" &&
       printf_green "Package $1 Installed" && return 0 ||
       printf_red "Can not locate package $1" && return 1
   fi
@@ -50,3 +50,4 @@ alias cnf="command_not_found_handle"
 alias command-not-found="command_not_found_handle"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
+
