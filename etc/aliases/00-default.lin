@@ -98,10 +98,12 @@ alias vim='vim '
 alias vis='vim +set si '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-[ -f "$(command -v nvim)" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim'
+[ -f "$(command -v nvim)" ] && [ -f $HOME/.config/neovim/init.vim ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim' || \
+  [ -f "$(command -v nvim)" ] && [ -f $HOME/.config/nvim/init.vim ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim' 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
+[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || \
+  alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
@@ -140,7 +142,8 @@ alias open='xdg-open '
 [ -f "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
 [ -f "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
 [ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
-[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
+[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || \ 
+  alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
 alias list-my-functions='typeset -F | less'
