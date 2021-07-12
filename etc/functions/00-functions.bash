@@ -111,7 +111,7 @@ printf_custom_question() {
 }
 
 printf_answer() {
-  read -e -r -n "${2:-120}" -s "${1:-$__ANSWER}"
+  read -e -r -n "${2:-120}" -s "${1:-__ANSWER}"
   history -s "${1:-$__ANSWER}"
 }
 
