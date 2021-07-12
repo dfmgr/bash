@@ -111,7 +111,7 @@ printf_custom_question() {
 }
 
 printf_answer() {
-  read -e -r -n "${2:-120}" -s "${1:-__ANSWER}"
+  read -e -r -n "${2:-120}" -s "${1:-$__ANSWER}"
   history -s "${1:-$__ANSWER}"
 }
 
@@ -120,7 +120,7 @@ printf_read_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
   local msg="$1" && shift 1
   local lines="${1:-120}" && shift 1
-  local reply="${1:-__ANSWER}" && shift 1
+  local reply="${1:-$__ANSWER}" && shift 1
   printf_color "\t\t$msg " "$color"
   printf_answer "$reply" "$lines"
 }
