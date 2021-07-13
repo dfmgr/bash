@@ -144,6 +144,7 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
+  if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
     rm_rf "$APPDIR/$file"
   done
@@ -152,6 +153,7 @@ run_postinst() {
   ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
   ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
   [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
+  if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
 }
 #
 execute "run_postinst" "Running post install scripts"
