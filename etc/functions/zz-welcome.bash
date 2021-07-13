@@ -29,7 +29,7 @@ show_welcome() {
     if ! printf_answer_yes; then
       touch "$HOME/.config/bash/welcome.msg"
     fi
-    printf_green "\n\n\n"
+    clear
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
