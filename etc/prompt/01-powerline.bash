@@ -370,6 +370,26 @@ bashprompt() {
       fi
     }
   fi
+  ### WakaTime ####################################################
+  if [ -f "$HOME/.config/bash/noprompt/wakatime" ]; then
+    __wakatime_prompt() { return; }
+  elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
+    ___wakatime_prompt() {
+      local version="1.0.0"
+      local entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1)"
+      local project=""
+      if [ -z "$entity" ]; then
+        return 0
+      else
+        if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
+          project="$(basename "$(git rev-parse --show-toplevel)")"
+        else
+          project="Terminal"
+        fi
+        (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
+      fi
+    }
+  fi
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
