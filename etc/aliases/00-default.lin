@@ -50,11 +50,18 @@ alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
 alias tmux_ssh='tmux -f '$HOME/.config/tmux/tmux.ssh.conf' new-session -D -A -s ssh'
+alias 755d='find ${1:-.} -type d -exec chmod 755 {} \;'
+alias 755f='find ${1:-.} -type f -exec chmod 755 {} \;'
+alias 644f='find ${1:-.} -type f -exec chmod 644 {} \;'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# OSS code
-[ -n "$(command -v code-oss 2>/dev/null)" ] && alias code='code-oss'
+# VisualStudio code
+if [ -n "$(command -v code-oss 2>/dev/null)" ]; then 
+alias code='code-oss'
+elif [ -n "$(command -v code-insiders 2>/dev/null)" ]; then
+alias code='code-insiders'
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
 alias sudo='sudo -H '
@@ -67,7 +74,6 @@ alias ipconfig='sudo ifconfig '
 alias systemctl='sudo systemctl '
 alias ports='sudo netstat -taupln | grep --color=auto LISTEN '
 alias flushdns='sudo systemd-resolve --flush-caches '
-[ -f "$(command -v docker)" ] && alias docker='sudo docker '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Package management
 [ "$(uname -s)" = Linux ] && [ -f "$(command -v apt 2>/dev/null)" ] && alias apt='sudo apt '
@@ -96,10 +102,17 @@ alias cd..='cd ..'
 alias vi='vim '
 alias vim='vim '
 alias vis='vim +set si '
+alias svim='sudo vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
 [ -f "$(command -v nvim)" ] && [ -f $HOME/.config/neovim/init.vim ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim' || \
   [ -f "$(command -v nvim)" ] && [ -f $HOME/.config/nvim/init.vim ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim' 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#Set docker
+if [ -f "$(command -v docker)" ]; then 
+  alias docker='sudo docker '
+  alias drun='docker run --rm -it -v "${PWD}":/app -w /app'
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
 [ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || \
