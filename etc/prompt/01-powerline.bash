@@ -177,7 +177,7 @@ bashprompt() {
         __ruby_info() {
           local version="$(__ruby_version)"
           [ -z "${version}" ] && return
-          printf "%s" " ${version}$RUBY_SYMBOL$RESET"
+          printf "%s" " ${version}$RUBY_SYMBOL|$RESET"
         }
       else
         __ruby_info() { return; }
@@ -198,21 +198,21 @@ bashprompt() {
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf "%s" " NVM: ${version}$NODE_SYMBOL${RESET}"
+            printf "%s" " NVM: ${version}$NODE_SYMBOL|${RESET}"
           }
         elif [[ -n "$(command -v fnm)" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf "%s" " FNM: ${version}$NODE_SYMBOL${RESET}"
+            printf "%s" " FNM: ${version}$NODE_SYMBOL|${RESET}"
           }
         elif [[ -n "$(command -v node)" ]]; then
-          __node_version() { printf "$(node --version)"; }
+          __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
-            printf "%s" " Node: ${version}$NODE_SYMBOL${RESET}"
+            printf "%s" " Node: ${version}$NODE_SYMBOL|${RESET}"
           }
         fi
       else
@@ -234,20 +234,20 @@ bashprompt() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
           if [ -n "$PYTHON_VIRTUALENV" ]; then
-            printf " $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+            printf "%s" " $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL|$RESET"
           else
-            printf " VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+            printf "%s" " VENV: $PYTHON_VERSION$PYTHON_SYMBOL|$RESET"
           fi
         }
       elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-          printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+          printf "%s" " Python: $PYTHON_VERSION$PYTHON_SYMBOL|$RESET"
         }
       elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
         __python_info() {
           PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
-          printf " Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+          printf "%s" " Python: $PYTHON_VERSION$PYTHON_SYMBOL|$RESET"
         }
       else
         __python_info() { return; }
@@ -270,7 +270,7 @@ bashprompt() {
         __php_info() {
           local version=$(__php_version)
           [ -z "$version" ] && return
-          printf " PHP: $version$PHP_SYMBOL $RESET"
+          printf "%s" " PHP: $version$PHP_SYMBOL|$RESET"
         }
       else
         __php_info() { return; }
@@ -286,14 +286,14 @@ bashprompt() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.pl* -o -iname *.cgi")" -ne 0 ]]; then
         if [ "$(command -v perl 2>/dev/null)" ]; then
-          __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g')"; }
+          __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
         else
           __perl_version() { return; }
         fi
         __perl_info() {
           local version=$(__perl_version)
           [ -z "$version" ] && return
-          printf "%s" " Perl: $version$PERL_SYMBOL $RESET"
+          printf "%s" " Perl: $version$PERL_SYMBOL|$RESET"
         }
       else
         __perl_info() { return; }
@@ -316,7 +316,7 @@ bashprompt() {
         __lua_info() {
           local version=$(__lua_version)
           [ -z "$version" ] && return
-          printf "%s" " lua: $version$LUA_SYMBOL $RESET"
+          printf "%s" " lua: $version$LUA_SYMBOL|$RESET"
         }
       else
         __lua_info() { return; }
@@ -345,7 +345,7 @@ bashprompt() {
           printf "%s" " [$branch]$marks"
         }
         __git_info() {
-          __git_version && __git_status && printf "%s" "$GIT_BRANCH_SYMBOL"
+          __git_version && __git_status && printf "%s" "$GIT_BRANCH_SYMBOL|"
         }
       else
         __git_version() { return; }
@@ -365,7 +365,7 @@ bashprompt() {
         local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
         local grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
         if [ "$grepgitignore" -ne 0 ]; then
-          printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+          printf "%s" "${BG_BLACK}${FG_GREEN} Dont forget to do a git pull |$RESET"
         fi
       fi
     }
@@ -393,7 +393,7 @@ bashprompt() {
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
-      printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-}${RESET:-$ADD_RESET} "
+      printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-} ${RESET:-$ADD_RESET}"
     fi
   }
   __additional_msg() {
@@ -429,7 +429,7 @@ bashprompt() {
     PS_FILL="${PS_LINE:0:$COLUMNS}"
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
-    PS1+="$BG_BLUE$FG_BLACK\s: \v $RESET"
+    PS1+="$BG_BLUE$FG_BLACK\s: \v|$RESET"
     [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
     [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
     [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
@@ -438,7 +438,7 @@ bashprompt() {
     [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
-    PS1+="$BG_GRAY2$FG_BLACK\u@\H:$BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
+    PS1+="$BG_GRAY2$FG_BLACK\u@\H :$BG_DARK_GREEN\w :$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
   PROMPT_COMMAND="ps1 && title && history -a && history -r "
