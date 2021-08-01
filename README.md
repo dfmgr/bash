@@ -27,7 +27,7 @@ brew install bash bash-completion direnv
 Automatic install/update:
 
 ```shell
-bash -c "$(curl -LSs https://github.com/dfmgr/bash/raw/master/install.sh)"
+bash -c "$(curl -LSs https://github.com/dfmgr/bash/raw/main/install.sh)"
 ```
 
 Manual install:
