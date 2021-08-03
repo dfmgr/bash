@@ -191,8 +191,7 @@ bashprompt() {
   else
     __ifnode() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-name .js -o")" -ne 0 ]] ||
-        [[ "$(__find "$gitdir" "1" "-name package.json")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "1" "-iname *.js -o -name package.json -o -name yarn.lock")" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
           [[ "$(nvm current)" != "system" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
