@@ -2,6 +2,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # set path
 PATH="/usr/local/bin:$PATH"
+eval "$(fnm env)"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -139,4 +140,3 @@ show_welcome
 #echo "ALERT - Shell Access on $HOSTNAME from $USER on: `date`" | mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-
