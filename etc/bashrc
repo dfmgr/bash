@@ -2,7 +2,6 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # set path
 PATH="/usr/local/bin:$PATH"
-eval "$(fnm env)"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -103,8 +102,17 @@ userbashprofilelocal() {
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+userbashprofilepost() {
+  if [ "$(find ~/.config/bash/post/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in ~/.config/bash/post/*.bash; do
+      . "$f" >/dev/null 2>&1
+    done
+  fi
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases \
-  userbashcompletions userbashplugins userbashprompt userbashos userbashprofilelocal; do
+  userbashcompletions userbashplugins userbashprompt userbashos userbashprofilelocal \
+  userbashprofilepost; do
   $executeuserfunct
 done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
