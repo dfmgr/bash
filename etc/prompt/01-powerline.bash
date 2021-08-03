@@ -102,6 +102,7 @@ bashprompt() {
   PHP_SYMBOL=' ♻️ ' 2>/dev/null
   PERL_SYMBOL=' ☢️ ' 2>/dev/null
   LUA_SYMBOL=' ⚠️ ' 2>/dev/null
+
   # Foreground Colors
   FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
   FG_GRAY1="\[$(__tput setaf 15 2>/dev/null)\]"
@@ -301,23 +302,23 @@ bashprompt() {
     }
   fi
   ### lua ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/lua" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
     __iflua() { true; }
     __lua_info() { true; }
   else
     __iflua() {
-      local luaversion="$(lua -v 2>&1)"
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.lua*")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "1" "-iname *.lua")" -ne 0 ]]; then
         if [ "$(command -v lua 2>/dev/null)" ]; then
-          __lua_version() { printf "%s" "$(echo $luaversion | head -n1 | awk '{print $2}')"; }
+          local luaversion="(lua -v 2>/&1)"
+          __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
         else
           __lua_version() { return; }
         fi
         __lua_info() {
           local version=$(__lua_version)
           [ -z "$version" ] && return
-          printf "%s" "| lua: $version$LUA_SYMBOL$RESET"
+          printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
         }
       else
         __lua_info() { return; }
