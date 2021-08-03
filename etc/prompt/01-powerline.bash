@@ -191,7 +191,8 @@ bashprompt() {
   else
     __ifnode() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.js -o -name package.json")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "1" "-name .js -o")" -ne 0 ]] ||
+        [[ "$(__find "$gitdir" "1" "-name package.json")" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
           [[ "$(nvm current)" != "system" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
@@ -306,10 +307,11 @@ bashprompt() {
     __lua_info() { true; }
   else
     __iflua() {
+      local luaversion="$(lua -v 2>&1)"
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.lua*")" -ne 0 ]]; then
         if [ "$(command -v lua 2>/dev/null)" ]; then
-          __lua_version() { printf "%s" "$(lua -v 2>&1 | awk '{print $2}')"; }
+          __lua_version() { printf "%s" "$(echo $luaversion | head -n1 | awk '{print $2}')"; }
         else
           __lua_version() { return; }
         fi
