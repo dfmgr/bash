@@ -154,8 +154,13 @@ run_postinst() {
   ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
   [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
   if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
-  if [ -f "$HOME/.bash_history" ]; then
+  history -a && history -w && history -a
+  if [ -f "$HOME/.bash_history" ] && [ ! -e "$HOME/.config/bash/bash_history" ]; then
     mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
+  else
+    history -w && history -a
+    cat "$HOME/.bash_history" >> "$HOME/.config/bash/bash_history"
+    rm_rf "$HOME/.bash_history"
   fi
 }
 #
