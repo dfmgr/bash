@@ -351,7 +351,7 @@ bashprompt() {
   fi
   ### WakaTime ####################################################
   if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
-    __wakatime_prompt() { return; }
+    ___wakatime_prompt() { return; }
   elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
     ___wakatime_prompt() {
       local version="1.0.0"
@@ -381,6 +381,8 @@ bashprompt() {
   }
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
+  __pre_prompt_command() { ___wakatime_prompt; }
+  __post_prompt_command() { history -a && history -r; }
   case $TERM in
   *-256color)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
@@ -420,7 +422,7 @@ bashprompt() {
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w: $RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-  PROMPT_COMMAND="ps1 && title && history -a && history -r "
+  PROMPT_COMMAND="__pre_prompt_command;ps1 && title;__post_prompt_command "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
