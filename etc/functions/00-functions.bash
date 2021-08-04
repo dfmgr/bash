@@ -125,7 +125,9 @@ printf_read_question() {
   printf_answer "$reply" "$lines"
 }
 
-printf_answer_yes() { [[ "${1:-$__ANSWER}" =~ ${2:-^[Yy]$} ]] && return 0 || return 1; }
+printf_answer_yes() {
+  [[ "${1:-$__ANSWER}" =~ ${2:-^[Yy]$} ]] && return 0 || return 1
+}
 
 printf_head() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
