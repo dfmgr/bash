@@ -158,23 +158,22 @@ bashprompt() {
     ;;
   esac
   ### Ruby #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/ruby" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/ruby" ] && [ -z "$(command -v ruby 2>/dev/null)" ]; then
     __ifruby() { true; }
     __ruby_info() { true; }
   else
     __ifruby() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [ "$(__find "$gitdir" "1" "-iname *.rb")" -ne 0 ]; then
-        if [ "$(command -v rbenv 2>/dev/null)" ]; then
+        if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
           __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
-        elif [ "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
+        elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
           __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
-        elif [ "$(command -v ruby 2>/dev/null)" ]; then
+        elif [ -f "$(command -v ruby 2>/dev/null)" ]; then
           __ruby_version() { printf "%s" "Ruby: $(ruby --version | cut -d' ' -f2)"; }
         else
           __ruby_version() { return; }
         fi
-
         __ruby_info() {
           local version="$(__ruby_version)"
           [ -z "${version}" ] && return
@@ -186,7 +185,7 @@ bashprompt() {
     }
   fi
   ### Node.js ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/node" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
     __ifnode() { true; }
     __node_info() { true; }
   else
@@ -201,14 +200,14 @@ bashprompt() {
             [ -z "${version}" ] && return
             printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
           }
-        elif [[ -n "$(command -v fnm)" ]]; then
+        elif [[ -f "$(command -v fnm)" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
             [ -z "${version}" ] && return
             printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
           }
-        elif [[ -n "$(command -v node)" ]]; then
+        elif [[ -f "$(command -v node)" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
           __node_info() {
             local version="$(__node_version)"
@@ -223,32 +222,22 @@ bashprompt() {
     }
   fi
   ### python ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/python" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(command -v python3 2>/dev/null || command -v python2 2>/dev/null)" ]; then
     __ifpython() { true; }
     __python_info() { true; }
   else
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ -n "$VIRTUAL_ENV" ]] && [[ $(__find "$VIRTUAL_ENV" "1" "-name pyvenv.cfg") -ne 0 ]] ||
-        [[ $(__find "$gitdir" "1" "-name pyvenv.cfg") -ne 0 ]]; then
+      if [[ $(__find "$gitdir" "1" "-name *.py") -ne 0 ]]; then
         __python_info() {
-          PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          local pythonBin="$(command -v python3 || command -v python2 || command -v python)"
+          local PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
+          local PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
           if [ -n "$PYTHON_VIRTUALENV" ]; then
             printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           else
-            printf "%s" "| VENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+            printf "%s" "| Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           fi
-        }
-      elif [ -n "$(command -v python3)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
-        __python_info() {
-          PYTHON_VERSION="$($(command -v python3) --version | sed 's#Python ##g')"
-          printf "%s" "| Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
-        }
-      elif [ -n "$(command -v python2)" ] && [ "$(__find "$gitdir" "1" "-iname *.py")" -ne 0 ]; then
-        __python_info() {
-          PYTHON_VERSION="$($(command -v python2) --version | sed 's#Python ##g')"
-          printf "%s" "| Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         }
       else
         __python_info() { return; }
@@ -256,77 +245,65 @@ bashprompt() {
     }
   fi
   ### php ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/php" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(command -v php 2>/dev/null)" ]; then
     __ifphp() { true; }
     __php_info() { true; }
   else
     __ifphp() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.php*")" -ne 0 ]]; then
-        if [ "$(command -v php 2>/dev/null)" ]; then
-          __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
-        else
-          __php_version() { return; }
-        fi
-        __php_info() {
-          local version=$(__php_version)
-          [ -z "$version" ] && return
-          printf "%s" "| PHP: $version$PHP_SYMBOL$RESET"
-        }
+        __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
       else
-        __php_info() { return; }
+        __php_version() { return; }
       fi
+      __php_info() {
+        local version=$(__php_version)
+        [ -z "$version" ] && return
+        printf "%s" "| PHP: $version$PHP_SYMBOL$RESET"
+      }
     }
   fi
   ### perl ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(command -v perl 2>/dev/null)" ]; then
     __ifperl() { true; }
     __perl_info() { true; }
   else
     __ifperl() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.pl* -o -iname *.cgi")" -ne 0 ]]; then
-        if [ "$(command -v perl 2>/dev/null)" ]; then
-          __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
-        else
-          __perl_version() { return; }
-        fi
-        __perl_info() {
-          local version=$(__perl_version)
-          [ -z "$version" ] && return
-          printf "%s" "| Perl: $version$PERL_SYMBOL$RESET"
-        }
+        __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
       else
-        __perl_info() { return; }
+        __perl_version() { return; }
       fi
+      __perl_info() {
+        local version=$(__perl_version)
+        [ -z "$version" ] && return
+        printf "%s" "| Perl: $version$PERL_SYMBOL$RESET"
+      }
     }
   fi
   ### lua ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/perl" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(command -v lua 2>/dev/null)" ]; then
     __iflua() { true; }
     __lua_info() { true; }
   else
     __iflua() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       if [[ "$(__find "$gitdir" "1" "-iname *.lua")" -ne 0 ]]; then
-        if [ "$(command -v lua 2>/dev/null)" ]; then
-          local luaversion="(lua -v 2>/&1)"
-          __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
-        else
-          __lua_version() { return; }
-        fi
-        __lua_info() {
-          local version=$(__lua_version)
-          [ -z "$version" ] && return
-          printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
-        }
+        luaversion="$(lua -v 2>&1)"
+        __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
       else
-        __lua_info() { return; }
+        __lua_version() { return; }
       fi
+      __lua_info() {
+        local version="$(__lua_version)"
+        [ -z "$version" ] && return
+        printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
+      }
     }
   fi
   ### Git ########################################################
-  if [ -f "$HOME/.config/bash/noprompt/git" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
     __ifgit() { true; }
     __git_info() { true; }
   else
@@ -356,7 +333,7 @@ bashprompt() {
     }
   fi
   ### Git reminder ###############################################
-  if [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ]; then
+  if [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
     __git_prompt_message_warn() { true; }
   fi
   if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
@@ -373,7 +350,7 @@ bashprompt() {
     }
   fi
   ### WakaTime ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/wakatime" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
     __wakatime_prompt() { return; }
   elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
     ___wakatime_prompt() {
@@ -395,7 +372,7 @@ bashprompt() {
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
-      printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-} ${RESET:-$ADD_RESET}"
+      printf "%s" "|${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}${PS1_ADD:-} ${RESET:-$ADD_RESET}"
     fi
   }
   __additional_msg() {
@@ -432,13 +409,13 @@ bashprompt() {
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK\s: \v $RESET"
-    [ -n "$(command -v php 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
-    [ -n "$(command -v ruby 2>/dev/null)" ] && PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
-    [ -n "$(command -v node 2>/dev/null)" ] && PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
-    [ -n "$(command -v python 2>/dev/null)" ] && PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
-    [ -n "$(command -v perl 2>/dev/null)" ] && PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
-    [ -n "$(command -v lua 2>/dev/null)" ] && PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
-    [ -n "$(command -v git 2>/dev/null)" ] && PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
+    PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
+    PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
+    PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
+    PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
+    PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
+    PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
+    PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET "
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w: $RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
