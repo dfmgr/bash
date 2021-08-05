@@ -4,11 +4,11 @@
 # @Author        : casjay
 # @Contact       : casjay
 # @License       : LICENSE.md
-# @ReadME        : fnm.bash --help
+# @ReadME        : nvm.bash --help
 # @Copyright     : Copyright: (c) 2021 casjay, casjay
 # @Created       : Tuesday, Aug 03, 2021 03:05 EDT
-# @File          : fnm.bash
-# @Description   : fast node manager
+# @File          : nvm.bash
+# @Description   : node version manager
 # @TODO          :
 # @Other         :
 # @Resource      :
