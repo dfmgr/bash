@@ -158,9 +158,10 @@ run_postinst() {
   if [ -f "$HOME/.bash_history" ] && [ ! -e "$HOME/.config/bash/bash_history" ]; then
     mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
   else
-    history -w && history -a
-    cat "$HOME/.bash_history" >> "$HOME/.config/bash/bash_history"
-    rm_rf "$HOME/.bash_history"
+    if [ -f "$HOME/.bash_history" ]; then
+      cat "$HOME/.bash_history" >> "$HOME/.config/bash/bash_history"
+      rm_rf "$HOME/.bash_history"
+    fi
   fi
 }
 #
