@@ -381,8 +381,7 @@ bashprompt() {
   }
   ### PROMPT #####################################################
   __title_info() {
-    local TITLE="${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
-    echo -ne "${TITLE}"
+    echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
   }
   __pre_prompt_command() {
     local EXIT=$? # Kepp this here as it is needed for prompt
@@ -431,7 +430,7 @@ bashprompt() {
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w: $RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-  PROMPT_COMMAND="__pre_prompt_command; && title;__post_prompt_command "
+  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
