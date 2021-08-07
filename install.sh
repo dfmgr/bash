@@ -143,7 +143,7 @@ if __am_i_online; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
-  run_postinst() {
+run_postinst() {
   local tmpext="$$"
   history -a &>/dev/null && history -w &>/dev/null && history -a &>/dev/null
   if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
@@ -159,8 +159,8 @@ fi
   if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
     mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
-  elif [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]
-    cat "$HOME/.bash_history" >> "$HOME/.config/bash/bash_history"
+  elif [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
+    cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
     rm_rf "$HOME/.bash_history"
   elif [ -f "/tmp/bash_history.$tmpext" ]; then
     mv_f "/tmp/bash_history.$tmpext" "$HOME/.config/bash/bash_history"
