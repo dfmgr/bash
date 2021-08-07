@@ -380,9 +380,18 @@ bashprompt() {
     __ps1_additional
   }
   ### PROMPT #####################################################
-  __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
-  __pre_prompt_command() { ___wakatime_prompt; }
-  __post_prompt_command() { history -a && history -r; }
+  __title_info() {
+    local TITLE="${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
+    echo -ne "${TITLE}"
+  }
+  __pre_prompt_command() {
+    local EXIT=$? # Kepp this here as it is needed for prompt
+    ___wakatime_prompt
+    return $EXIT
+  }
+  __post_prompt_command() {
+    history -a &>/dev/null && history -r &>/dev/null
+  }
   case $TERM in
   *-256color)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
@@ -422,7 +431,7 @@ bashprompt() {
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w: $RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-  PROMPT_COMMAND="__pre_prompt_command;ps1 && title;__post_prompt_command "
+  PROMPT_COMMAND="__pre_prompt_command; && title;__post_prompt_command "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
