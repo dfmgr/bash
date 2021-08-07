@@ -165,6 +165,7 @@ run_postinst() {
   elif [ -f "/tmp/bash_history.$tmpext" ]; then
     mv_f "/tmp/bash_history.$tmpext" "$HOME/.config/bash/bash_history"
   fi
+  history -a &>/dev/null && history -w &>/dev/null && history -a &>/dev/null
 }
 #
 execute "run_postinst" "Running post install scripts"
