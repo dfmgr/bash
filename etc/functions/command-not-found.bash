@@ -16,12 +16,12 @@
 orig_command_not_found_handle() {
   cmd="$1"
   args="$@"
-  printf_red "bash: $1: command not found"
+  printf_red "$1: command not found"
   if [ "$OS" = "Linux" ] || cmd_exists pkmgr; then
     printf_green "Searching the repo for $1"
     pkmgr silent install "$1" 2>/dev/null 
     if type -P "$1" &>/dev/null; then
-      printf_green "Package $1 Installed"
+      printf_green "$1 has been Installed"
       return 0
     else
       printf_red "Can not locate package $1"
@@ -37,7 +37,7 @@ command_not_found_handle() {
     if echo " ${_suffix_vi[*]} " | grep -q " ${cmd##*.} "; then
       if type vi >&/dev/null; then
         vi "${args[@]}"
-        return $?
+        return $? && return 0 || return 1
       fi
     elif [[ "${cmd##*.}" = "ps1" ]]; then
       if type powershell >&/dev/null; then
@@ -54,4 +54,3 @@ alias cnf="command_not_found_handle"
 alias command-not-found="command_not_found_handle"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-
