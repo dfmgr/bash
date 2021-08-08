@@ -17,18 +17,21 @@ orig_command_not_found_handle() {
   cmd="$1"
   args="$@"
   printf_red "$1: command not found"
-  if [ "$OS" = "Linux" ] || cmd_exists pkmgr; then
+  if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
     pkmgr silent install "$1" 2>/dev/null 
     if type -P "$1" &>/dev/null; then
       printf_green "$1 has been Installed"
       return 0
     else
-      local possbile="$(pkmgr search $1 | grep ^"$1")"
+      local possibilities="$(pkmgr search $1 | head -n5)"
       printf_red "Can not locate package $1"
-      [ -z "$possbile" ] || echo "$possible" | printf_readline "5"
+      [ -z "$possibilities" ] || echo "$possibilities" | printf_readline "5"
       return 1
     fi
+  else
+    printf_red "Maybe you should try installing $1 with your package manager"
+    return 1
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
