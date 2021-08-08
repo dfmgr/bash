@@ -24,7 +24,9 @@ orig_command_not_found_handle() {
       printf_green "$1 has been Installed"
       return 0
     else
+      local possbile="$(pkmgr search $1 | grep ^"$1")"
       printf_red "Can not locate package $1"
+      [ -z "$possbile" ] || echo "$possible" | printf_readline "5"
       return 1
     fi
   fi
