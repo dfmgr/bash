@@ -15,16 +15,25 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  [ -f ~/.config/bash/aliases/00-default.win ] &&
+  if [ -f ~/.config/misc/shell/aliases/00-default.win ]; then
+    . ~/.config/misc/shell/aliases/00-default.win
+  elif [ -f ~/.config/bash/aliases/00-default.win ]; then
     . ~/.config/bash/aliases/00-default.win
+  fi
   ;;
 Darwin)
-  [ -f ~/.config/bash/aliases/00-default.mac ] &&
+  if [ -f ~/.config/misc/shell/aliases/00-default.mac ]; then
+    . ~/.config/misc/shell/aliases/00-default.mac
+  elif [ -f ~/.config/bash/aliases/00-default.mac ]; then
     . ~/.config/bash/aliases/00-default.mac
+  fi
   ;;
 Linux)
-  [ -f ~/.config/bash/aliases/00-default.lin ] &&
+  if [ -f ~/.config/misc/shell/aliases/00-default.lin ]; then
+    . ~/.config/misc/shell/aliases/00-default.lin
+  elif [ -f ~/.config/bash/aliases/00-default.lin ]; then
     . ~/.config/bash/aliases/00-default.lin
+  fi
   ;;
 *)
   printf '\t\t%s\n' "Unknown OS or OS not supported"
