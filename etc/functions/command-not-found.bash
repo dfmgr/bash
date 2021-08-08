@@ -25,7 +25,7 @@ orig_command_not_found_handle() {
       return 0
     else
       printf_red "Can not locate package $1"
-      local possibilities="$(pkmgr search show-raw "$1" | grep ^"$1" | head -n5)"
+      local possibilities="$(pkmgr search show-raw "$1" | grep -a "^$1" | head -n10 | grep '^')"
       if [ -n "$possibilities" ]; then
         printf_cyan "However, I did find packages matching $1"
         echo "$possibilities" | printf_readline "5"
