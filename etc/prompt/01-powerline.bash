@@ -410,11 +410,14 @@ bashprompt() {
   __title_info() {
     echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
   }
+  # Add all additional pre commands here command
   __pre_prompt_command() {
     local EXIT=$? # Keep this here as it is needed for prompt
+    ___time_it
     ___wakatime_prompt
     return $EXIT
   }
+  # Add all additional post commands here command
   __post_prompt_command() {
     history -a &>/dev/null && history -r &>/dev/null
   }
@@ -457,7 +460,7 @@ bashprompt() {
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-  PROMPT_COMMAND="__pre_prompt_command;___time_it;ps1;title;__post_prompt_command; "
+  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
