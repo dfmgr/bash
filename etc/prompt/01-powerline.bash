@@ -48,11 +48,14 @@ _noprompt_completion() {
 noprompt() {
   if [ $1 = --help ]; then
     printf_blue "Disable prompt messages"
-    printf_blue "lua node ruby python perl git reminder"
+    printf_blue "timer lua node ruby python perl php git reminder"
     return
   fi
   while true; do
     case $1 in
+    timer)
+      touch "$HOME/.config/bash/noprompt/lua"
+      ;;
     lua)
       touch "$HOME/.config/bash/noprompt/lua"
       ;;
@@ -157,6 +160,30 @@ bashprompt() {
     PS_SYMBOL="$PS_SYMBOL_OTHER"
     ;;
   esac
+  ### Timer #######################################################
+  if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
+    ___time_it() { true; }
+    ___time_it_pre() { true; }
+  else
+    ___time_it_pre() {
+      local st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}')
+      if [[ -z "$STARTTIME" || (-n "$STARTTIME" && "$STARTTIME" -ne "$st") ]]; then
+        TIMER_ENDTIME=$EPOCHSECONDS
+        TIMER_STARTTIME=$st
+      else
+        TIMER_ENDTIME=0
+      fi
+    }
+    ___time_it() {
+      ___time_it_pre
+      if ((ENDTIME - STARTTIME >= 0)); then
+        ___time_show() { printf '%ds' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
+      else
+        ___time_show() { true; }
+      fi
+    }
+  fi
+
   ### Ruby #######################################################
   if [ -f "$HOME/.config/bash/noprompt/ruby" ] && [ -z "$(command -v ruby 2>/dev/null)" ]; then
     __ifruby() { true; }
@@ -164,7 +191,7 @@ bashprompt() {
   else
     __ifruby() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [ "$(__find "$gitdir" "1" "-iname *.rb")" -ne 0 ]; then
+      if [ "$(__find "$gitdir" "1" "-iname *.rb -o -name *.gem -o name Gemfile")" -ne 0 ]; then
         if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
           __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
         elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -384,7 +411,7 @@ bashprompt() {
     echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
   }
   __pre_prompt_command() {
-    local EXIT=$? # Kepp this here as it is needed for prompt
+    local EXIT=$? # Keep this here as it is needed for prompt
     ___wakatime_prompt
     return $EXIT
   }
@@ -415,7 +442,7 @@ bashprompt() {
       local PS_SYMBOL=" 😔 "
     fi
     PS_LINE="$(printf -- '%.0s' {4..2000})"
-    PS_FILL="${PS_LINE:0:$((COLUMNS-1))}"
+    PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK\s: \v $RESET"
@@ -428,9 +455,9 @@ bashprompt() {
     PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET\n"
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
-    PS1+="$BG_EXIT${FG_BLACK}Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
+    PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
-  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command "
+  PROMPT_COMMAND="__pre_prompt_command;___time_it;ps1;title;__post_prompt_command; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
