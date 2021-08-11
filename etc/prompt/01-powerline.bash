@@ -399,10 +399,11 @@ bashprompt() {
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
     local bash="Bash: ${BASH_VERSION%.*}"
-    local tmux="$(pidof tmux &>/dev/null && printf 'tmux: %s' "$(tmux -V 2>/dev/null)")"
-    local screen="$(pidof screen &>/dev/null && printf 'Screen: %s' "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]')")"
-    { [ -n "$screen" ] && printf '%s' "$screen" || return 1; } ||
-      { [ -n "$tmux" ] && printf '%s' "$tmux" || return 1; } || printf '%s' "$bash"
+    local tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null)")"
+    local screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]')")"
+    { [ -n "$screen" ] && printf 'screen:%s' "$screen" || false; } ||
+      { [ -n "$tmux" ] && printf 'tmux:%s' "$tmux" || false; } ||
+      printf '%s' "$bash"
   }
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
