@@ -17,7 +17,6 @@ orig_command_not_found_handle() {
   cmd="$1"
   args="$@"
   printf_red "$1: command not found"
-  sudo -n true || ask_for_password true
   if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
     pkmgr silent install "$1" 2>/dev/null
