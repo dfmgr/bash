@@ -398,8 +398,11 @@ bashprompt() {
   fi
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
-    { [ -n "$(pidof screen 2>/dev/null)" ] && screen --version | tr ' ' '\n' | grep -wE '[0-9]' || return; } || 
-      echo "Bash: ${BASH_VERSION%.*}"
+    local bash="Bash: ${BASH_VERSION%.*}"
+    local tmux="$(pidof tmux &>/dev/null && printf 'tmux: %s' "$(tmux -V 2>/dev/null)")"
+    local screen="$(pidof screen &>/dev/null && printf 'Screen: %s' "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]')")"
+    { [ -n "$screen" ] && printf '%s' "$screen" || return 1; } ||
+      { [ -n "$tmux" ] && printf '%s' "$tmux" || return 1; } || printf '%s' "$bash"
   }
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
