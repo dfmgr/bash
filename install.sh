@@ -144,7 +144,6 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
-  local tmpext="$$"
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
   if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
   if [ -f "$HOME/.config/bash/bash_history" ]; then mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.$tmpext"; fi
@@ -160,10 +159,8 @@ run_postinst() {
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
     mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
   elif [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
-    cat "$HOME/.bash_history" | sort -u >>"$HOME/.config/bash/bash_history"
+    cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
     rm_rf "$HOME/.bash_history"
-  elif [ -f "/tmp/bash_history.$tmpext" ]; then
-    cat "/tmp/bash_history.$tmpext" | sort -u > "$HOME/.config/bash/bash_history"
   fi
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
 }
