@@ -8,11 +8,17 @@
 # @Copyright     : Copyright: (c) 2021 casjay, casjay
 # @Created       : Tuesday, Aug 03, 2021 03:05 EDT
 # @File          : luaver.bash
-# @Description   : lua version manager
+# @Description   : luaver plugin
 # @TODO          :
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Setup luaver
-[ -s "$LUAVER_HOME/luaver" ] && . "$LUAVER_HOME/luaver"
-[ -s "$LUAVER_HOME/completions/luaver.bash" ] && . "$LUAVER_HOME/completions/luaver.bash"
+# basher
+if [ -n "$BASH_VERSION" ]; then
+  if [ -f "$LUAVER_HOME/luaver" ]; then
+    . "$LUAVER_HOME/luaver"
+    . "$LUAVER_HOME/completions/luaver.bash"
+  fi
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
