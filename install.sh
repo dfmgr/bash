@@ -58,7 +58,7 @@ REPORAW="$REPO/raw/$REPO_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup plugins
-PLUGNAMES="basher "
+PLUGNAMES=""
 PLUGDIR="${SHARE:-$HOME/.local/share}/$APPNAME"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the dfmgr function
@@ -132,10 +132,10 @@ fi
 # Plugins
 if am_i_online; then
   if [ "$PLUGNAMES" != "" ]; then
-    if [ -d "$PLUGDIR"/basher/.git ]; then
-      execute "git_update $PLUGDIR/basher" "Updating plugin basher"
+    if [ -d "$PLUGDIR/" ]; then
+      execute "git_update $PLUGDIR/" "Updating plugin "
     else
-      execute "git_clone https://github.com/basherpm/basher $PLUGDIR/basher" "Installing plugin basher"
+      execute "git_clone REPO $PLUGDIR/" "Installing plugin "
     fi
   fi
   # exit on fail
