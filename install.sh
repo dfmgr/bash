@@ -161,7 +161,7 @@ run_postinst() {
   elif [ -f "$HOME/.bash_history" ] && [ -e "HOME/.config/bash/bash_history" ]; then
     cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
     rm_rf "$HOME/.bash_history"
-  elif [[ -f "$HOME/.config/bash/bash_history" ]]; then
+  elif [[ -f "/tmp/bash_history.tmp" ]]; then
     mv_f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
