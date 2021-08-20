@@ -15,7 +15,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # asdf
 if [ -n "$BASH_VERSION" ]; then
-  if [ -f "$ASDF_DIR/asdf" ]; then
+  if [ -f "$ASDF_DIR/asdf.sh" ]; then
     . "$ASDF_DIR/asdf.sh"
     . "$ASDF_DIR/completions/asdf.bash"
   fi
