@@ -16,7 +16,7 @@
 # basher
 if [ -n "$BASH_VERSION" ]; then
   if [ -f "$BASHER_ROOT/bin/basher" ]; then
-    eval "$("$BASHER_ROOT/bin/basher" init - bash)"
+    eval "$($BASHER_ROOT/bin/basher init - bash)"
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
