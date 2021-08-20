@@ -145,8 +145,8 @@ fi
 # run post install scripts
 run_postinst() {
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
+  if [ -f "$HOME/.config/bash/bash_history" ]; then mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"; fi
   if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
-  if [ -f "$HOME/.config/bash/bash_history" ]; then mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.$tmpext"; fi
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
     rm_rf "$APPDIR/$file"
   done
@@ -158,9 +158,11 @@ run_postinst() {
   if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
     mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
-  elif [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
+  elif [ -f "$HOME/.bash_history" ] && [ -e "HOME/.config/bash/bash_history" ]; then
     cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
     rm_rf "$HOME/.bash_history"
+  elif [[ -f "$HOME/.config/bash/bash_history" ]]; then
+    mv_f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
 }
