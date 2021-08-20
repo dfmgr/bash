@@ -157,12 +157,12 @@ run_postinst() {
   [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
   if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
-    mv_f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
+    mv -f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
   elif [ -f "$HOME/.bash_history" ] && [ -e "HOME/.config/bash/bash_history" ]; then
     cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
-    rm_rf "$HOME/.bash_history"
+    rm -Rf "$HOME/.bash_history"
   elif [[ -f "/tmp/bash_history.tmp" ]]; then
-    mv_f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
+    mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
   history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
 }
