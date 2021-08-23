@@ -16,8 +16,10 @@
 # basher
 if [ -n "$BASH_VERSION" ]; then
   if [ -f "$LUAVER_HOME/luaver" ]; then
-    . "$LUAVER_HOME/luaver"
-    . "$LUAVER_HOME/completions/luaver.bash"
+    source "$LUAVER_HOME/luaver"
+  fi
+  if [ -f "$LUAVER_HOME/completions/luaver.bash" ]; then
+    source "$LUAVER_HOME/completions/luaver.bash"
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
