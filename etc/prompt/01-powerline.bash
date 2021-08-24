@@ -458,6 +458,9 @@ bashprompt() {
       local BG_EXIT="$BG_RED"
       local PS_SYMBOL=" 😔 "
     fi
+    [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
+    [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
+    
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
     PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}[\t]$RESET"
