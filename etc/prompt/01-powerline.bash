@@ -179,7 +179,7 @@ bashprompt() {
       ___time_it_pre
         [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
         [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
-      if [[ ((TIMER_ENDTIME - TIMER_STARTTIME )) != 0 ]]; then
+      if ((TIMER_ENDTIME - TIMER_STARTTIME >0)); then
         ___time_show() { printf '%ds' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
       else
         ___time_show() { printf 0; }
