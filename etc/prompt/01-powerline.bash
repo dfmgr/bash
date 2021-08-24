@@ -395,6 +395,8 @@ bashprompt() {
         (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
       fi
     }
+  else
+    ___wakatime_prompt() { return; }
   fi
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
