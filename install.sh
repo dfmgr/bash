@@ -126,7 +126,7 @@ if am_i_online; then
     execute "git_clone $REPO $INSTDIR" "Installing $APPNAME configurations"
   fi
   # exit on fail
-  failexitcode $? "Git has failed"
+  failexitcode $? "Failed to download $REPO/$APPNAME to $INSTDIR"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Plugins
@@ -144,7 +144,10 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
-  history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
+  history -r &>/dev/null
+  history -a &>/dev/null
+  history -w &>/dev/null
+  history -a &>/dev/null
   if [ -f "$HOME/.config/bash/bash_history" ]; then mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"; fi
   if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
@@ -164,7 +167,10 @@ run_postinst() {
   elif [[ -f "/tmp/bash_history.tmp" ]]; then
     mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
-  history -r &>/dev/null; history -a &>/dev/null; history -w &>/dev/null; history -a &>/dev/null
+  history -r &>/dev/null
+  history -a &>/dev/null
+  history -w &>/dev/null
+  history -a &>/dev/null
 }
 #
 execute "run_postinst" "Running post install scripts"
