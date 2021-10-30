@@ -382,11 +382,21 @@ bashprompt() {
   ### WakaTime ####################################################
   if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
     ___wakatime_prompt() { return; }
+    ___wakatime_show() { return; }
   elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
+    ___wakatime_show() {
+      local devtime="$(wakatime --today || return)"
+      if [ -n "$devtime" ]; then
+        printf 'Dev Time: %s' "$devtime"
+      else
+        return
+      fi
+    }
     ___wakatime_prompt() {
       local version="1.0.0"
       local entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1)"
       local project=""
+      local devtime="$(wakatime --today || return)"
       if [ -z "$entity" ]; then
         return 0
       else
@@ -479,6 +489,7 @@ bashprompt() {
     PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
     PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
+    PS1+="$BG_CYAN$FG_BLACK$(___wakatime_show)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET\n"
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
