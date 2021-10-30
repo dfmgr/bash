@@ -477,9 +477,10 @@ bashprompt() {
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     
+    PS_DEV_TIME="$(___wakatime_show | wc -c)"
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-10))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show)|[\t]$RESET"
+    PS_TIME="\[\033[\$((COLUMNS-$PS_DEV_TIME-11))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show)/[\t]$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
     PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
