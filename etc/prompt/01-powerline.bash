@@ -404,11 +404,17 @@ bashprompt() {
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
     local bash="Bash: ${BASH_VERSION%.*}"
-    local tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null)")"
-    local screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]')")"
-    { [ -n "$screen" ] && printf 'screen:%s' "$screen" || false; } ||
-      { [ -n "$tmux" ] && printf 'tmux:%s' "$tmux" || false; } ||
+    local tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null | head -n1 | grep '^')")"
+    local screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | head -n1 | grep '^')")"
+    if [ -n "$screen" ]; then
+      printf 'screen:%s' "$screen"
+    elif [ -n "$tmux" ]; then
+      printf 'tmux:%s' "$tmux"
+    elif [ -n "$bash" ]; then
       printf '%s' "$bash"
+    else
+      printf '%s' "$TERM"
+    fi
   }
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
