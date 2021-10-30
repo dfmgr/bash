@@ -396,11 +396,11 @@ bashprompt() {
       local wakatime=""
       local devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        waka_hrs="$(echo "$devtime" | sed 's| hrs.*||g' | awk '{print $1*60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        waka_hrs="$(echo "$devtime" | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
         waka_min="$(echo "$devtime" | awk '{print $3}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        [[ -n "$waka_hrs" ]] || waka_hrs=0
+        [[ -n "$waka_hrs" ]] && waka_hrs=$(($waka_hrs * 60)) || waka_hrs=0
         [[ -n "$waka_min" ]] || waka_min=0
-        wakatime=$((waka_hrs + waka_min / 60))
+        wakatime=$(($waka_hrs + $waka_min / 60))
         printf '[Waka: %s] ' "$wakatime"
       else
         return
