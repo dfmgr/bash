@@ -8,13 +8,13 @@
 # @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
 # @Created       : Thursday, Mar 25, 2021 18:00 EDT
 # @File          : 01-powerline.bash
-# @Description   :
+# @Description   : A highly informative prompt
 # @TODO          :
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Powerline check
-if [ "$POWERLINE" ]; then
+if [ -z "$POWERLINE" ]; then
   #Debian/Ubuntu/Arch
   if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
     source /usr/share/powerline/bindings/bash/powerline.sh
@@ -95,7 +95,7 @@ noprompt() {
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 bashprompt() {
   __tput() { tput "$@" 2>/dev/null; }
-  __find() { find "${1:-./}" -maxdepth "${2:-1}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
+  __find() { find "${1:-./}" -maxdepth "${2:-$1}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
   # Unicode symbols
   PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
   PS_SYMBOL_LINUX=' 🐧 ' >/dev/null
@@ -151,7 +151,7 @@ bashprompt() {
   REVERSE="\[$(__tput rev 2>/dev/null)\]"
   RESET="\[$(__tput sgr0 2>/dev/null)\]"
   BOLD="\[$(__tput bold 2>/dev/null)\]"
-  # what OS?
+  ### what OS #######################################################
   case "$(uname)" in
   Darwin)
     PS_SYMBOL="$PS_SYMBOL_DARWIN"
@@ -391,12 +391,17 @@ bashprompt() {
     ___wakatime_show() { return; }
   elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
     ___wakatime_show() {
-      local devtime="$(wakatime --today || return)"
+      local waka_hrs=""
+      local waka_min=""
+      local wakatime=""
+      local devtime="$(wakatime --today)"
       if [ -n "$devtime" ]; then
-        if builtin type -P bc &>/dev/null; then
-          devtime="$(wakatime --today | sed 's|hrs ||g;s| mins||g' | awk '{print $1*60+$2/60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        fi
-        printf '[Waka: %s] ' "$devtime"
+        waka_hrs="$(echo "$devtime" | sed 's| hrs.*||g' | awk '{print $1*60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        waka_min="$(echo "$devtime" | sed 's| *.min ||g' | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        [[ -n "$waka_hrs" ]] || waka_hrs=0
+        [[ -n "$waka_min" ]] || waka_min=0
+        wakatime=$((waka_hrs + waka_min / 60))
+        printf '[Waka: %s] ' "$wakatime"
       else
         return
       fi
