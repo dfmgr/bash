@@ -500,7 +500,7 @@ bashprompt() {
     PS_SHOW_TIME="$(___time_show | wc -c)"
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-$PS_DEV_TIME-$PS_SHOW_TIME-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show) $(___time_show)$RESET"
+    PS_TIME="\[\033[\$((COLUMNS-${PS_SHOW_WAKA:-0}-${PS_SHOW_TIME:-0}-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show) $(___time_show)$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
     PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
