@@ -54,7 +54,7 @@ noprompt() {
   while true; do
     case $1 in
     timer)
-      touch "$HOME/.config/bash/noprompt/lua"
+      touch "$HOME/.config/bash/noprompt/timer"
       ;;
     lua)
       touch "$HOME/.config/bash/noprompt/lua"
@@ -79,6 +79,12 @@ noprompt() {
       ;;
     reminder)
       touch "$HOME/.config/bash/noprompt/git_reminder"
+      ;;
+    time)
+      touch "$HOME/.config/bash/noprompt/time"
+      ;;
+    wakatime)
+      touch "$HOME/.config/bash/noprompt/waka"
       ;;
     *) break ;;
     esac
@@ -390,7 +396,7 @@ bashprompt() {
         if builtin type -P bc &>/dev/null; then
           devtime="$(wakatime --today | sed 's|hrs ||g;s| mins||g' | awk '{print $1*60+$2/60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
         fi
-        printf 'Waka: %s' "$devtime"
+        printf '[Waka: %s] ' "$devtime"
       else
         return
       fi
@@ -413,6 +419,16 @@ bashprompt() {
     }
   else
     ___wakatime_prompt() { return; }
+  fi
+  #
+  ### Add time ########################################
+  if [ -f "$HOME/.config/bash/noprompt/time" ]; then
+    ___time_show() { return; }
+  else  
+    ___time_show() {
+      local time="$(date '+%H:%M')"
+      printf '[Time: %s] ' "$time"
+    }
   fi
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
@@ -480,10 +496,11 @@ bashprompt() {
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     
-    PS_DEV_TIME="$(___wakatime_show | wc -c)"
+    PS_SHOW_WAKA="$(___wakatime_show | wc -c)"
+    PS_SHOW_TIME="$(___time_show | wc -c)"
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-$PS_DEV_TIME-11))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show)/[\t]$RESET"
+    PS_TIME="\[\033[\$((COLUMNS-$PS_DEV_TIME-$PS_SHOW_TIME-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show) $(___time_show)$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
     PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
