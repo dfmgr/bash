@@ -397,7 +397,7 @@ bashprompt() {
       local devtime="$(wakatime --today)"
       if [ -n "$devtime" ]; then
         waka_hrs="$(echo "$devtime" | sed 's| hrs.*||g' | awk '{print $1*60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        waka_min="$(echo "$devtime" | sed 's| *.min ||g' | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        waka_min="$(echo "$devtime" | awk '{print $3}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
         [[ -n "$waka_hrs" ]] || waka_hrs=0
         [[ -n "$waka_min" ]] || waka_min=0
         wakatime=$((waka_hrs + waka_min / 60))
