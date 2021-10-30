@@ -84,7 +84,7 @@ noprompt() {
       touch "$HOME/.config/bash/noprompt/time"
       ;;
     wakatime)
-      touch "$HOME/.config/bash/noprompt/waka"
+      touch "$HOME/.config/bash/noprompt/wakatime"
       ;;
     *) break ;;
     esac
