@@ -387,7 +387,10 @@ bashprompt() {
     ___wakatime_show() {
       local devtime="$(wakatime --today || return)"
       if [ -n "$devtime" ]; then
-        printf 'Dev Time: %s' "$devtime"
+        if builtin type -P bc &>/dev/null; then
+          devtime="$(wakatime --today | sed 's|hrs ||g;s| mins||g' | awk '{print $1*60+$2/60}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        fi
+        printf 'Waka: %s' "$devtime"
       else
         return
       fi
