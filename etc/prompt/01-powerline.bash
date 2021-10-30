@@ -489,8 +489,7 @@ bashprompt() {
     PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
     PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
     PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
-    PS1+="$BG_CYAN$FG_BLACK$(___wakatime_show)$RESET"
-    PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET\n"
+    PS1+="$BG_PURPLE$FG_BLACK$(___wakatime_show)|${PS_TIME}$RESET\n"
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
