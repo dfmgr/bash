@@ -14,15 +14,16 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 orig_command_not_found_handle() {
-  cmd="$1"
-  args="$@"
+  local cmd="$1"
+  local args="$*"
   printf_red "$1: command not found"
   if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
     pkmgr silent install "$1" 2>/dev/null
     if type -P "$1" &>/dev/null; then
       printf_green "$1 has been Installed"
-      return 0
+      sleep 2
+      eval $cmd $args
     else
       printf_red "Can not locate package $1"
       local possibilities="$(pkmgr search show-raw "$1" | grep -a "^$1" | head -n10 | grep '^')"
