@@ -389,7 +389,7 @@ bashprompt() {
   if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
     ___wakatime_prompt() { return; }
     ___wakatime_show() { return; }
-  elif cmd_exists wakatime && grep -qi api_key "$HOME/.wakatime.cfg"; then
+  elif grep -qi api_key "$HOME/.wakatime.cfg"; then
     ___wakatime_show() {
       local waka_hrs=""
       local waka_min=""
@@ -400,7 +400,7 @@ bashprompt() {
         waka_min="$(echo "$devtime" | awk '{print $3}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
         [[ -n "$waka_hrs" ]] && waka_hrs=$(($waka_hrs * 60)) || waka_hrs=0
         [[ -n "$waka_min" ]] || waka_min=0
-        wakatime=$(($waka_hrs + $waka_min / 60))
+        wakatime=$((waka_hrs + waka_min / 60))
         printf '[Waka: %s] ' "$wakatime"
       else
         return
@@ -408,9 +408,8 @@ bashprompt() {
     }
     ___wakatime_prompt() {
       local version="1.0.0"
-      local entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1)"
+      local entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || return)"
       local project=""
-      local devtime="$(wakatime --today || return)"
       if [ -z "$entity" ]; then
         return 0
       else
