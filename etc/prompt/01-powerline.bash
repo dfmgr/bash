@@ -390,7 +390,8 @@ bashprompt() {
     }
   fi
   ### WakaTime ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -n "$(command -v wakatime-disable 2>/dev/null)" ]|| [ -z "$(command -v wakatime-disable 2>/dev/null)" ]; then
+  #[ -n "$(command -v wakatime-disable 2>/dev/null)" ] ||
+  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime-disable 2>/dev/null)" ]; then
     ___wakatime_prompt() { return; }
     ___wakatime_show() { return; }
   elif grep -qi api_key "$HOME/.wakatime.cfg"; then
@@ -400,11 +401,19 @@ bashprompt() {
       local wakatime=""
       local devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        waka_hrs="$(echo "$devtime" | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        waka_min="$(echo "$devtime" | awk '{print $3}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        [[ -n "$waka_hrs" ]] && waka_hrs=$(($waka_hrs * 60)) || waka_hrs=0
+        waka_hrs="$(echo "$devtime" | awk '{print $1,$2}' | grep hrs | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        if [[ -z "$waka_hrs" ]]; then
+          waka_min="$(echo "$devtime" | awk '{print $1,$2}' | grep min | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        else
+          waka_min="$(echo "$devtime" | awk '{print $3,$4}' | grep min | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
+        fi
         [[ -n "$waka_min" ]] || waka_min=0
-        wakatime=$((waka_hrs + waka_min / 60))
+        if [[ -n "$waka_hrs" ]]; then
+          waka_hrs=$(($waka_hrs * 60)) || waka_hrs=0
+          wakatime=$((waka_hrs + waka_min / 60))
+        else
+          wakatime="$waka_min"
+        fi
         printf '[Waka: %s] ' "$wakatime"
       else
         return
