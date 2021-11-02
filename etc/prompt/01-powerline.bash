@@ -489,8 +489,7 @@ bashprompt() {
   }
   # Add all additional pre commands here command
   __pre_prompt_command() {
-    local EXIT
-    EXIT=$? # Keep this here as it is needed for prompt
+    local EXIT=$? # Keep this here as it is needed for prompt
     ___time_it
     ___wakatime_prompt
     return $EXIT
@@ -514,14 +513,13 @@ bashprompt() {
     ;;
   esac
   ps1() {
-    EXIT=$?
-    local EXIT BG_EXIT PS_SYMBOL
+    local EXIT=$?
     if [ $EXIT -eq 0 ]; then
-      BG_EXIT="$BG_DARK_GREEN"
-      PS_SYMBOL="${PS_SYMBOL:-#}"
+      local BG_EXIT="$BG_DARK_GREEN"
+      local PS_SYMBOL="${PS_SYMBOL:- 😇 }"
     else
-      BG_EXIT="$BG_RED"
-      PS_SYMBOL=" 😔 "
+      local BG_EXIT="$BG_RED"
+      local PS_SYMBOL=" 😔 "
     fi
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
