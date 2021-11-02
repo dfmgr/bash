@@ -390,7 +390,7 @@ bashprompt() {
     }
   fi
   ### WakaTime ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime-disable 2>/dev/null)" ]; then
     ___wakatime_prompt() { return; }
     ___wakatime_show() { return; }
   elif grep -qi api_key "$HOME/.wakatime.cfg"; then
