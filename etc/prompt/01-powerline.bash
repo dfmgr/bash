@@ -264,11 +264,15 @@ bashprompt() {
   else
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ $(__find "$gitdir" "1" "-name *.py") -ne 0 ]]; then
+      if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "1" "-name '*.py' -o -name 'requirements.txt'") -ne 0 ]]; then
         __python_info() {
           local pythonBin="$(command -v python3 || command -v python2 || command -v python)"
           local PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
-          local PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          if [[ "$VIRTUAL_ENV" = "venv" ]]; then
+            local PYTHON_VIRTUALENV="$(basename $(dirname "$VIRTUAL_ENV"))"
+          else
+            local PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          fi
           if [ -n "$PYTHON_VIRTUALENV" ]; then
             printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
           else
