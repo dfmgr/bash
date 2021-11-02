@@ -401,20 +401,21 @@ bashprompt() {
       local wakatime=""
       local devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        waka_hrs="$(echo "$devtime" | awk '{print $1,$2}' | grep hrs | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        if [[ -z "$waka_hrs" ]]; then
-          waka_min="$(echo "$devtime" | awk '{print $1,$2}' | grep min | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        else
-          waka_min="$(echo "$devtime" | awk '{print $3,$4}' | grep min | awk '{print $1}' | sed 's/\(\.[0-9][0-9]\)[0-9]*/\1/g')"
-        fi
-        [[ -n "$waka_min" ]] || waka_min=0
-        if [[ -n "$waka_hrs" ]]; then
-          waka_hrs=$(($waka_hrs * 60)) || waka_hrs=0
-          wakatime=$((waka_hrs + waka_min / 60))
-        else
-          wakatime="$waka_min"
-        fi
-        printf '[Dev Time: %s minutes] ' "$wakatime"
+        # waka_hrs="$(echo "$devtime" | awk '{print $1,$2}' | grep hr | awk '{print $1}')"
+        # if [[ -z "$waka_hrs" ]]; then
+        #   waka_min="$(echo "$devtime" | awk '{print $1,$2}' | grep min | awk '{print $1}')"
+        # else
+        #   waka_min="$(echo "$devtime" | awk '{print $3,$4}' | grep min | awk '{print $1}')"
+        # fi
+        # [[ -n "$waka_min" ]] || waka_min=0
+        # if [[ -n "$waka_hrs" ]]; then
+        #   waka_hrs=$((waka_hrs * 60))
+        #   setwakatime=$((waka_hrs + waka_min / 60))
+        # else
+        #   setwakatime="$waka_min"
+        # fi
+        wakatime="${setwakatime:-$devtime}"
+        printf '[Dev Time: %s] ' "$wakatime"
       else
         return
       fi
