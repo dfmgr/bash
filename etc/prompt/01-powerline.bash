@@ -264,7 +264,7 @@ bashprompt() {
   else
     __ifpython() {
       local gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "1" "-name '*.py' -o -name 'requirements.txt'") -ne 0 ]]; then
+      if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "1" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
         __python_info() {
           local pythonBin="$(command -v python3 || command -v python2 || command -v python)"
           local PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
