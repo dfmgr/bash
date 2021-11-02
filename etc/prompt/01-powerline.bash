@@ -414,7 +414,7 @@ bashprompt() {
         else
           wakatime="$waka_min"
         fi
-        printf '[Waka: %s] ' "$wakatime"
+        printf '[Dev Time: %s minutes] ' "$wakatime"
       else
         return
       fi
