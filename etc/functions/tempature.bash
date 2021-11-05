@@ -20,7 +20,7 @@ celcius2f() {
   fi
   math="$1"
   tf=$(echo "scale=2;((9/5) * $math) + 32" | bc)
-  printf "\t\t$tf\n"
+  printf '\t\t%s\n' "$tf"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 f2celcius() {
@@ -30,7 +30,7 @@ f2celcius() {
   fi
   math="$1"
   tc=$(echo "scale=2;(5/9)*($math-32)" | bc)
-  printf "\t\t$tf\n"
+  printf '\t\t%s\n' "$tf"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
