@@ -202,7 +202,7 @@ bashprompt() {
     __ifruby() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [ "$(__find "$gitdir" "1" "-iname *.rb -o -name *.gem -o name Gemfile")" -ne 0 ]; then
+      if [ "$(__find "$gitdir" "1" "-iname *.rb -o -name *.gem -o -name Gemfile")" -ne 0 ]; then
         if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
           __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
         elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
