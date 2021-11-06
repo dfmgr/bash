@@ -178,7 +178,10 @@ if [[ -z "$(command -v mkpasswd)" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cd() {
-  [ -d "$1" ] || mkdir -p "$1"
+  [[ $# -gt 1 ]] && { printf_red "Usage: cd or cd directory" && return 1; }
+  if [ -n "$1" ] && [ ! -d "$1" ]; then
+    mkdir -p "$1"
+  fi
   builtin cd "$1" || { printf_red "failed to cd into $1" && return 1; }
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
