@@ -80,7 +80,7 @@ printf_custom() {
 printf_read() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
-  while read line; do
+  while read -r line; do
     printf_color "\t\t$line" "$color"
   done
   printf "\n"
@@ -90,7 +90,7 @@ printf_read() {
 printf_readline() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
-  while read line; do
+  while read -r line; do
     printf_color "\t\t$line\n" "$color"
   done
   set +o pipefail
@@ -176,6 +176,11 @@ if [[ -z "$(command -v mkpasswd)" ]]; then
     cat /dev/urandom | tr -dc [:print:] | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
   }
 fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+cd() {
+  [ -d "$1" ] || mkdir -p "$1"
+  builtin cd "$1" || { printf_red "failed to cd into $1" && return 1; }
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # the fuck
 fuck() {

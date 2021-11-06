@@ -49,18 +49,15 @@ alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
 alias cp_rpf='cp --parents -Rfv'
 alias less='less -r'
-alias tmux_ssh='tmux -f '$HOME/.config/tmux/tmux.ssh.conf' new-session -D -A -s ssh'
-alias 755d='find ${1:-.} -type d -exec chmod 755 {} \;'
-alias 755f='find ${1:-.} -type f -exec chmod 755 {} \;'
-alias 644f='find ${1:-.} -type f -exec chmod 644 {} \;'
+alias tmux_ssh='tmux -f "\$HOME/.config/tmux/tmux.ssh.conf" new-session -D -A -s ssh'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # VisualStudio code
-if [ -n "$(command -v code-oss 2>/dev/null)" ]; then 
-alias code='code-oss'
+if [ -n "$(command -v code-oss 2>/dev/null)" ]; then
+  alias code='code-oss'
 elif [ -n "$(command -v code-insiders 2>/dev/null)" ]; then
-alias code='code-insiders'
+  alias code='code-insiders'
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
@@ -105,17 +102,17 @@ alias vis='vim +set si '
 alias svim='sudo vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-[ -f "$(command -v nvim)" ] && [ -f $HOME/.config/neovim/init.vim ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim' || \
-  [ -f "$(command -v nvim)" ] && [ -f $HOME/.config/nvim/init.vim ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim' 
+[ -f "$(command -v nvim)" ] && [ -f $HOME/.config/neovim/init.vim ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim' ||
+  [ -f "$(command -v nvim)" ] && [ -f $HOME/.config/nvim/init.vim ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set docker
-if [ -f "$(command -v docker)" ]; then 
+if [ -f "$(command -v docker)" ]; then
   alias docker='sudo docker '
   alias drun='docker run --rm -it -v "${PWD}":/app -w /app'
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || \
+[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' ||
   alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
@@ -155,7 +152,7 @@ alias open='xdg-open '
 [ -f "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
 [ -f "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
 [ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
-[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || \ 
+[ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' ||
   alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
