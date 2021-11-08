@@ -178,11 +178,12 @@ if [[ -z "$(command -v mkpasswd)" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cd() {
+  local CD_DIR="${*:-$HOME}"
   [[ $# -gt 1 ]] && { printf_red "Usage: cd or cd directory" && return 1; }
-  if [ -n "$1" ] && [ ! -d "$1" ]; then
-    mkdir -p "$1"
+  if [ -n "$CD_DIR" ] && [ ! -d "$CD_DIR" ]; then
+    mkdir -p "$CD_DIR"
   fi
-  builtin cd "$1" || { printf_red "failed to cd into $1" && return 1; }
+  builtin cd "$CD_DIR" || { printf_red "failed to cd into $CD_DIR" && return 1; }
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # the fuck
