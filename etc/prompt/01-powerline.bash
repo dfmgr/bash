@@ -459,11 +459,14 @@ bashprompt() {
   fi
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
-    local bash tmux screen
+    local bash tmux screen byobu
     bash="Bash: ${BASH_VERSION%.*}"
     tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null | head -n1 | grep '^')")"
     screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | head -n1 | grep '^')")"
-    if [ -n "$screen" ]; then
+    byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version | grep byobu | tr ' ' '\n' | grep '[0..9]')")"
+    if [ -n "$byobu" ]; then
+      printf 'byobu:%s' "$byobu"
+    elif [ -n "$screen" ]; then
       printf 'screen:%s' "$screen"
     elif [ -n "$tmux" ]; then
       printf 'tmux:%s' "$tmux"
