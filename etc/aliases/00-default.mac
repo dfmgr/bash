@@ -64,12 +64,12 @@ alias fgrep='grep -F --color=auto'
 [ -f "$(command -v gdircolors 2>/dev/null)" ] && alias dircolors='gdircolors '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
-alias ~='cd ~'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias cd..='cd ..'
+alias ~='builtin cd ~'
+alias ..='builtin cd ..'
+alias ...='builtin cd ../..'
+alias ....='builtin cd ../../..'
+alias .....='builtin cd ../../../..'
+alias cd..='builtin cd ..'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
 [ -f "/usr/local/bin/vim" ] && alias vi='/usr/local/bin/vim'

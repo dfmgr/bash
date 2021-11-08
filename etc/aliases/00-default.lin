@@ -88,12 +88,12 @@ alias ll='ls -l --color=auto '
 alias dir='ls -D --color=auto'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
-alias ~='cd ~'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias cd..='cd ..'
+alias ~='builtin cd ~'
+alias ..='builtin cd ..'
+alias ...='builtin cd ../..'
+alias ....='builtin cd ../../..'
+alias .....='builtin cd ../../../..'
+alias cd..='builtin cd ..'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
 alias vi='vim '
