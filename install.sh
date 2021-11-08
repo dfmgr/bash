@@ -167,6 +167,7 @@ run_postinst() {
   elif [[ -f "/tmp/bash_history.tmp" ]]; then
     mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
+  [[ -f "$HOME/.bashrc" ]] && . "$HOME/.bashrc"
   history -r &>/dev/null
   history -a &>/dev/null
   history -w &>/dev/null
