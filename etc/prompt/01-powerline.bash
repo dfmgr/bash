@@ -48,13 +48,19 @@ _noprompt_completion() {
 noprompt() {
   if [ $1 = --help ]; then
     printf_blue "Disable prompt messages"
-    printf_blue "timer lua node ruby python perl php git reminder"
+    printf_blue "timer date wakatime lua node ruby python perl php git reminder go rust"
     return
   fi
   while true; do
     case $1 in
     timer)
       touch "$HOME/.config/bash/noprompt/timer"
+      ;;
+    rust)
+      touch "$HOME/.config/bash/noprompt/rust"
+      ;;
+    go)
+      touch "$HOME/.config/bash/noprompt/go"
       ;;
     lua)
       touch "$HOME/.config/bash/noprompt/lua"
@@ -117,6 +123,8 @@ bashprompt() {
   PHP_SYMBOL=' ♻️ ' 2>/dev/null
   PERL_SYMBOL=' ☢️ ' 2>/dev/null
   LUA_SYMBOL=' ⚠️ ' 2>/dev/null
+  GO_SYMBOL=' 👺 ' 2>/dev/null
+  RUST_SYMBOL=' 🏗 ' 2>/dev/null
 
   # Foreground Colors
   FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
@@ -199,9 +207,57 @@ bashprompt() {
       fi
     }
   fi
+  ### Rust #######################################################
+  if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(command -v rustc 2>/dev/null)" ]; then
+    __ifrust() { true; }
+    __rust_info() { true; }
+  else
+    __ifrust() {
+      local gitdir version
+      gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+      if [[ "$(__find "$gitdir" "-iname *.rs -o -iname *.rlib")" -ne 0 ]]; then
+        if [ -f "$(command -v rustc 2>/dev/null)" ]; then
+          __rust_version() { printf "%s" "Rust: $(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
+        else
+          __rust_version() { return; }
+        fi
+        __rust_info() {
+          version="$(__rust_version)"
+          [ -z "${version}" ] && return
+          printf "%s" "| ${version}$RUST_SYMBOL$RESET"
+        }
+      else
+        __rust_info() { return; }
+      fi
+    }
+  fi
+  ### GO #######################################################
+  if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(command -v go 2>/dev/null)" ]; then
+    __ifgo() { true; }
+    __go_info() { true; }
+  else
+    __ifgo() {
+      local gitdir version
+      gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+      if [[ "$(__find "$gitdir" "-iname *.go")" -ne 0 ]]; then
+        if [ -f "$(command -v go 2>/dev/null)" ]; then
+          __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
+        else
+          __go_version() { return; }
+        fi
+        __go_info() {
+          version="$(__go_version)"
+          [ -z "${version}" ] && return
+          printf "%s" "| ${version}$GO_SYMBOL$RESET"
+        }
+      else
+        __go_info() { return; }
+      fi
+    }
+  fi
 
   ### Ruby #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/ruby" ] && [ -z "$(command -v ruby 2>/dev/null)" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(command -v ruby 2>/dev/null)" ]; then
     __ifruby() { true; }
     __ruby_info() { true; }
   else
@@ -546,7 +602,9 @@ bashprompt() {
     PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
     PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
-    PS1+="$BG_CYAN$FG_BLACK$(__ifgit && __git_info)$RESET"
+    PS1+="$BG_RED$FG_BLACK$(__ifrust && __rust_info)$RESET"
+    PS1+="$BG_YELLOW$FG_BLACK$(__ifgo && __go_info)$RESET"
+    PS1+="$BG_DARK_RED$FG_BLACK$(__ifgit && __git_info)$RESET"
     PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET\n"
     PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
