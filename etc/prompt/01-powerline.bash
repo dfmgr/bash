@@ -94,8 +94,14 @@ noprompt() {
 }
 # Borrowed and customized from https://github.com/riobard/bash-powerline
 bashprompt() {
+  printf_return() { return; }
+  __find() {
+    local dir="${1:-.}" && shift 1
+    local args="$*"
+    printf_return "$args"
+    find "${dir:-./}" -type l,f -maxdepth 1 ${*:-} -not -path "${dir:-./}/.git/*" 2>/dev/null | wc -l
+  }
   __tput() { tput "$@" 2>/dev/null; }
-  __find() { find "${1:-./}" -maxdepth "${2:-$1}" ${3:-} -not -path "${1:-./}/.git/*" -type l,f 2>/dev/null | wc -l; }
   # Unicode symbols
   PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
   PS_SYMBOL_LINUX=' 🐧 ' >/dev/null
@@ -202,7 +208,7 @@ bashprompt() {
     __ifruby() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [ "$(__find "$gitdir" "1" "-iname *.rb -o -name *.gem -o -name Gemfile")" -ne 0 ]; then
+      if [[ "$(__find "$gitdir" "-iname *.gem -o -iname *.rb -o -name Gemfile")" -ne 0 ]]; then
         if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
           __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
         elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -230,7 +236,7 @@ bashprompt() {
     __ifnode() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.js -o -name package.json -o -name yarn.lock")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "-iname *.js -o -name package.json -o -name yarn.lock")" -ne 0 ]]; then
         if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
           [[ "$(nvm current)" != "system" ]]; then
           __node_version() { printf "%s" "$(node --version)"; }
@@ -268,7 +274,7 @@ bashprompt() {
     __ifpython() {
       local gitdir pythonBin PYTHON_VERSION
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ -n "$VIRTUAL_ENV" ]] || [[ -f "$gitdir/venv/bin/activate" ]] || [[ $(__find "$gitdir" "1" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
+      if [[ -n "$VIRTUAL_ENV" ]] || [[ -f "$gitdir/venv/bin/activate" ]] || [[ $(__find "$gitdir" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
         __python_info() {
           if [[ -f "$gitdir/venv/bin/activate" ]] && [[ -z "$VIRTUAL_ENV" ]]; then
             source "$gitdir/venv/bin/activate"
@@ -299,7 +305,7 @@ bashprompt() {
     __ifphp() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.php*")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "-iname *.php*")" -ne 0 ]]; then
         __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
       else
         __php_version() { return; }
@@ -319,7 +325,7 @@ bashprompt() {
     __ifperl() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.pl* -o -iname *.cgi")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "-iname *.pl* -o -iname *.cgi")" -ne 0 ]]; then
         __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
       else
         __perl_version() { return; }
@@ -339,7 +345,7 @@ bashprompt() {
     __iflua() {
       local gitdir version
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-      if [[ "$(__find "$gitdir" "1" "-iname *.lua")" -ne 0 ]]; then
+      if [[ "$(__find "$gitdir" "-iname *.lua")" -ne 0 ]]; then
         luaversion="$(lua -v 2>&1)"
         __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
       else
