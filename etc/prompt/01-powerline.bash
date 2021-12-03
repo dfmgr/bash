@@ -27,7 +27,7 @@ if [ -z "$POWERLINE" ]; then
   if [ -f /usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh ]; then
     source /usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh
   fi
-  powerline-daemon -q
+  [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ] && powerline-daemon -q
   export POWERLINE_BASH_CONTINUATION=1
   export POWERLINE_BASH_SELECT=1
 fi
