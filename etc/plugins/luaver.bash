@@ -13,7 +13,8 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# basher
+# luaver
+type -P luaver &>/dev/null && return
 if [ -n "$BASH_VERSION" ]; then
   if [ -f "$LUAVER_HOME/luaver" ]; then
     source "$LUAVER_HOME/luaver"
