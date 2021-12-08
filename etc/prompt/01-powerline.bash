@@ -468,24 +468,11 @@ bashprompt() {
     ___wakatime_show() { return; }
   elif grep -qi api_key "$HOME/.wakatime.cfg"; then
     ___wakatime_show() {
-      local waka_hrs waka_min wakatime devtime
+      local devtime
       devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        # waka_hrs="$(echo "$devtime" | awk '{print $1,$2}' | grep hr | awk '{print $1}')"
-        # if [[ -z "$waka_hrs" ]]; then
-        #   waka_min="$(echo "$devtime" | awk '{print $1,$2}' | grep min | awk '{print $1}')"
-        # else
-        #   waka_min="$(echo "$devtime" | awk '{print $3,$4}' | grep min | awk '{print $1}')"
-        # fi
-        # [[ -n "$waka_min" ]] || waka_min=0
-        # if [[ -n "$waka_hrs" ]]; then
-        #   waka_hrs=$((waka_hrs * 60))
-        #   setwakatime=$((waka_hrs + waka_min / 60))
-        # else
-        #   setwakatime="$waka_min"
-        # fi
-        wakatime="${setwakatime:-$devtime}"
-        printf '[Dev Time: %s] ' "$wakatime"
+        WAKA_PROMPT_MESSAGE="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}")"
+        WAKA_PROMPT_COUNT="${#WAKA_PROMPT_MESSAGE}"
       else
         return
       fi
@@ -514,9 +501,8 @@ bashprompt() {
     ___date_show() { return; }
   else
     ___date_show() {
-      local time
-      time="$(date '+%H:%M')"
-      printf '[Time: %s] ' "$time"
+      DATETIME_PROMPT_MESSAGE="$(printf '[Time: %s]' "$(date '+%H:%M')")"
+      DATETIME_PROMPT_COUNT="${#DATETIME_PROMPT_MESSAGE}"
     }
   fi
   ### Add bash/screen/tmux version ########################################
@@ -588,12 +574,11 @@ bashprompt() {
     fi
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
-
-    PS_SHOW_WAKA="$(___wakatime_show | wc -c)"
-    PS_SHOW_TIME="$(___date_show | wc -c)"
+    ___date_show
+    ___wakatime_show
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-${PS_SHOW_WAKA:-0}-${PS_SHOW_TIME:-0}-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}$(___wakatime_show)$(___date_show)$RESET"
+    PS_TIME="\[\033[\$((COLUMNS-${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT_MESSAGE} ${DATETIME_PROMPT_MESSAGE}$RESET"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
     PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
