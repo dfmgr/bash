@@ -188,7 +188,7 @@ bashprompt() {
     ___time_it_pre() {
       local st
       st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}')
-      if [[ -z "$STARTTIME" || (-n "$STARTTIME" && "$STARTTIME" -ne "$st") ]]; then
+      if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
         TIMER_ENDTIME=${EPOCHSECONDS:-1}
         TIMER_STARTTIME=${st:-0}
       else
