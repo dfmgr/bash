@@ -35,11 +35,14 @@ fi
 _noprompt_completion() {
   local cur prev words cword ARRAY
   cur="${COMP_WORDS[COMP_CWORD]}"
-  ARRAY="--help lua node ruby python perl git reminder"
+  ARRAY="--help timer date wakatime lua node ruby python perl php git reminder go rust"
   _init_completion || return
   case $prev in
+  --help)
+    COMPREPLY=($(compgen -W '' -- ${cur}))
+    ;;
   *)
-    COMPREPLY=($(compgen -W '$ARRAY' -- "$cur"))
+    COMPREPLY=($(compgen -W '${ARRAY}' -- "$cur"))
     return 0
     ;;
   esac
@@ -52,49 +55,63 @@ noprompt() {
     return
   fi
   while true; do
-    case $1 in
+    case "$1" in
     timer)
+      shift 1
       touch "$HOME/.config/bash/noprompt/timer"
       ;;
     rust)
+      shift 1
       touch "$HOME/.config/bash/noprompt/rust"
       ;;
     go)
+      shift 1
       touch "$HOME/.config/bash/noprompt/go"
       ;;
     lua)
+      shift 1
       touch "$HOME/.config/bash/noprompt/lua"
       ;;
     node)
+      shift 1
       touch "$HOME/.config/bash/noprompt/node"
       ;;
     ruby)
+      shift 1
       touch "$HOME/.config/bash/noprompt/ruby"
       ;;
     perl)
+      shift 1
       touch "$HOME/.config/bash/noprompt/perl"
       ;;
     python)
+      shift 1
       touch "$HOME/.config/bash/noprompt/python"
       ;;
     php)
+      shift 1
       touch "$HOME/.config/bash/noprompt/php"
       ;;
     git)
+      shift 1
       touch "$HOME/.config/bash/noprompt/git"
       ;;
     reminder)
+      shift 1
       touch "$HOME/.config/bash/noprompt/git_reminder"
       ;;
     date)
+      shift 1
       touch "$HOME/.config/bash/noprompt/date"
       ;;
     wakatime)
+      shift 1
       touch "$HOME/.config/bash/noprompt/wakatime"
       ;;
-    *) break ;;
+    *)
+      break
+      ;;
     esac
-    shift
   done
   return
 }
@@ -200,7 +217,7 @@ bashprompt() {
       ___time_it_pre
       [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
       [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
-      if ((TIMER_ENDTIME - TIMER_STARTTIME > 0)); then
+      if ((TIMER_ENDTIME - TIMER_STARTTIME > 1)); then
         ___time_show() { printf '%ds' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
       else
         ___time_show() { printf 0; }

@@ -38,11 +38,11 @@ else
   pathmunge /sbin after
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-HOSTNAME=$(/bin/hostname 2>/dev/null)
+HOSTNAME=$(/bin/hostname 2>/dev/null || hostname 2>/dev/null)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-HISTSIZE=1000
-HISTCONTROL=ignoredups:erasedups
-HISTIGNORE="[bf]g:exit:pwd:clear:q:!"
+HISTSIZE=${HISTSIZE:-1000}
+HISTCONTROL="${HISTCONTROL:-ignoredups:erasedups}"
+HISTIGNORE="${HISTIGNORE:-[bf]g:exit:pwd:clear:q:!}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export PATH USER LOGNAME MAIL MAILDIR HOSTNAME HISTSIZE HISTCONTROL GPG_TTY TERM
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
