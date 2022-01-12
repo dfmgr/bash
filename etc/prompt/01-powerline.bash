@@ -43,7 +43,6 @@ _noprompt_completion() {
     ;;
   *)
     COMPREPLY=($(compgen -W '${array}' -- "$cur"))
-    return 0
     ;;
   esac
 }
