@@ -81,10 +81,11 @@ noprompt() {
 bashprompt() {
   printf_return() { return; }
   __find() {
-    local dir args
-    [ -d "$1" ] && dir="$1" && shift 1
-    [ $# -eq 0 ] || args="$*" && shift $#
-    find "$dir" -type l,f -maxdepth 1 $arg -not -path "$dir/.git/*" 2>/dev/null | wc -l
+    local dir="$PWD"
+    local args=""
+    [[ -d "$1" ]] && dir="$1" && shift 1
+    [ $# -eq 0 ] && return || args="$*"
+    find "$dir" -type l,f -maxdepth 1 ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
   }
 
   # Unicode symbols
