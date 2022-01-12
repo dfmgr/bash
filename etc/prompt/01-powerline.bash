@@ -11,7 +11,7 @@
 # @Description   : A highly informative prompt
 # @TODO          : Refactor this to be more efficient
 # @Other         :
-# @Resource      :
+# @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Powerline check
 if [ -z "$POWERLINE" ]; then
@@ -77,7 +77,7 @@ noprompt() {
   done
   return
 }
-# Borrowed and customized from https://github.com/riobard/bash-powerline
+# Initialize prompt
 bashprompt() {
   printf_return() { return; }
   __find() {
