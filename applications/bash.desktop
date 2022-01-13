@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+Exec=bash -l
+Name=bash
+Icon=bash
+Categories=ConsoleOnly;System;
