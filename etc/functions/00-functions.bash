@@ -167,13 +167,13 @@ fi
 # generate random strings
 if [[ -z "$(command -v random-string)" ]]; then
   random-string() {
-    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1
+    cat '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [[ -z "$(command -v mkpasswd)" ]]; then
   mkpasswd() {
-    cat /dev/urandom | tr -dc [:print:] | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
+    cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
