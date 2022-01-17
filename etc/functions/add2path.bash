@@ -18,7 +18,7 @@ _add2path_completion() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
-  opts="--help --remove --add"
+  opts="--help --remove --add --list"
   paths="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$')"
   if [[ ${prev} == '--help' ]]; then
     COMPREPLY=($(compgen -W '' -- ${cur}))
@@ -37,18 +37,16 @@ complete -F _add2path_completion add2path
 
 add2path() {
   __help() {
-    printf "\t\t%sOptions: add2path [--help] [--remove] [--list]%s\n" "${red}" "${reset}"
-    printf "\t\t%sUsage: add2path [options] [directory]%s\n" "${red}" "${reset}"
+    printf "\t\t${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}\n"
+    printf "\t\t${green}Usage: add2path [options] [directory]${reset}\n"
   }
-  local a=""
-  local i=""
-  local d=""
-  local p=""
+  local dir=""
+  local args=""
+  local path=""
   local red="\033[0;31m"
   local green="\033[0;32m"
   local reset="\033[0m"
   local args=""
-  [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
   if [[ $1 = '--add' ]]; then
     shift 1
   elif [[ $1 = '--list' ]]; then
@@ -58,51 +56,48 @@ add2path() {
   fi
   if [[ $1 = 'remove' ]] || [[ $1 = '--remove' ]] || [[ $1 = 'delete' ]] || [[ $1 = '--delete' ]]; then
     shift 1
-    for a in "$@"; do
-      d="$(realpath "$a" 2>/dev/null)"
-      if [[ -d "$d" ]]; then
-        p="$d"
+    [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
+    for args in "$@"; do
+      [[ "$args" = '.' ]] && args=""
+      if [[ -n "$args" ]]; then
+        if [[ -n "$args" ]] && echo "$PATH" | tr ':' '\n' | grep -qsx "$args" &>/dev/null; then
+          path="$(echo "$PATH" | tr ':' '\n' | grep -v '^$' | grep -vsx "$args" | tr '\n' ':')"
+          export PATH="$path"
+          printf "\t\t${green}Deleted %s from PATH ${reset}\n" "$args"
+        else
+          printf "\t\t${red}%s was not not found in PATH ${reset}\n" "$args"
+        fi
       else
-        p="$(dirname "$d")"
-      fi
-      [[ -n "$p" ]] || continue
-      if echo "$PATH" | tr ':' '\n' | grep -sqw "$d" &>/dev/null; then
-        p="$(echo "$PATH" | tr ':' '\n' | grep -v "$d" | grep -v '^$' | tr '\n' ':')"
-        export PATH="$p"
-        printf "\t\t${green}Deleted %s from PATH ${reset}\n" "$p"
-      else
-        printf "\t\t${red}%s not found in PATH ${reset}\n" "$p"
+        printf "\t\t${red}An error has occured %s${reset}\n" "$args"
       fi
     done
   else
+    [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
     while :; do
-      echo "$@" | grep -q '\-' &>/dev/null && break
-      [[ $1 = -* ]] && shift 1 && echo 'Do not provide any arguments'
+      echo -e "$@" | grep -q '\-' &>/dev/null || break
+      [[ "$*" = -* ]] && shift 1 && echo 'Do not provide any arguments'
     done
-    for a in "$@"; do
-      d="$(realpath "$a" 2>/dev/null)"
-      if [[ -d "$d" ]]; then
-        p="$d"
-        if [[ -n "$p" ]]; then
-          if echo "$PATH" | tr ':' '\n' | grep -sqw "$p" &>/dev/null; then
-            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$p"
-          else
-            export PATH="$p:$PATH"
-            printf "\t\t${green}Added %s to PATH ${reset}\n" "$p"
-          fi
+    for args in "$@"; do
+      [[ "$args" = '.' ]] && args=""
+      if [[ -n "$args" ]]; then
+        if [[ -d "$args" ]]; then
+          dir="$args"
+        elif [[ -f "$args" ]]; then
+          dir="$(dirname "$args" 2>/dev/null || echo '')"
         fi
-      elif [[ -e "$d" ]]; then
-        p="$(dirname "$i")"
-        if [[ -n "$p" ]]; then
-          if echo "$PATH" | tr ':' '\n' | grep -sqw "$p" &>/dev/null; then
-            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$p"
+        if [[ -d "$dir" ]]; then
+          if echo "$PATH" | tr ':' '\n' | grep -qsx "$dir" &>/dev/null; then
+            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$args"
           else
-            export PATH="$p:$PATH"
-            printf "\t\t${green}Added %s to PATH ${reset}\n" "$p"
+            path="$dir:$PATH"
+            export PATH="$path"
+            printf "\t\t${green}Added %s to your path ${reset}\n" "$dir"
           fi
         else
-          printf "\t\t${red}%s does not exist ${reset}\n" "$p"
+          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
         fi
+      else
+        printf "\t\t${red}An error has occured %s${reset}\n" "$args"
       fi
     done
   fi
