@@ -36,7 +36,7 @@ _noprompt_completion() {
   local cur prev words cword array shortopts longopts
   cur="${COMP_WORDS[COMP_CWORD]}"
   shortopts="-e -s -d"
-  longopts="--enable --show --disable --help"
+  longopts="--enable --show --disable --help --disable-all --enable-all"
   array="date git go lua node path perl php python reminder ruby rust timer wakatime"
   _init_completion || return
   if [[ ${cur} == --* ]]; then
@@ -60,7 +60,8 @@ noprompt() {
   local action="touch"
   local message="Disabled"
   local shortopts="e,s,d"
-  local longopts="enable,show,disable,help"
+  local longopts="enable,show,disable,help,disable-all,enable-all"
+  local array="date git go lua node path perl php python reminder ruby rust timer wakatime"
   setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
   eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
@@ -75,7 +76,29 @@ noprompt() {
       ;;
     --help)
       printf_blue "Disable prompt messages"
-      printf_blue "date git go lua node path perl php python reminder ruby rust timer wakatime"
+      printf_blue "${array}"
+      return
+      ;;
+    --disable-all)
+      for f in ${array}; do
+        printf_blue "Disabled ${f}"
+        touch "$HOME/.config/bash/noprompt/$f"
+      done
+      if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+        exec bash -s "${BASH_SOURCE[0]}"
+      fi
+      return
+      ;;
+    --enable-all)
+      for f in ${array}; do
+        printf_blue "Enabled ${f}"
+        [[ -f "$HOME/.config/bash/noprompt/$f" ]] && rm -Rf "$HOME/.config/bash/noprompt/$f"
+      done
+      if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+        exec bash -s "${BASH_SOURCE[0]}"
+      fi
       return
       ;;
     --)
@@ -84,6 +107,7 @@ noprompt() {
       ;;
     esac
   done
+  [[ $# -eq 0 ]] && return
   while :; do
     case "$1" in
     date | time) $action "$HOME/.config/bash/noprompt/date" ;;
@@ -200,6 +224,7 @@ bashprompt() {
   if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
     ___time_it() { return; }
     ___time_it_pre() { return; }
+    ___time_show() { return; }
   else
     ___time_it_pre() {
       local st
