@@ -525,6 +525,13 @@ bashprompt() {
     local EXIT=$? # Keep this here as it is needed for prompt
     ___time_it
     ___wakatime_prompt
+    if [[ -d "$PWD/bin" ]] && [[ -z "$RESET_PATH" ]]; then
+      export RESET_PATH="$PATH"
+      export PATH="$PWD/bin:$RESET_PATH"
+    else
+      [[ -z "$RESET_PATH" ]] || export PATH="$RESET_PATH"
+      unset RESET_PATH
+    fi
     return $EXIT
   }
   # Add all additional post commands here command
@@ -554,8 +561,9 @@ bashprompt() {
       local BG_EXIT="$BG_RED"
       local PS_SYMBOL=" 😔 "
     fi
-    [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
+    [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
+
     ___date_show
     ___wakatime_show
     PS_LINE="$(printf -- '%.0s' {4..2000})"
