@@ -67,7 +67,6 @@ noprompt() {
     case "$1" in
     --enable | --show | -e | -s)
       shift 1
-      echo -e "$@"
       action="rm -Rf"
       message="Enabled"
       ;;
@@ -106,7 +105,10 @@ noprompt() {
     shift 1
     [[ $# -ne 0 ]] || break
   done
-  exec bash -l
+  if [[ -f "${BASH_SOURCE[0]}" ]]; then
+    printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+    source "${BASH_SOURCE[0]}"
+  fi
   return
 }
 # Initialize prompt
@@ -238,7 +240,7 @@ bashprompt() {
         __rust_info() {
           version="$(__rust_version)"
           [ -z "${version}" ] && return
-          printf "%s" "| ${version}$RUST_SYMBOL$RESET"
+          printf "%s" "${version}$RUST_SYMBOL$RESET"
         }
       else
         __rust_info() { return; }
@@ -384,7 +386,7 @@ bashprompt() {
       __php_info() {
         version=$(__php_version)
         [ -z "$version" ] && return
-        printf "%s" "| PHP: $version$PHP_SYMBOL$RESET"
+        printf "%s" "| PHP: ${version}${PHP_SYMBOL}${RESET}"
       }
     }
   fi
@@ -486,8 +488,8 @@ bashprompt() {
       local devtime
       devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        WAKA_PROMPT="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}") "
-        WAKA_PROMPT_COUNT="${#WAKA_PROMPT_MESSAGE}"
+        WAKA_PROMPT="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}")"
+        WAKA_PROMPT_COUNT="${#WAKA_PROMPT}"
         WAKA_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT}${RESET} "
       else
         return
@@ -517,29 +519,30 @@ bashprompt() {
     ___date_show() { return; }
   else
     ___date_show() {
-      DATETIME_PROMPT="$(printf '[Time: %s]' "$(date '+%H:%M')") "
+      DATETIME_PROMPT="$(printf '[Time: %s]' "$(date '+%H:%M')")"
       DATETIME_PROMPT_COUNT="${#DATETIME_PROMPT}"
-      DATETIME_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${DATETIME_PROMPT}${RESET} "
+      DATETIME_PROMPT_MESSAGE=" ${RESET}${BG_PURPLE}${FG_BLACK}${DATETIME_PROMPT}${RESET}"
     }
   fi
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
-    local bash tmux screen byobu
+    local bash tmux screen byobu shell
     bash="Bash: ${BASH_VERSION%.*}"
     tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null | head -n1 | grep '^')")"
     screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | head -n1 | grep '^')")"
     byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version | grep byobu | tr ' ' '\n' | grep '[0..9]')")"
     if [ -n "$byobu" ]; then
-      printf 'byobu:%s' "$byobu"
+      shell="$byobu"
     elif [ -n "$screen" ]; then
-      printf 'screen:%s' "$screen"
+      shell="$screen"
     elif [ -n "$tmux" ]; then
-      printf 'tmux:%s' "$tmux"
+      shell="$tmux"
     elif [ -n "$bash" ]; then
-      printf '%s' "$bash"
+      shell="$bash"
     else
-      printf '%s' "$TERM"
+      shell="$(basename ${TERM:-$SHELL})"
     fi
+    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
   }
   ### Add bin to path ########################################
   ___add_bin_path() {
@@ -605,24 +608,24 @@ bashprompt() {
 
     ___date_show
     ___wakatime_show
-    DATETIME_PROMPT_MESSAGE=""
+    COLUMNS_COUNT="${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1"
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1))G\]${WAKA_PROMPT_MESSAGE}${DATETIME_PROMPT_MESSAGE}"
+    PS_TIME="\[\033[\$((COLUMNS-${COLUMNS_COUNT}))G\]${WAKA_PROMPT_MESSAGE}${DATETIME_PROMPT_MESSAGE}"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
-    PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
-    PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
-    PS1+="$BG_DARK_RED$FG_GRAY1$(__ifruby && __ruby_info)$RESET"
-    PS1+="$BG_DEEP_GREEN$FG_GRAY1$(__ifnode && __node_info)$RESET"
-    PS1+="$BG_RED$FG_BLACK$(__ifpython && __python_info)$RESET"
-    PS1+="$BG_PURPLE$FG_BLACK$(__ifperl && __perl_info)$RESET"
-    PS1+="$BG_MAGENTA$FG_BLACK$(__iflua && __lua_info)$RESET"
-    PS1+="$BG_RED$FG_BLACK$(__ifrust && __rust_info)$RESET"
-    PS1+="$BG_YELLOW$FG_BLACK$(__ifgo && __go_info)$RESET"
-    PS1+="$BG_DARK_RED$FG_BLACK$(__ifgit && __git_info)$RESET"
-    PS1+="$BG_PURPLE$FG_BLACK${PS_TIME}$RESET\n"
-    PS1+="$BG_GRAY2$FG_BLACK\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
-    PS1+="$BG_EXIT${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
+    PS1+="$(__prompt_version)"
+    PS1+="${BG_PURPLE}${FG_GRAY1}$(__ifphp && __php_info)${RESET}"
+    PS1+="${BG_DARK_RED}${FG_GRAY1}$(__ifruby && __ruby_info)${RESET}"
+    PS1+="${BG_DEEP_GREEN}$FG_GRAY1$(__ifnode && __node_info)${RESET}"
+    PS1+="${BG_RED}${FG_BLACK}$(__ifpython && __python_info)${RESET}"
+    PS1+="${BG_PURPLE}${FG_BLACK}$(__ifperl && __perl_info)${RESET}"
+    PS1+="${BG_MAGENTA}${FG_BLACK}$(__iflua && __lua_info)${RESET}"
+    PS1+="${BG_RED}${FG_BLACK}$(__ifrust && __rust_info)${RESET}"
+    PS1+="${BG_YELLOW}${FG_BLACK}$(__ifgo && __go_info)${RESET}"
+    PS1+="${BG_DARK_RED}${FG_BLACK}$(__ifgit && __git_info)${RESET}"
+    PS1+="${BG_PURPLE}${FG_BLACK}${PS_TIME}$RESET\n"
+    PS1+="${BG_GRAY2}${FG_BLACK}\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
+    PS1+="${BG_EXIT}${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
   PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
