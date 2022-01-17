@@ -238,11 +238,12 @@ bashprompt() {
       fi
     }
     ___time_it() {
+      [ -f "$HOME/.config/bash/noprompt/timer" ] && return
       ___time_it_pre
       [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
       [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
       if ((TIMER_ENDTIME - TIMER_STARTTIME > 1)); then
-        ___time_show() { printf '%ds' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
+        ___time_show() { printf '[Time: %ds]' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
       else
         ___time_show() { printf 0; }
       fi
@@ -650,7 +651,7 @@ bashprompt() {
     PS1+="${BG_DARK_RED}${FG_BLACK}$(__ifgit && __git_info)${RESET}"
     PS1+="${BG_PURPLE}${FG_BLACK}${PS_TIME}$RESET\n"
     PS1+="${BG_GRAY2}${FG_BLACK}\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
-    PS1+="${BG_EXIT}${FG_BLACK}Time:[$(___time_show)] Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
+    PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL:$RESET "
   }
   PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
