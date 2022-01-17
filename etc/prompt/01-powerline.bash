@@ -33,43 +33,61 @@ if [ -z "$POWERLINE" ]; then
 fi
 # noprompt completion
 _noprompt_completion() {
-  local cur prev words cword array
+  local cur prev words cword array shortopts longopts
   cur="${COMP_WORDS[COMP_CWORD]}"
-  array="--help --show date git go lua node path perl php python reminder ruby rust timer wakatime"
+  shortopts="-e -s -d"
+  longopts="--enable --show --disable --help"
+  array="date git go lua node path perl php python reminder ruby rust timer wakatime"
   _init_completion || return
-  case $prev in
-  --help)
-    COMPREPLY=($(compgen -W '' -- ${cur}))
-    ;;
-  *)
-    COMPREPLY=($(compgen -W '${array}' -- "$cur"))
-    ;;
-  esac
+  if [[ ${cur} == --* ]]; then
+    COMPREPLY=($(compgen -W '${longopts}' -- ${cur}))
+  elif [[ ${cur} == -* ]]; then
+    COMPREPLY=($(compgen -W '${shortopts}' -- ${cur}))
+  else
+    case $prev in
+    --help)
+      COMPREPLY=($(compgen -W '' -- ${cur}))
+      ;;
+    *)
+      COMPREPLY=($(compgen -W '${array}' -- "$cur"))
+      ;;
+    esac
+  fi
 }
 # Disable prompt versions
 noprompt() {
+  local setopts=""
   local action="touch"
   local message="Disabled"
-  case "$@" in
-  --enable | --show)
-    shift 1
-    echo -e "$@"
-    action="rm -Rf"
-    message="Enabled"
-    ;;
-  --disable)
-    shift 1
-    ;;
-  --help)
-    printf_blue "Disable prompt messages"
-    printf_blue "date git go lua node path perl php python reminder ruby rust timer wakatime"
-    return
-    ;;
-  -*) shift 1 ;;
-  esac
+  local shortopts="e,s,d"
+  local longopts="enable,show,disable,help"
+  setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
+  eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
     case "$1" in
-    date) $action "$HOME/.config/bash/noprompt/date" ;;
+    --enable | --show | -e | -s)
+      shift 1
+      echo -e "$@"
+      action="rm -Rf"
+      message="Enabled"
+      ;;
+    --disable | -d)
+      shift 1
+      ;;
+    --help)
+      printf_blue "Disable prompt messages"
+      printf_blue "date git go lua node path perl php python reminder ruby rust timer wakatime"
+      return
+      ;;
+    --)
+      shift 1
+      break
+      ;;
+    esac
+  done
+  while :; do
+    case "$1" in
+    date | time) $action "$HOME/.config/bash/noprompt/date" ;;
     git) $action "$HOME/.config/bash/noprompt/git" ;;
     go) $action "$HOME/.config/bash/noprompt/go" ;;
     lua) $action "$HOME/.config/bash/noprompt/lua" ;;
@@ -494,7 +512,7 @@ bashprompt() {
   fi
   #
   ### Add time ########################################
-  if [ -f "$HOME/.config/bash/noprompt/time" ]; then
+  if [ -f "$HOME/.config/bash/noprompt/date" ]; then
     ___date_show() { return; }
   else
     ___date_show() {
