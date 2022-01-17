@@ -486,8 +486,9 @@ bashprompt() {
       local devtime
       devtime="$(wakatime --today 2>/dev/null || return)"
       if [ -n "$devtime" ]; then
-        WAKA_PROMPT_MESSAGE="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}")"
+        WAKA_PROMPT="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}") "
         WAKA_PROMPT_COUNT="${#WAKA_PROMPT_MESSAGE}"
+        WAKA_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT}${RESET} "
       else
         return
       fi
@@ -516,8 +517,9 @@ bashprompt() {
     ___date_show() { return; }
   else
     ___date_show() {
-      DATETIME_PROMPT_MESSAGE="$(printf '[Time: %s]' "$(date '+%H:%M')")"
-      DATETIME_PROMPT_COUNT="${#DATETIME_PROMPT_MESSAGE}"
+      DATETIME_PROMPT="$(printf '[Time: %s]' "$(date '+%H:%M')") "
+      DATETIME_PROMPT_COUNT="${#DATETIME_PROMPT}"
+      DATETIME_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${DATETIME_PROMPT}${RESET} "
     }
   fi
   ### Add bash/screen/tmux version ########################################
@@ -603,9 +605,10 @@ bashprompt() {
 
     ___date_show
     ___wakatime_show
+    DATETIME_PROMPT_MESSAGE=""
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-    PS_TIME="\[\033[\$((COLUMNS-${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1))G\]${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT_MESSAGE} ${DATETIME_PROMPT_MESSAGE}$RESET"
+    PS_TIME="\[\033[\$((COLUMNS-${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1))G\]${WAKA_PROMPT_MESSAGE}${DATETIME_PROMPT_MESSAGE}"
     PS1="\${PS_FILL}\[\033[0G\]$RESET"
     PS1+="$BG_BLUE$FG_BLACK$(__prompt_version)$RESET"
     PS1+="$BG_PURPLE$FG_GRAY1$(__ifphp && __php_info)$RESET"
