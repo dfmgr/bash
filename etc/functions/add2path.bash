@@ -73,10 +73,6 @@ add2path() {
     done
   else
     [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
-    while :; do
-      echo -e "$@" | grep -q '\-' &>/dev/null || break
-      [[ "$*" = -* ]] && shift 1 && echo 'Do not provide any arguments'
-    done
     for args in "$@"; do
       [[ "$args" = '.' ]] && args=""
       if [[ -n "$args" ]]; then
