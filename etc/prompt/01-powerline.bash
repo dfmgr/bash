@@ -35,7 +35,7 @@ fi
 _noprompt_completion() {
   local cur prev words cword array
   cur="${COMP_WORDS[COMP_CWORD]}"
-  array="--help date git go lua node perl php python reminder ruby rust timer wakatime"
+  array="--help --show date git go lua node path perl php python reminder ruby rust timer wakatime"
   _init_completion || return
   case $prev in
   --help)
@@ -48,32 +48,47 @@ _noprompt_completion() {
 }
 # Disable prompt versions
 noprompt() {
-  if [ $1 = --help ]; then
+  local action="touch"
+  local message="Disabled"
+  case "$@" in
+  --enable | --show)
+    shift 1
+    echo -e "$@"
+    action="rm -Rf"
+    message="Enabled"
+    ;;
+  --disable)
+    shift 1
+    ;;
+  --help)
     printf_blue "Disable prompt messages"
-    printf_blue "date git go lua node perl php python reminder ruby rust timer wakatime"
+    printf_blue "date git go lua node path perl php python reminder ruby rust timer wakatime"
     return
-  fi
+    ;;
+  -*) shift 1 ;;
+  esac
   while :; do
     case "$1" in
-    date) touch "$HOME/.config/bash/noprompt/date" ;;
-    git) touch "$HOME/.config/bash/noprompt/git" ;;
-    go) touch "$HOME/.config/bash/noprompt/go" ;;
-    lua) touch "$HOME/.config/bash/noprompt/lua" ;;
-    node) touch "$HOME/.config/bash/noprompt/node" ;;
-    perl) touch "$HOME/.config/bash/noprompt/perl" ;;
-    php) touch "$HOME/.config/bash/noprompt/php" ;;
-    python) touch "$HOME/.config/bash/noprompt/python" ;;
-    reminder) touch "$HOME/.config/bash/noprompt/git_reminder" ;;
-    ruby) touch "$HOME/.config/bash/noprompt/ruby" ;;
-    rust) touch "$HOME/.config/bash/noprompt/rust" ;;
-    timer) touch "$HOME/.config/bash/noprompt/timer" ;;
-    wakatime) touch "$HOME/.config/bash/noprompt/wakatime" ;;
-    *)
-      break
-      ;;
+    date) $action "$HOME/.config/bash/noprompt/date" ;;
+    git) $action "$HOME/.config/bash/noprompt/git" ;;
+    go) $action "$HOME/.config/bash/noprompt/go" ;;
+    lua) $action "$HOME/.config/bash/noprompt/lua" ;;
+    node) $action "$HOME/.config/bash/noprompt/node" ;;
+    path) $action "$HOME/.config/bash/noprompt/path" ;;
+    perl) $action "$HOME/.config/bash/noprompt/perl" ;;
+    php) $action "$HOME/.config/bash/noprompt/php" ;;
+    python) $action "$HOME/.config/bash/noprompt/python" ;;
+    reminder) $action "$HOME/.config/bash/noprompt/git_reminder" ;;
+    ruby) $action "$HOME/.config/bash/noprompt/ruby" ;;
+    rust) $action "$HOME/.config/bash/noprompt/rust" ;;
+    timer) $action "$HOME/.config/bash/noprompt/timer" ;;
+    wakatime) $action "$HOME/.config/bash/noprompt/wakatime" ;;
     esac
+    printf_blue "$message $1"
     shift 1
+    [[ $# -ne 0 ]] || break
   done
+  exec bash -l
   return
 }
 # Initialize prompt
@@ -506,6 +521,16 @@ bashprompt() {
       printf '%s' "$TERM"
     fi
   }
+  ### Add bin to path ########################################
+  ___add_bin_path() {
+    if [[ -d "$PWD/bin" ]] && [[ -z "$RESET_PATH" ]]; then
+      export RESET_PATH="$PATH"
+      export PATH="$PWD/bin:$RESET_PATH"
+    else
+      [[ -z "$RESET_PATH" ]] || export PATH="$RESET_PATH"
+      unset RESET_PATH
+    fi
+  }
   ### Add PROMPT  Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
@@ -525,13 +550,7 @@ bashprompt() {
     local EXIT=$? # Keep this here as it is needed for prompt
     ___time_it
     ___wakatime_prompt
-    if [[ -d "$PWD/bin" ]] && [[ -z "$RESET_PATH" ]]; then
-      export RESET_PATH="$PATH"
-      export PATH="$PWD/bin:$RESET_PATH"
-    else
-      [[ -z "$RESET_PATH" ]] || export PATH="$RESET_PATH"
-      unset RESET_PATH
-    fi
+    ___add_bin_path
     return $EXIT
   }
   # Add all additional post commands here command
@@ -603,7 +622,7 @@ bashprompt() {
   export PS4
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-bashprompt 2>/dev/null
 complete -F _noprompt_completion -o default noprompt
+bashprompt 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

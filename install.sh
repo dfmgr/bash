@@ -181,4 +181,5 @@ dfmgr_install_version
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # exit
 run_exit
+exec bash -l
 # end
