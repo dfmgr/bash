@@ -178,15 +178,13 @@ if [[ -z "$(command -v mkpasswd)" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cd() {
-  local CD_DIR="${*:-$CDD_CWD_DIR}"
+  [[ $# -gt 1 ]] && { printf_red "Usage: cd or cd directory" && return 1; }
   if [[ -n "$CDD_CWD_DIR" ]]; then
-    cd_cdd "$CD_DIR"
+    [[ $# -eq 0 ]] && CD_DIR="$CDD_CWD_DIR" || CD_DIR="$CDD_CWD_DIR/${*:-}"
+    cd_cdd "$CDD_CWD_DIR"
   else
-    local CD_DIR="${*:-$CD_DIR}"
-    [[ $# -gt 1 ]] && { printf_red "Usage: cd or cd directory" && return 1; }
-    if [ -n "$CD_DIR" ] && [ ! -d "$CD_DIR" ]; then
-      mkdir -p "$CD_DIR"
-    fi
+    local CD_DIR="${1:-$HOME}"
+    [ -n "$CD_DIR" ] && [ -d "$CD_DIR" ] || mkdir -p "$CD_DIR"
     builtin cd "$CD_DIR" || { printf_red "failed to cd into $CD_DIR" && return 1; }
   fi
 }
