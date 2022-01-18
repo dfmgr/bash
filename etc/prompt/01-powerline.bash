@@ -481,35 +481,36 @@ bashprompt() {
   ### WakaTime ####################################################
   __ifwakatime() {
     if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
-      ___wakatime_prompt() { return; }
       return 1
     fi
-    ___wakatime_show() {
-      local devtime
-      devtime="$(wakatime --today 2>/dev/null || return)"
-      if [ -n "$devtime" ]; then
-        WAKA_PROMPT="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}")"
-        WAKA_PROMPT_COUNT="${#WAKA_PROMPT}"
-        WAKA_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT}${RESET} "
+  }
+  ___wakatime_show() {
+    __ifwakatime || return 1
+    local devtime
+    devtime="$(wakatime --today 2>/dev/null || return)"
+    if [ -n "$devtime" ]; then
+      WAKA_PROMPT="$(printf '[Dev Time: %s]' "${setwakatime:-$devtime}")"
+      WAKA_PROMPT_COUNT="${#WAKA_PROMPT}"
+      WAKA_PROMPT_MESSAGE="${RESET}${BG_PURPLE}${FG_BLACK}${WAKA_PROMPT}${RESET} "
+    else
+      return
+    fi
+  }
+  ___wakatime_prompt() {
+    __ifwakatime || return 1
+    local version entity project
+    version="1.0.0"
+    entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || return)"
+    if [ -z "$entity" ]; then
+      return 0
+    else
+      if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
+        project="$(basename "$(git rev-parse --show-toplevel)")"
       else
-        return
+        project="Terminal"
       fi
-    }
-    ___wakatime_prompt() {
-      local version entity project
-      version="1.0.0"
-      entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || return)"
-      if [ -z "$entity" ]; then
-        return 0
-      else
-        if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
-          project="$(basename "$(git rev-parse --show-toplevel)")"
-        else
-          project="Terminal"
-        fi
-        (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
-      fi
-    }
+      (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
+    fi
   }
   ### Add time ########################################
   __ifdate() {
