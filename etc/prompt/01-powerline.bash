@@ -481,6 +481,7 @@ bashprompt() {
   ### WakaTime ####################################################
   __ifwakatime() {
     if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
+      ___wakatime_prompt() { return; }
       return 1
     fi
     ___wakatime_show() {
