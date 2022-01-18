@@ -222,9 +222,10 @@ bashprompt() {
   esac
   ### Timer #######################################################
   ___time_it_pre() {
+    local st es
+    local es=${EPOCHSECONDS:-$(date +%s)}
     [ -f "$HOME/.config/bash/noprompt/timer" ] && return 1
-    local st
-    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}')
+    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-0})
     if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
       TIMER_ENDTIME=${EPOCHSECONDS:-1}
       TIMER_STARTTIME=${st:-0}
@@ -238,8 +239,8 @@ bashprompt() {
     ___time_it_pre
     [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
     [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
-    if ((TIMER_ENDTIME - TIMER_STARTTIME > 1)); then
-      ___time_show() { printf '[Time: %ds]' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
+    if ((TIMER_ENDTIME - TIMER_STARTTIME > 0)); then
+      ___time_show() { printf 'Time: [%ds]' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
     else
       ___time_show() { printf 0; }
     fi
