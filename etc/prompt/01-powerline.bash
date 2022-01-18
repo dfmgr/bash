@@ -481,12 +481,12 @@ bashprompt() {
   ### WakaTime ####################################################
   __ifwakatime() {
     if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
-      ___wakatime_prompt() { return; }
+      ___wakatime_show() { return 1; }
+      ___wakatime_prompt() { return 1; }
       return 1
     fi
   }
   ___wakatime_show() {
-    __ifwakatime || return 1
     local devtime
     devtime="$(wakatime --today 2>/dev/null || return)"
     if [ -n "$devtime" ]; then
@@ -498,7 +498,6 @@ bashprompt() {
     fi
   }
   ___wakatime_prompt() {
-    __ifwakatime || return 1
     local version entity project
     version="1.0.0"
     entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || return)"
