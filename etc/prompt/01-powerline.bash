@@ -527,22 +527,27 @@ bashprompt() {
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
     local bash tmux screen byobu shell
-    bash="Bash: ${BASH_VERSION%.*}"
-    tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V | tr ' ' '\n' | grep [0-9.] 2>/dev/null | head -n1 | grep '^')")"
-    screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | head -n1 | grep '^')")"
-    byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version | grep byobu | tr ' ' '\n' | grep '[0..9]')")"
+    bash="${BASH_VERSION%.*}"
+    tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V 2>/dev/null | tr ' ' '\n' | grep [0-9.] | head -n1 | sed 's/[^.0-9]*//g' | grep '^')")"
+    screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | sed 's/[^.0-9]*//g' | head -n1 | grep '^')")"
+    byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version 2>/dev/null | grep byobu | tr ' ' '\n' | sed 's/[^.0-9]*//g' | grep '[0..9]')")"
     if [ -n "$byobu" ]; then
-      shell="$byobu"
-    elif [ -n "$screen" ]; then
-      shell="$screen"
-    elif [ -n "$tmux" ]; then
-      shell="$tmux"
+      shell="byobu: "
+      version="$byobu"
+    elif [ -n "$screen" ] && [[ -n "$SCREENEXCHANGE" ]]; then
+      shell="screen: "
+      version="$screen"
+    elif [ -n "$tmux" ] && [[ -n "$TMUX" ]]; then
+      shell="TMUX: "
+      version="$tmux"
     elif [ -n "$bash" ]; then
-      shell="$bash"
+      shell="bash: "
+      version="$bash"
     else
       shell="$(basename ${TERM:-$SHELL})"
+      version="$(eval $SHELL --version | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo unknown)"
     fi
-    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
+    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${version}${RESET}"
   }
   ### Add bin to path ########################################
   ___add_bin_path() {
