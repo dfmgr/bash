@@ -40,16 +40,16 @@ _noprompt_completion() {
   array="date git go lua node path perl php python reminder ruby rust timer wakatime"
   _init_completion || return
   if [[ ${cur} == --* ]]; then
-    COMPREPLY=($(compgen -W '${longopts}' -- ${cur}))
+    COMPREPLY=($(compgen -W "${longopts}" -- ${cur}))
   elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W '${shortopts}' -- ${cur}))
+    COMPREPLY=($(compgen -W "${shortopts}" -- ${cur}))
   else
     case $prev in
     --help)
       COMPREPLY=($(compgen -W '' -- ${cur}))
       ;;
     *)
-      COMPREPLY=($(compgen -W '${array}' -- "$cur"))
+      COMPREPLY=($(compgen -W "${array}" -- "$cur"))
       ;;
     esac
   fi
@@ -221,295 +221,268 @@ bashprompt() {
     ;;
   esac
   ### Timer #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
-    ___time_it() { return; }
-    ___time_it_pre() { return; }
-    ___time_show() { return; }
-  else
-    ___time_it_pre() {
-      local st
-      st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}')
-      if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
-        TIMER_ENDTIME=${EPOCHSECONDS:-1}
-        TIMER_STARTTIME=${st:-0}
-      else
-        TIMER_ENDTIME=0
-        TIMER_STARTTIME=0
-      fi
-    }
-    ___time_it() {
-      [ -f "$HOME/.config/bash/noprompt/timer" ] && return
-      ___time_it_pre
-      [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
-      [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
-      if ((TIMER_ENDTIME - TIMER_STARTTIME > 1)); then
-        ___time_show() { printf '[Time: %ds]' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
-      else
-        ___time_show() { printf 0; }
-      fi
-    }
-  fi
-  ### Rust #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(command -v rustc 2>/dev/null)" ]; then
-    __ifrust() { return; }
-    __rust_info() { return; }
-  else
-    __ifrust() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.rs")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rlib")" -ne 0 ]]; then
-        if [ -f "$(command -v rustc 2>/dev/null)" ]; then
-          __rust_version() { printf "%s" "Rust: $(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
-        else
-          __rust_version() { return; }
-        fi
-        __rust_info() {
-          version="$(__rust_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "${version}$RUST_SYMBOL$RESET"
-        }
-      else
-        __rust_info() { return; }
-      fi
-    }
-  fi
-  ### GO #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(command -v go 2>/dev/null)" ]; then
-    __ifgo() { return; }
-    __go_info() { return; }
-  else
-    __ifgo() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.go")" -ne 0 ]]; then
-        if [ -f "$(command -v go 2>/dev/null)" ]; then
-          __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
-        else
-          __go_version() { return; }
-        fi
-        __go_info() {
-          version="$(__go_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "| ${version}$GO_SYMBOL$RESET"
-        }
-      else
-        __go_info() { return; }
-      fi
-    }
-  fi
+  ___time_it_pre() {
+    [ -f "$HOME/.config/bash/noprompt/timer" ] && return 1
+    local st
+    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}')
+    if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
+      TIMER_ENDTIME=${EPOCHSECONDS:-1}
+      TIMER_STARTTIME=${st:-0}
+    else
+      TIMER_ENDTIME=0
+      TIMER_STARTTIME=0
+    fi
+  }
+  ___time_it() {
+    [ -f "$HOME/.config/bash/noprompt/timer" ] && ___time_show() { return; } && return 1
+    ___time_it_pre
+    [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
+    [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
+    if ((TIMER_ENDTIME - TIMER_STARTTIME > 1)); then
+      ___time_show() { printf '[Time: %ds]' "$((TIMER_ENDTIME - TIMER_STARTTIME))"; }
+    else
+      ___time_show() { printf 0; }
+    fi
+  }
 
+  ### Rust #######################################################
+  __ifrust() {
+    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(command -v rustc 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.rs")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rlib")" -ne 0 ]]; then
+      if [ -f "$(command -v rustc 2>/dev/null)" ]; then
+        __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
+      else
+        __rust_version() { return; }
+      fi
+      __rust_info() {
+        version="$(__rust_version)"
+        [ -z "${version}" ] && return
+        printf "%s" "${version}$RUST_SYMBOL$RESET"
+      }
+    else
+      __rust_info() { return; }
+    fi
+  }
+  ### GO #######################################################
+  __ifgo() {
+    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(command -v go 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.go")" -ne 0 ]]; then
+      if [ -f "$(command -v go 2>/dev/null)" ]; then
+        __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
+      else
+        __go_version() { return; }
+      fi
+      __go_info() {
+        version="$(__go_version)"
+        [ -z "${version}" ] && return
+        printf "%s" "| ${version}$GO_SYMBOL$RESET"
+      }
+    else
+      __go_info() { return; }
+    fi
+  }
   ### Ruby #######################################################
-  if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(command -v ruby 2>/dev/null)" ]; then
-    __ifruby() { return; }
-    __ruby_info() { return; }
-  else
-    __ifruby() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.gem")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rb")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name Gemfile")" -ne 0 ]]; then
-        if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
-          __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
-        elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
-          __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
-        elif [ -f "$(command -v ruby 2>/dev/null)" ]; then
-          __ruby_version() { printf "%s" "Ruby: $(ruby --version | cut -d' ' -f2)"; }
-        else
-          __ruby_version() { return; }
-        fi
-        __ruby_info() {
-          version="$(__ruby_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "| ${version}$RUBY_SYMBOL$RESET"
-        }
+  __ifruby() {
+    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(command -v ruby 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.gem")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rb")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name Gemfile")" -ne 0 ]]; then
+      if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
+        __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
+      elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
+        __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
+      elif [ -f "$(command -v ruby 2>/dev/null)" ]; then
+        __ruby_version() { printf "%s" "Ruby: $(ruby --version | cut -d' ' -f2)"; }
       else
-        __ruby_info() { return; }
+        __ruby_version() { return; }
       fi
-    }
-  fi
+      __ruby_info() {
+        version="$(__ruby_version)"
+        [ -z "${version}" ] && return
+        printf "%s" "| ${version}$RUBY_SYMBOL$RESET"
+      }
+    else
+      __ruby_info() { return; }
+    fi
+  }
   ### Node.js ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
-    __ifnode() { return; }
-    __node_info() { return; }
-  else
-    __ifnode() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.js")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name package.json")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name yarn.lock")" -ne 0 ]]; then
-        if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
-          [[ "$(nvm current)" != "system" ]]; then
-          __node_version() { printf "%s" "$(node --version)"; }
-          __node_info() {
-            version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
-          }
-        elif [[ -f "$(command -v fnm)" ]]; then
-          __node_version() { printf "%s" "$(node --version)"; }
-          __node_info() {
-            version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
-          }
-        elif [[ -f "$(command -v node)" ]]; then
-          __node_version() { printf "%s" "$(node --version)"; }
-          __node_info() {
-            version="$(__node_version)"
-            [ -z "${version}" ] && return
-            printf "%s" "| Node: ${version}$NODE_SYMBOL${RESET}"
-          }
-        fi
-      else
-        __node_version() { return; }
-        __node_info() { return; }
+  __ifnode() {
+    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.js")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name package.json")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name yarn.lock")" -ne 0 ]]; then
+      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
+        [[ "$(nvm current)" != "system" ]]; then
+        __node_version() { printf "%s" "$(node --version)"; }
+        __node_info() {
+          version="$(__node_version)"
+          [ -z "${version}" ] && return
+          printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
+        }
+      elif [[ -f "$(command -v fnm)" ]]; then
+        __node_version() { printf "%s" "$(node --version)"; }
+        __node_info() {
+          version="$(__node_version)"
+          [ -z "${version}" ] && return
+          printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
+        }
+      elif [[ -f "$(command -v node)" ]]; then
+        __node_version() { printf "%s" "$(node --version)"; }
+        __node_info() {
+          version="$(__node_version)"
+          [ -z "${version}" ] && return
+          printf "%s" "| Node: ${version}$NODE_SYMBOL${RESET}"
+        }
       fi
-    }
-  fi
+    else
+      __node_version() { return; }
+      __node_info() { return; }
+    fi
+  }
   ### python ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(command -v python3 2>/dev/null)" ] || [ -z "$(command -v python2 2>/dev/null)" ]; then
-    __ifpython() { return; }
-    __python_info() { return; }
-  else
-    __ifpython() {
-      local gitdir pythonBin PYTHON_VERSION
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      [[ -n "$VIRTUAL_ENV" ]] && [[ ! -f "$gitdir/.venv/bin/activate" ]] && deactivate && return
-      [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/bin/activate" ]] && . "$gitdir/bin/activate"
-      [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/venv/bin/activate" ]] && . "$gitdir/venv/bin/activate"
-      [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
-      if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "-name *.py") -ne 0 ]] || [[ $(__find "$gitdir" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
-        __python_info() {
-          pythonBin="$(command -v python3 || command -v python2 || command -v python)"
-          PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
-          if [[ "$VIRTUAL_ENV" =~ venv ]]; then
-            PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
-          else
-            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-          fi
-          if [ -n "$PYTHON_VIRTUALENV" ]; then
-            printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
-          else
-            printf "%s" "| Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
-          fi
-        }
-      else
-        __python_info() { return; }
-      fi
-    }
-  fi
-  ### php ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(command -v php 2>/dev/null)" ]; then
-    __ifphp() { return; }
-    __php_info() { return; }
-  else
-    __ifphp() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.php*")" -ne 0 ]]; then
-        __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
-      else
-        __php_version() { return; }
-      fi
-      __php_info() {
-        version=$(__php_version)
-        [ -z "$version" ] && return
-        printf "%s" "| PHP: ${version}${PHP_SYMBOL}${RESET}"
-      }
-    }
-  fi
-  ### perl ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(command -v perl 2>/dev/null)" ]; then
-    __ifperl() { return; }
-    __perl_info() { return; }
-  else
-    __ifperl() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.pl")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.cgi")" -ne 0 ]]; then
-        __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
-      else
-        __perl_version() { return; }
-      fi
-      __perl_info() {
-        version=$(__perl_version)
-        [ -z "$version" ] && return
-        printf "%s" "| Perl: $version$PERL_SYMBOL$RESET"
-      }
-    }
-  fi
-  ### lua ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(command -v lua 2>/dev/null)" ]; then
-    __iflua() { return; }
-    __lua_info() { return; }
-  else
-    __iflua() {
-      local gitdir version
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      if [[ "$(__find "$gitdir" "-iname *.lua")" -ne 0 ]]; then
-        luaversion="$(lua -v 2>&1)"
-        __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
-      else
-        __lua_version() { return; }
-      fi
-      __lua_info() {
-        version="$(__lua_version)"
-        [ -z "$version" ] && return
-        printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
-      }
-    }
-  fi
-  ### Git ########################################################
-  if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
-    __ifgit() { return; }
-    __git_info() { return; }
-  else
-    __ifgit() {
-      local gitdir marks git_eng branch stat aheadN behindN
-      if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-        __git_version() { printf "%s" "| Git: $(git --version | awk '{print $3}' | head -n 1)"; }
-        __git_status() {
-          git_eng="env LANG=C git" # force git output in English to make our work easier
-          branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-          [ -n "$branch" ] || return # git branch not found
-          [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-          stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
-          aheadN="$(echo -n "$stat" | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-          behindN="$(echo -n "$stat" | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-          [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
-          [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
-          printf "%s" " [$branch]$marks"
-        }
-        __git_info() {
-          __git_version && __git_status && printf "%s" "$GIT_BRANCH_SYMBOL"
-        }
-      else
-        __git_version() { return; }
-        __git_info() { return; }
-      fi
-    }
-  fi
-  ### Git reminder ###############################################
-  if [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
-    __git_prompt_message_warn() { return; }
-  fi
-  if [ -f "$HOME/.config/bash/noprompt/git_reminder" ]; then
-    __git_prompt_message_warn() { return; }
-  else
-    __git_prompt_message_warn() {
-      local gitdir grepgitignore
-      if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
-        gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-        grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
-        if [ "$grepgitignore" -ne 0 ]; then
-          printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+  __ifpython() {
+    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(command -v python3 2>/dev/null)" ] || [ -z "$(command -v python2 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir pythonBin PYTHON_VERSION
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    [[ -n "$VIRTUAL_ENV" ]] && [[ ! -f "$gitdir/.venv/bin/activate" ]] && deactivate && return
+    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/bin/activate" ]] && . "$gitdir/bin/activate"
+    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/venv/bin/activate" ]] && . "$gitdir/venv/bin/activate"
+    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
+    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "-name *.py") -ne 0 ]] || [[ $(__find "$gitdir" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
+      __python_info() {
+        pythonBin="$(command -v python3 || command -v python2 || command -v python)"
+        PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
+        if [[ "$VIRTUAL_ENV" =~ venv ]]; then
+          PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
+        else
+          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
         fi
-      fi
+        if [ -n "$PYTHON_VIRTUALENV" ]; then
+          printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+        else
+          printf "%s" "| Python: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
+        fi
+      }
+    else
+      __python_info() { return; }
+    fi
+  }
+  ### php ####################################################
+  __ifphp() {
+    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(command -v php 2>/dev/null)" ] || [ -z "$(command -v php8 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.php*")" -ne 0 ]]; then
+      __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
+    else
+      __php_version() { return; }
+    fi
+    __php_info() {
+      version=$(__php_version)
+      [ -z "$version" ] && return
+      printf "%s" "| PHP: ${version}${PHP_SYMBOL}${RESET}"
     }
-  fi
+  }
+  ### perl ####################################################
+  __ifperl() {
+    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(command -v perl 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.pl")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.cgi")" -ne 0 ]]; then
+      __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
+    else
+      __perl_version() { return; }
+    fi
+    __perl_info() {
+      version=$(__perl_version)
+      [ -z "$version" ] && return
+      printf "%s" "| Perl: $version$PERL_SYMBOL$RESET"
+    }
+  }
+  ### lua ####################################################
+  __iflua() {
+    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(command -v lua 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir version
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    if [[ "$(__find "$gitdir" "-iname *.lua")" -ne 0 ]]; then
+      luaversion="$(lua -v 2>&1)"
+      __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
+    else
+      __lua_version() { return; }
+    fi
+    __lua_info() {
+      version="$(__lua_version)"
+      [ -z "$version" ] && return
+      printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
+    }
+  }
+  ### Git ########################################################
+  __ifgit() {
+    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir marks git_eng branch stat aheadN behindN
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+      __git_version() { printf "%s" "| Git: $(git --version | awk '{print $3}' | head -n 1)"; }
+      __git_status() {
+        git_eng="env LANG=C git" # force git output in English to make our work easier
+        branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
+        [ -n "$branch" ] || return # git branch not found
+        [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
+        stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
+        aheadN="$(echo -n "$stat" | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
+        behindN="$(echo -n "$stat" | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
+        [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
+        [ -n "$behindN" ] && marks+="$GIT_NEED_PULL_SYMBOL$behindN"
+        printf "%s" " [$branch]$marks"
+      }
+      __git_info() {
+        __git_version && __git_status && printf "%s" "$GIT_BRANCH_SYMBOL"
+      }
+    else
+      __git_version() { return; }
+      __git_info() { return; }
+    fi
+  }
+  ### Git reminder ###############################################
+  __git_prompt_message_warn() {
+    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
+      return 1
+    fi
+    local gitdir grepgitignore
+    if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
+      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+      grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
+      if [ "$grepgitignore" -ne 0 ]; then
+        printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+      fi
+    fi
+  }
   ### WakaTime ####################################################
-  if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
-    ___wakatime_prompt() { return; }
-    ___wakatime_show() { return; }
-  elif grep -qi api_key "$HOME/.wakatime.cfg"; then
+  __ifwakatime() {
+    if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
+      return 1
+    fi
     ___wakatime_show() {
       local devtime
       devtime="$(wakatime --today 2>/dev/null || return)"
@@ -536,20 +509,18 @@ bashprompt() {
         (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
       fi
     }
-  else
-    ___wakatime_prompt() { return; }
-  fi
-  #
+  }
   ### Add time ########################################
-  if [ -f "$HOME/.config/bash/noprompt/date" ]; then
-    ___date_show() { return; }
-  else
+  __ifdate() {
+    if [ -f "$HOME/.config/bash/noprompt/date" ]; then
+      return 1
+    fi
     ___date_show() {
       DATETIME_PROMPT="$(printf '[Time: %s]' "$(date '+%H:%M')")"
       DATETIME_PROMPT_COUNT="${#DATETIME_PROMPT}"
       DATETIME_PROMPT_MESSAGE=" ${RESET}${BG_PURPLE}${FG_BLACK}${DATETIME_PROMPT}${RESET}"
     }
-  fi
+  }
   ### Add bash/screen/tmux version ########################################
   __prompt_version() {
     local bash tmux screen byobu shell
@@ -632,8 +603,8 @@ bashprompt() {
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
 
-    ___date_show
-    ___wakatime_show
+    __ifdate && ___date_show
+    __ifwakatime && ___wakatime_show
     COLUMNS_COUNT="${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1"
     PS_LINE="$(printf -- '%.0s' {4..2000})"
     PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
