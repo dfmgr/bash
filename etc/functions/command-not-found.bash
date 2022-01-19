@@ -20,16 +20,22 @@ orig_command_not_found_handle() {
   printf_red "$1: command not found"
   if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
-    pkmgr silent install "$1" 2>/dev/null
+    #if type -P pacman &>/dev/null; then
+    possibilities="$(pkmgr search show-raw $1 | sed "s|^.*/$1|$1|g" | grep -aw "^$1" | head -n10 | grep '^')"
+    pkmgr search show-raw $1 | sed "s|^.*/$1|$1|g" | awk '{print $1}' | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
+    #else
+    #  possibilities="$(pkmgr search show-raw "$1" | grep -aw "^$1" | head -n10 | grep '^')"
+    #  pkmgr search show-raw "$1" | awk '{print $1}' | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
+    #fi
     if type -P "$1" &>/dev/null; then
       printf_green "$1 has been Installed"
       sleep 2
       eval $cmd $args
     else
-      printf_red "Can not locate package $1"
-      possibilities="$(pkmgr search show-raw "$1" | grep -a "^$1" | head -n10 | grep '^')"
+      printf_red "Sorry install of package $1 failed"
       if [ -n "$possibilities" ]; then
-        printf_cyan "However, I did find packages matching $1"
+        printf '\n'
+        printf_yellow "However, I did find packages matching $1"
         echo "$possibilities" | printf_readline "5"
         echo
       fi
