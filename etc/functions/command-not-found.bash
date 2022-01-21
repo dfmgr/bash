@@ -21,8 +21,8 @@ orig_command_not_found_handle() {
   if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
     #if type -P pacman &>/dev/null; then
-    possibilities="$(pkmgr search show-raw $1 | sed "s|^.*/$1|$1|g" | grep -aw "^$1" | head -n10 | grep '^')"
-    pkmgr search show-raw $1 | sed "s|^.*/$1|$1|g" | awk '{print $1}' | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
+    possibilities="$(pkmgr search show-raw $1 2>/dev/null | sed "s|^.*/$1|$1|g" | grep -aw "^$1" | head -n10 | grep '^')"
+    pkmgr search show-raw $1 2>/dev/null | sed "s|^.*/$1|$1|g" | awk '{print $1}' | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
     #else
     #  possibilities="$(pkmgr search show-raw "$1" | grep -aw "^$1" | head -n10 | grep '^')"
     #  pkmgr search show-raw "$1" | awk '{print $1}' | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
