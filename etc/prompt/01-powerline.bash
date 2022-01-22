@@ -552,7 +552,6 @@ bashprompt() {
   ### Add bin to path ########################################
   ___add_bin_path() {
     if [[ -d "$PWD/bin" ]]; then
-      echo add path
       if [[ -z "$RESET_PATH" ]]; then
         export RESET_PATH="$PATH"
         export PATH="$PWD/bin:$RESET_PATH"
@@ -576,7 +575,7 @@ bashprompt() {
   }
   ### PROMPT #####################################################
   __title_info() {
-    echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"
+    echo -ne "${USER}@${HOSTNAME}:${PWD//$HOME/\~}"
   }
   # Add all additional pre commands here command
   __pre_prompt_command() {
