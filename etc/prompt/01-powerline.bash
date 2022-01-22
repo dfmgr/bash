@@ -551,12 +551,17 @@ bashprompt() {
   }
   ### Add bin to path ########################################
   ___add_bin_path() {
-    if [[ -d "$PWD/bin" ]] && [[ -z "$RESET_PATH" ]]; then
-      export RESET_PATH="$PATH"
-      export PATH="$PWD/bin:$RESET_PATH"
+    if [[ -d "$PWD/bin" ]]; then
+      echo add path
+      if [[ -z "$RESET_PATH" ]]; then
+        export RESET_PATH="$PATH"
+        export PATH="$PWD/bin:$RESET_PATH"
+      fi
     else
-      [[ -z "$RESET_PATH" ]] || export PATH="$RESET_PATH"
-      unset RESET_PATH
+      if [[ -n "$RESET_PATH" ]]; then
+        export PATH="$RESET_PATH"
+        unset RESET_PATH
+      fi
     fi
   }
   ### Add PROMPT  Message ########################################
@@ -578,7 +583,6 @@ bashprompt() {
     local EXIT=$? # Keep this here as it is needed for prompt
     ___time_it
     ___wakatime_prompt
-    ___add_bin_path
     return $EXIT
   }
   # Add all additional post commands here command
@@ -611,6 +615,7 @@ bashprompt() {
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
 
+    ___add_bin_path
     __ifdate && ___date_show
     __ifwakatime && ___wakatime_show
     COLUMNS_COUNT="${WAKA_PROMPT_COUNT:-0}-${DATETIME_PROMPT_COUNT:-0}-1"
