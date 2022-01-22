@@ -62,6 +62,7 @@ add2path() {
     echo "$PATH" | tr ":" "\n" | sort -u | grep -v "^$"
     return 0
   fi
+  # Remove dir from path
   if [[ $1 = 'remove' ]] || [[ $1 = '--remove' ]] || [[ $1 = 'delete' ]] || [[ $1 = '--delete' ]]; then
     shift 1
     [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
@@ -80,6 +81,7 @@ add2path() {
       fi
     done
   else
+    # Add dir to path
     [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
     for args in "$@"; do
       [[ "$args" = '.' ]] && args=""
@@ -91,14 +93,14 @@ add2path() {
         fi
         if [[ -d "$dir" ]]; then
           if echo "$PATH" | tr ':' '\n' | grep -qsx "$dir" &>/dev/null; then
-            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$args"
+            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
           else
             path="$dir:$PATH"
             export PATH="$path"
-            printf "\t\t${green}Added %s to your path ${reset}\n" "$dir"
+            printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
           fi
         else
-          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
+          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
         fi
       else
         printf "\t\t${red}An error has occured %s${reset}\n" "$args"
