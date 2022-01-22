@@ -100,7 +100,7 @@ add2path() {
             printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
           fi
         else
-          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
+          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
         fi
       else
         printf "\t\t${red}An error has occured %s${reset}\n" "$args"
