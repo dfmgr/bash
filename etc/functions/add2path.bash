@@ -50,8 +50,8 @@ add2path() {
   if [[ "$1" = 'init' ]]; then
     shift 1
     NEWPATH="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$')"
-    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.||g' | grep "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
-    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.||g' | grep -v "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
+    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.$||g' | grep "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
+    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.$||g' | grep -v "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
     printf 'export PATH+=.\n'
     return 0
   fi
