@@ -37,8 +37,8 @@ complete -F _add2path_completion add2path
 
 add2path() {
   __help() {
-    printf "\t\t${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}\n"
-    printf "\t\t${green}Usage: add2path [options] [directory]${reset}\n"
+    printf "\t\t%s\n" "${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}"
+    printf "\t\t%s\n" "${green}Usage: add2path [options] [directory]${reset}"
   }
   local dir=""
   local args=""
@@ -47,6 +47,14 @@ add2path() {
   local green="\033[0;32m"
   local reset="\033[0m"
   local args=""
+  if [[ "$1" = 'init' ]]; then
+    shift 1
+    NEWPATH="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$')"
+    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.||g' | grep "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
+    printf '%s\n' "$NEWPATH" | tr ':' '\n' | sed 's|\.||g' | grep -v "$HOME" | sort -u | grep -v '^$' | xargs -I{} echo "export PATH=\"\$PATH:{}\""
+    printf 'export PATH+=.\n'
+    return 0
+  fi
   if [[ $1 = '--add' ]]; then
     shift 1
   elif [[ $1 = '--list' ]]; then
