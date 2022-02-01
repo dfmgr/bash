@@ -143,7 +143,7 @@ bashprompt() {
     local args=""
     [[ -d "$1" ]] && dir="$1" && shift 1
     [ $# -eq 0 ] && return || args="$*"
-    find "$dir" -type l,f -maxdepth 1 ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
+    find -L "$dir" -maxdepth 1 -type f ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
   }
 
   # Unicode symbols
