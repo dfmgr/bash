@@ -297,7 +297,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.gem")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rb")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name Gemfile")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.gem')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.rb')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'Gemfile')" -ne 0 ]]; then
       if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
