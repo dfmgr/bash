@@ -138,11 +138,11 @@ noprompt() {
 # Initialize prompt
 bashprompt() {
   printf_return() { return; }
-  __find() {
-    local dir="$PWD"
+  ___bash_find() {
+    local dir="${1:-$PWD}"
     local args=""
     [[ -d "$1" ]] && dir="$1" && shift 1
-    [ $# -eq 0 ] && return || args="$*"
+    [ $# -eq 0 ] && return 1 || args="$*"
     find -L "$dir" -maxdepth 1 -type f ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
   }
 
@@ -253,7 +253,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.rs')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.rlib')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.rs')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rlib')" -ne 0 ]]; then
       if [ -f "$(command -v rustc 2>/dev/null)" ]; then
         __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       else
@@ -275,7 +275,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.go')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.go')" -ne 0 ]]; then
       if [ -f "$(command -v go 2>/dev/null)" ]; then
         __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       else
@@ -297,7 +297,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.gem')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.rb')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'Gemfile')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.gem')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rb')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'Gemfile')" -ne 0 ]]; then
       if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -323,7 +323,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.js')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'package.json')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'yarn.lock')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.js')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'package.json')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'yarn.lock')" -ne 0 ]]; then
       if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
         [[ "$(nvm current)" != "system" ]]; then
         __node_version() { printf "%s" "$(node --version)"; }
@@ -363,7 +363,7 @@ bashprompt() {
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/bin/activate" ]] && . "$gitdir/bin/activate"
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/venv/bin/activate" ]] && . "$gitdir/venv/bin/activate"
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
-    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" -name '*.py') -ne 0 ]] || [[ $(__find "$gitdir" -name '*.py' -o -name 'requirements.txt') -ne 0 ]]; then
+    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(___bash_find "$gitdir" -name '*.py') -ne 0 ]] || [[ $(___bash_find "$gitdir" -name '*.py' -o -name 'requirements.txt') -ne 0 ]]; then
       __python_info() {
         pythonBin="$(command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
@@ -389,7 +389,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.php*')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ]]; then
       __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
     else
       __php_version() { return; }
@@ -407,7 +407,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.pl')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.cgi')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.pl')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.cgi')" -ne 0 ]]; then
       __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -425,7 +425,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" -iname '*.lua')" -ne 0 ]]; then
+    if [[ "$(___bash_find "$gitdir" -iname '*.lua')" -ne 0 ]]; then
       luaversion="$(lua -v 2>&1)"
       __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
     else
@@ -444,13 +444,13 @@ bashprompt() {
     fi
     local gitdir marks git_eng branch stat aheadN behindN
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      __git_version() { printf "%s" "| Git: $(git --version | awk '{print $3}' | head -n 1)"; }
+      __git_version() { printf "%s" "| Git: $(git --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
         git_eng="env LANG=C git" # force git output in English to make our work easier
         branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
         [ -n "$branch" ] || return # git branch not found
-        [ -n "$($git_eng status --porcelain)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-        stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
+        [ -n "$($git_eng status --porcelain 2>/dev/null)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
+        stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$' 2>/dev/null)"
         aheadN="$(echo -n "$stat" | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         behindN="$(echo -n "$stat" | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
@@ -506,7 +506,7 @@ bashprompt() {
       return 0
     else
       if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
-        project="$(basename "$(git rev-parse --show-toplevel)")"
+        project="$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")"
       else
         project="Terminal"
       fi
