@@ -253,7 +253,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.rs")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.rlib")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.rs')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.rlib')" -ne 0 ]]; then
       if [ -f "$(command -v rustc 2>/dev/null)" ]; then
         __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       else
@@ -275,7 +275,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.go")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.go')" -ne 0 ]]; then
       if [ -f "$(command -v go 2>/dev/null)" ]; then
         __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       else
@@ -323,7 +323,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.js")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name package.json")" -ne 0 ]] || [[ "$(__find "$gitdir" "-name yarn.lock")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.js')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'package.json')" -ne 0 ]] || [[ "$(__find "$gitdir" -name 'yarn.lock')" -ne 0 ]]; then
       if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
         [[ "$(nvm current)" != "system" ]]; then
         __node_version() { printf "%s" "$(node --version)"; }
@@ -363,7 +363,7 @@ bashprompt() {
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/bin/activate" ]] && . "$gitdir/bin/activate"
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/venv/bin/activate" ]] && . "$gitdir/venv/bin/activate"
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
-    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" "-name *.py") -ne 0 ]] || [[ $(__find "$gitdir" "-name *.py -o -name requirements.txt") -ne 0 ]]; then
+    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(__find "$gitdir" -name '*.py') -ne 0 ]] || [[ $(__find "$gitdir" -name '*.py' -o -name 'requirements.txt') -ne 0 ]]; then
       __python_info() {
         pythonBin="$(command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
@@ -389,7 +389,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.php*")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.php*')" -ne 0 ]]; then
       __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
     else
       __php_version() { return; }
@@ -407,7 +407,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.pl")" -ne 0 ]] || [[ "$(__find "$gitdir" "-iname *.cgi")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.pl')" -ne 0 ]] || [[ "$(__find "$gitdir" -iname '*.cgi')" -ne 0 ]]; then
       __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -425,7 +425,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(__find "$gitdir" "-iname *.lua")" -ne 0 ]]; then
+    if [[ "$(__find "$gitdir" -iname '*.lua')" -ne 0 ]]; then
       luaversion="$(lua -v 2>&1)"
       __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
     else
