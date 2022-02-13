@@ -563,7 +563,12 @@ bashprompt() {
       fi
     fi
   }
-  ### Add PROMPT  Message ########################################
+  ### Change cursor ########################################
+  ___set_cursor() {
+    printf "\x1b[\x35 q" 2>/dev/null
+    printf "\e]12;cyan\a" 2>/dev/null
+  }
+  ### Add PROMPT Message ########################################
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
       printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}|${PS1_ADD:-}${RESET:-$ADD_RESET}"
@@ -582,6 +587,7 @@ bashprompt() {
     local EXIT=$? # Keep this here as it is needed for prompt
     ___time_it
     ___wakatime_prompt
+    ___set_cursor
     return $EXIT
   }
   # Add all additional post commands here command
