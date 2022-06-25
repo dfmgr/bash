@@ -13,4 +13,5 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+# Load fnm if missing
+[[ -z "$FNM_MULTISHELL_PATH" ]] && eval $(fnm env)

@@ -17,14 +17,14 @@ elif [ -f /etc/bash.bashrc ]; then # Debian/Ubuntu/Arch/Mac/Win
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source .profile
-if [ -f ~/.profile ]; then
-  . ~/.profile
+if [ -f "$HOME"/.profile ]; then
+  . "$HOME"/.profile
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
 userbashfunctions() {
-  if [ "$(find ~/.config/bash/functions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/functions/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/functions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/functions/*.bash; do
       . "$f"
     done
   fi
@@ -32,8 +32,8 @@ userbashfunctions() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
 userbashexports() {
-  if [ "$(find ~/.config/bash/exports/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/exports/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/exports/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/exports/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -41,8 +41,8 @@ userbashexports() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional bash scripts
 userbashprofile() {
-  if [ "$(find ~/.config/bash/profile/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/profile/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/profile/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/profile/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -50,8 +50,8 @@ userbashprofile() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional aliases scripts
 userbashaliases() {
-  if [ "$(find ~/.config/bash/aliases/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/aliases/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/aliases/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/aliases/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -59,8 +59,8 @@ userbashaliases() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
-  if [ "$(find ~/.config/bash/completions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/completions/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/completions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/completions/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -68,8 +68,8 @@ userbashcompletions() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source plugins
 userbashplugins() {
-  if [ "$(find ~/.config/bash/plugins/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/plugins/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/plugins/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/plugins/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -77,8 +77,8 @@ userbashplugins() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
-  if [ "$(find ~/.config/bash/prompt/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/prompt/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/prompt/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/prompt/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -86,8 +86,8 @@ userbashprompt() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source OS specific
 userbashos() {
-  if [ "$(find ~/.config/bash/*/*.load 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/*/*.load; do
+  if [ "$(find "$HOME"/.config/bash/*/*.load 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/*/*.load; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -95,16 +95,16 @@ userbashos() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional user bash scripts
 userbashprofilelocal() {
-  if [ "$(find ~/.config/bash/local/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/local/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/local/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/local/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 userbashprofilepost() {
-  if [ "$(find ~/.config/bash/post/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in ~/.config/bash/post/*.bash; do
+  if [ "$(find "$HOME"/.config/bash/post/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME"/.config/bash/post/*.bash; do
       . "$f" >/dev/null 2>&1
     done
   fi
@@ -117,21 +117,21 @@ for executeuserfunct in userbashfunctions userbashexports userbashprofile userba
 done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Local file
-if [ -f ~/.config/local/bash.local ]; then
-  . ~/.config/local/bash.local
+if [ -f "$HOME"/.config/local/bash.local ]; then
+  . "$HOME"/.config/local/bash.local
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Servers specific
-if [ -f ~/.config/local/bash.servers.local ]; then
-  . ~/.config/local/bash.servers.local
+if [ -f "$HOME"/.config/local/bash.servers.local ]; then
+  . "$HOME"/.config/local/bash.servers.local
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #System specific
-if [ -f ~/.config/local/bash."$(hostname)".local ]; then
-  . ~/.config/local/bash."$(hostname)".local
+if [ -f "$HOME"/.config/local/bash."$(hostname)".local ]; then
+  . "$HOME"/.config/local/bash."$(hostname)".local
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-BASHRCSRC=~/.bashrc
+BASHRCSRC="$HOME"/.bashrc
 PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
