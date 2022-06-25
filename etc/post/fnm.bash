@@ -11,7 +11,7 @@
 # @Description   : fast node manager
 # @TODO          :
 # @Other         :
-# @Resource      :
+# @Resource      : https://github.com/Schniz/fnm
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Load fnm if missing
-[[ -z "$FNM_MULTISHELL_PATH" ]] && eval $(fnm env)
+[[ -n "$FNM_MULTISHELL_PATH" ]] || eval "$(fnm env)"
