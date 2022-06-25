@@ -13,5 +13,5 @@
 # @Other         :
 # @Resource      : https://github.com/Schniz/fnm
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Load fnm if missing
-[[ -n "$FNM_MULTISHELL_PATH" ]] || eval "$(fnm env)"
+# Load fnm
+[[ -n "$(builtin type fnm 2>/dev/null)" ]] && eval "$(fnm env)"
