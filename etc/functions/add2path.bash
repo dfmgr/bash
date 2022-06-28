@@ -36,9 +36,13 @@ _add2path_completion() {
 complete -F _add2path_completion add2path
 
 add2path() {
+  __test_path() { echo "$PATH" | tr ':' '\n' | grep -qsx "${1:-$dir}" &>/dev/null && return 0 || return 1; }
   __help() {
-    printf "\t\t%s\n" "${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}"
-    printf "\t\t%s\n" "${green}Usage: add2path [options] [directory]${reset}"
+    local red="\033[0;31m"
+    local green="\033[0;32m"
+    local reset="\033[0m"
+    echo -e "\t\t${green}Usage: add2path [options] [directory]${reset}"
+    echo -e "\t\t${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}\n"
   }
   local dir=""
   local args=""
@@ -61,6 +65,9 @@ add2path() {
     shift 1
     echo "$PATH" | tr ":" "\n" | sort -u | grep -v "^$"
     return 0
+  elif [[ "$1" = '--help' ]]; then
+    __help
+    return 1
   fi
   # Remove dir from path
   if [[ $1 = 'remove' ]] || [[ $1 = '--remove' ]] || [[ $1 = 'delete' ]] || [[ $1 = '--delete' ]]; then
@@ -82,30 +89,45 @@ add2path() {
     done
   else
     # Add dir to path
-    [[ $# -eq 0 || $1 = '--help' ]] && __help && return 1
-    for args in "$@"; do
-      [[ "$args" = '.' ]] && args=""
-      if [[ -n "$args" ]]; then
-        if [[ -d "$args" ]]; then
-          dir="$args"
-        elif [[ -f "$args" ]]; then
-          dir="$(dirname "$args" 2>/dev/null || echo '')"
-        fi
-        if [[ -d "$dir" ]]; then
-          if echo "$PATH" | tr ':' '\n' | grep -qsx "$dir" &>/dev/null; then
-            printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
-          else
-            path="$dir:$PATH"
-            export PATH="$path"
-            printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
-          fi
+    if [[ $# = 0 ]]; then
+      if [[ -d "$PWD/bin" ]]; then
+        if __test_path "$PWD/bin"; then
+          printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
+          return
         else
-          printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
+          PATH="$PWD/bin:$PATH"
+          printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
+          return
         fi
       else
-        printf "\t\t${red}An error has occured %s${reset}\n" "$args"
+        printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$PWD/bin"
+        return
       fi
-    done
+    else
+      for args in "$@"; do
+        [[ "$args" = '.' ]] && args=""
+        if [[ -n "$args" ]]; then
+          if [[ -d "$args" ]]; then
+            dir="$args"
+          elif [[ -f "$args" ]]; then
+            dir="$(dirname "$args" 2>/dev/null || echo '')"
+          fi
+          if [[ -d "$dir" ]]; then
+            if __test_path; then
+              printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
+            else
+              path="$dir:$PATH"
+              export PATH="$path"
+              printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
+            fi
+          else
+            printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
+          fi
+        else
+          printf "\t\t${red}An error has occured %s${reset}\n" "$args"
+        fi
+      done
+    fi
   fi
   return ${exitCode:-$?}
 }
