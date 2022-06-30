@@ -21,7 +21,7 @@ orig_command_not_found_handle() {
   if type pkmgr &>/dev/null; then
     printf_green "Searching the repo for $1"
     possibilities="$(pkmgr search show-raw "$1" 2>/dev/null | grep -aw "^$1" | sort -u | head -n10 | grep '^')"
-    pkmgr search show-raw "$1" 2>/dev/null | awk '{print $1}' | sort -u | grep -qw "^$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
+    pkmgr search show-raw "$1" 2>/dev/null | awk '{print $1}' | sort -u | grep -qw "$1" &>/dev/null && pkmgr silent install "$1" 2>/dev/null
     if type -P "$1" &>/dev/null; then
       printf_green "$1 has been Installed"
       sleep 2
