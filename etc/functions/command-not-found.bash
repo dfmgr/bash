@@ -15,30 +15,30 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 orig_command_not_found_handle() {
   local cmd="$1"
-  local args="$*"
   local possibilities=""
   printf_red "$cmd: command not found"
   if type -P pkmgr &>/dev/null; then
     printf_green "Searching the repo for $cmd"
-    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -aw "$cmd" | sort -u | head -n10 | grep '^')"
+    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -aw "$cmd" | sort -u | head -n10 | grep '^' || echo '')"
     results="$(pkmgr search show-raw "$cmd" 2>/dev/null | awk '{print $1}' | sort -u | grep -w "$cmd" | head -n1 | grep '^' || echo '')"
     [[ -n "$results" ]] && pkmgr silent install "$results" 2>/dev/null
     if type -P "$cmd" &>/dev/null || [[ $? = 0 ]]; then
-      printf_green "$1 has been Installed"
+      printf_green "$cmd has been Installed"
       sleep 2
-      eval $cmd $args
+      eval "$*"
+      return $?
     else
-      printf_red "Sorry install of package $1 failed"
+      printf_red "Sorry install of package $cmd failed"
       if [ -n "$possibilities" ]; then
         printf '\n'
-        printf_yellow "However, I did find packages matching $1"
+        printf_yellow "However, I did find packages matching $cmd"
         echo "$possibilities" | printf_readline "5"
         echo
       fi
       return 1
     fi
   else
-    printf_red "Failed to install $1 with your package manager"
+    printf_red "Failed to install $cmd with your package manager"
     return 1
   fi
 }
@@ -49,8 +49,7 @@ command_not_found_handle() {
   if [[ -f "$cmd" ]]; then
     if echo " ${_suffix_vi[*]} " | grep -q " ${cmd##*.} "; then
       if type vi >&/dev/null; then
-        vi "${args[@]}"
-        return $? && return 0 || return 1
+        vi "${args[@]}" && return 0 || return 1
       fi
     elif [[ "${cmd##*.}" = "ps1" ]]; then
       if type powershell >&/dev/null; then
