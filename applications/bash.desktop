@@ -4,5 +4,5 @@ Type=Application
 Terminal=true
 Exec=bash
 Name=bash
-Icon=bash
-Categories=ConsoleOnly;System;
+Icon=xfce4-terminal
+Categories=System;
