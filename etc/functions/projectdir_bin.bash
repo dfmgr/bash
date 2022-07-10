@@ -16,9 +16,9 @@
 set-project-path() {
   BASH_PATH=${BASH_PATH:-$PATH}                  # only set variable if unset
   for DIR in . .. ../.. ../../.. ../../../..; do # set to required lookup depth
-    DIR=$DIR/node_modules/.bin
-    if [[ -d $DIR ]]; then
-      PATH=$(pwd $DIR):$BASH_PATH
+    DIR="$DIR/node_modules/.bin"
+    if [[ -d "$DIR" ]]; then
+      PATH=$(pwd "$DIR"):$BASH_PATH
       [[ $1 != quit ]] || echo "set-project-path(): \$PATH += $(pwd $DIR)"
       break
     fi
