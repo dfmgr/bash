@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202207100807-git
+# @Author            :  Jason Hempstead
+# @Contact           :  jason@casjaysdev.com
+# @License           :  WTFPL
+# @ReadME            :  noprompt --help
+# @Copyright         :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @Created           :  Sunday, Jul 10, 2022 08:07 EDT
+# @File              :  noprompt
+# @Description       :
+# @TODO              :
+# @Other             :
+# @Resource          :
+# @sudo/root         :  no
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# noprompt completion
+_noprompt_completion() {
+  local cur prev words cword array shortopts longopts
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  shortopts="-e -s -d"
+  longopts="--enable --show --disable --help --disable-all --enable-all"
+  array="date git go lua node path perl php python reminder ruby rust timer wakatime"
+  _init_completion || return
+  if [[ ${cur} == --* ]]; then
+    COMPREPLY=($(compgen -W "${longopts}" -- ${cur}))
+  elif [[ ${cur} == -* ]]; then
+    COMPREPLY=($(compgen -W "${shortopts}" -- ${cur}))
+  else
+    case $prev in
+    --help)
+      COMPREPLY=($(compgen -W '' -- ${cur}))
+      ;;
+    *)
+      COMPREPLY=($(compgen -W "${array}" -- "$cur"))
+      ;;
+    esac
+  fi
+} && complete -F _noprompt_completion -o default noprompt
