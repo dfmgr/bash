@@ -15,9 +15,10 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Install fonts
 if [[ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ]] || [[ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]]; then
+  mkdir -p "$HOME/.local/share/fonts" &>/dev/null
   curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
     curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
-    fc-cache -vf "$HOME/.local/share/fonts/" &>/dev/null
+    fc-cache -vf "$HOME/.local/share/fonts" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Powerline check
@@ -36,9 +37,11 @@ if [ -z "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
   unset powerline_sh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Start
-  [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ] && powerline-daemon -q
-  export POWERLINE_BASH_CONTINUATION=1
-  export POWERLINE_BASH_SELECT=1
+  if [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
+    export POWERLINE_BASH_CONTINUATION=1
+    export POWERLINE_BASH_SELECT=1
+    powerline-daemon -q
+  fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Disable prompt versions
