@@ -6,7 +6,7 @@ _fnm() {
   cmd=""
   opts=""
 
-  for i in ${COMP_WORDS[@]}; do
+  for i in "${COMP_WORDS[@]}"; do
     case "${i}" in
     fnm)
       cmd="fnm"
