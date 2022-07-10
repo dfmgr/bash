@@ -13,14 +13,14 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 dirignore() {
+  local IGNORE_FILE DATE_FMT
   if [[ "$1" == "--help" ]]; then
     printf_help "add dirignore message to .gitignore file"
     return
   fi
-  local IGNORE_FILE="./.gitignore"
-  local DATE_FMT="$(date '+%h-%d-%Y at %H:%M')"
+  IGNORE_FILE="${1:-$PWD}/.gitignore"
+  DATE_FMT="$(date '+%h-%d-%Y at %H:%M')"
   if [ -f "$IGNORE_FILE" ]; then
     if grep -qs 'ignoredirmessage' "$IGNORE_FILE"; then
       printf_blue 'dirignore is already in .gitignore'
