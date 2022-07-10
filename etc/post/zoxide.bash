@@ -14,4 +14,4 @@
 # @Resource      : https://github.com/ajeetdsouza/zoxide
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 command -v zoxide &>/dev/null && eval "$(zoxide init bash)" ||
-  zoxide() { curl -q -sSL https://webinstall.dev/zoxide | bash; }
+  zoxide() { curl -q -LSsf "https://webinstall.dev/zoxide" | bash && eval "$(zoxide init bash)"; }
