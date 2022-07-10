@@ -11,35 +11,8 @@
 # @Description   :
 # @TODO          :
 # @Other         :
-# @Resource      :
+# @Resource      : https://github.com/iridakos/goto
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# shellcheck shell=bash
-# shellcheck disable=SC2039
-# SOURCE: https://github.com/iridakos/goto
-# MIT License
-#
-# Copyright (c) 2018 Lazarus Lazaridis
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-# Changes to the given alias directory
-# or executes a command based on the arguments.
 goto() {
   local target
   _goto_resolve_db
@@ -90,16 +63,18 @@ goto() {
 _goto_resolve_db() {
   local CONFIG_DEFAULT="${XDG_CONFIG_HOME:-$HOME/.config}/goto"
   GOTO_DB="${GOTO_DB:-$CONFIG_DEFAULT}"
+  GOTO_DB_CONFIG_DIRNAME=$(dirname "$GOTO_DB")
+  if [[ ! -d "$GOTO_DB_CONFIG_DIRNAME" ]]; then
+    mkdir "$GOTO_DB_CONFIG_DIRNAME"
+  fi
   touch -a "$GOTO_DB"
 }
 
 _goto_usage() {
   cat <<\USAGE
 usage: goto [<option>] <alias> [<directory>]
-
 default usage:
   goto <alias> - changes to the directory registered for the given alias
-
 OPTIONS:
   -r, --register: registers an alias
     goto -r|--register <alias> <directory>
@@ -124,7 +99,7 @@ USAGE
 
 # Displays version
 _goto_version() {
-  echo "goto version 2.0.0"
+  echo "goto version 2.1.0"
 }
 
 # Expands directory.
@@ -137,8 +112,15 @@ _goto_expand_directory() {
 _goto_list_aliases() {
   local IFS=$' '
   if [ -f "$GOTO_DB" ]; then
+    local maxlength=0
     while read -r name directory; do
-      printf '\e[1;36m%20s  \e[0m%s\n' "$name" "$directory"
+      local length=${#name}
+      if [[ $length -gt $maxlength ]]; then
+        local maxlength=$length
+      fi
+    done <"$GOTO_DB"
+    while read -r name directory; do
+      printf "\e[1;36m%${maxlength}s  \e[0m%s\n" "$name" "$directory"
     done <"$GOTO_DB"
   else
     echo "You haven't configured any directory aliases yet."
@@ -237,14 +219,14 @@ _goto_directory_push() {
     return
   fi
 
-  { pushd . || return; } >/dev/null 2>&1
+  { pushd . || return; } 1>/dev/null 2>&1
 
   _goto_directory "$@"
 }
 
 # Pops the top directory from the stack, then goto
 _goto_directory_pop() {
-  { popd || return; } >/dev/null 2>&1
+  { popd || return; } 1>/dev/null 2>&1
 }
 
 # Unregisters aliases whose directories no longer exist.
@@ -262,6 +244,12 @@ _goto_cleanup() {
 
 # Changes to the given alias' directory
 _goto_directory() {
+  # directly goto the special name that is unable to be registered due to invalid alias, eg: ~
+  if ! [[ $1 =~ ^[[:alnum:]]+[a-zA-Z0-9_-]*$ ]]; then
+    { builtin cd "$1" 2>/dev/null && return 0; } ||
+      { _goto_error "Failed to goto '$1'" && return 1; }
+  fi
+
   local target
 
   target=$(_goto_resolve_alias "$1") || return 1
