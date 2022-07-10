@@ -13,47 +13,34 @@
 # @Other         :
 # @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#Powerline check
-if [ -z "$POWERLINE" ]; then
-  #Debian/Ubuntu/Arch
+# Install fonts
+if [[ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ]] || [[ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]]; then
+  curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
+    curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
+    fc-cache -vf "$HOME/.local/share/fonts/" &>/dev/null
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Powerline check
+if [ -z "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
+  # Debian/Ubuntu/Arch
   if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
     source "/usr/share/powerline/bindings/bash/powerline.sh"
-  fi
-  #Redhat/CentOS
-  if [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
+  # Redhat/CentOS
+  elif [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
     source "/usr/share/powerline/bash/powerline.sh"
+    # Try to find powerline.sh
+    powerline_sh="$(find /usr/*/powerline /usr/lib/python*/dist-packages /usr/local/lib/python*/dist-packages -iname 'powerline.sh' 2>/dev/null | grep bindings/bash | head -n1)"
+  elif [ -f "$powerline_sh" ]; then
+    source "$powerline_sh"
   fi
-  #MacOS
-  if [ -f "/usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh" ]; then
-    source "/usr/local/lib/python3.7/site-packages/powerline/bindings/bash/powerline.sh"
-  fi
+  unset powerline_sh
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Start
   [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ] && powerline-daemon -q
   export POWERLINE_BASH_CONTINUATION=1
   export POWERLINE_BASH_SELECT=1
 fi
-# noprompt completion
-_noprompt_completion() {
-  local cur prev words cword array shortopts longopts
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  shortopts="-e -s -d"
-  longopts="--enable --show --disable --help --disable-all --enable-all"
-  array="date git go lua node path perl php python reminder ruby rust timer wakatime"
-  _init_completion || return
-  if [[ ${cur} == --* ]]; then
-    COMPREPLY=($(compgen -W "${longopts}" -- ${cur}))
-  elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W "${shortopts}" -- ${cur}))
-  else
-    case $prev in
-    --help)
-      COMPREPLY=($(compgen -W '' -- ${cur}))
-      ;;
-    *)
-      COMPREPLY=($(compgen -W "${array}" -- "$cur"))
-      ;;
-    esac
-  fi
-}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Disable prompt versions
 noprompt() {
   local setopts=""
@@ -135,6 +122,7 @@ noprompt() {
   fi
   return
 }
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Initialize prompt
 bashprompt() {
   printf_return() { return; }
@@ -145,7 +133,7 @@ bashprompt() {
     [ $# -eq 0 ] && return 1 || args="$*"
     find -L "$dir" -maxdepth 1 -type f ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
   }
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unicode symbols
   PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
   PS_SYMBOL_LINUX=' 🐧 ' >/dev/null
@@ -163,7 +151,7 @@ bashprompt() {
   LUA_SYMBOL=' ⚠️ ' 2>/dev/null
   GO_SYMBOL=' 👺 ' 2>/dev/null
   RUST_SYMBOL=' 🏗 ' 2>/dev/null
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Foreground Colors
   __tput() { tput "$@" 2>/dev/null; }
   FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
@@ -182,7 +170,7 @@ bashprompt() {
   FG_NAVY="\[$(__tput setaf 4 2>/dev/null)\]"
   FG_PURPLE="\[$(__tput setaf 5 2>/dev/null)\]"
   FG_TURQUOISE="\[$(__tput setaf 6 2>/dev/null)\]"
-
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Background Colors
   BG_BLACK="\[$(__tput setab 0 2>/dev/null)\]"
   BG_GRAY1="\[$(__tput setab 15 2>/dev/null)\]"
@@ -205,7 +193,8 @@ bashprompt() {
   REVERSE="\[$(__tput rev 2>/dev/null)\]"
   RESET="\[$(__tput sgr0 2>/dev/null)\]"
   BOLD="\[$(__tput bold 2>/dev/null)\]"
-  ### what OS #######################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get OS
   case "$(uname)" in
   Darwin)
     PS_SYMBOL="$PS_SYMBOL_DARWIN"
@@ -220,7 +209,8 @@ bashprompt() {
     PS_SYMBOL="$PS_SYMBOL_OTHER"
     ;;
   esac
-  ### Timer #######################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Timer
   ___time_it_pre() {
     local st es
     local es=${EPOCHSECONDS:-$(date +%s)}
@@ -245,8 +235,8 @@ bashprompt() {
       ___time_show() { printf 0; }
     fi
   }
-
-  ### Rust #######################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Rust
   __ifrust() {
     if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(command -v rustc 2>/dev/null)" ]; then
       return 1
@@ -268,7 +258,8 @@ bashprompt() {
       __rust_info() { return; }
     fi
   }
-  ### GO #######################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # GO
   __ifgo() {
     if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(command -v go 2>/dev/null)" ]; then
       return 1
@@ -290,7 +281,8 @@ bashprompt() {
       __go_info() { return; }
     fi
   }
-  ### Ruby #######################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Ruby
   __ifruby() {
     if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(command -v ruby 2>/dev/null)" ]; then
       return 1
@@ -316,7 +308,8 @@ bashprompt() {
       __ruby_info() { return; }
     fi
   }
-  ### Node.js ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Node.js
   __ifnode() {
     if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
       return 1
@@ -352,7 +345,8 @@ bashprompt() {
       __node_info() { return; }
     fi
   }
-  ### python ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # python
   __ifpython() {
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(command -v python3 2>/dev/null)" ] || [ -z "$(command -v python2 2>/dev/null)" ]; then
       return 1
@@ -382,7 +376,8 @@ bashprompt() {
       __python_info() { return; }
     fi
   }
-  ### php ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # php
   __ifphp() {
     if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(command -v php 2>/dev/null)" ] || [ -z "$(command -v php8 2>/dev/null)" ]; then
       return 1
@@ -400,7 +395,8 @@ bashprompt() {
       printf "%s" "| PHP: ${version}${PHP_SYMBOL}${RESET}"
     }
   }
-  ### perl ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # perl
   __ifperl() {
     if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(command -v perl 2>/dev/null)" ]; then
       return 1
@@ -418,7 +414,8 @@ bashprompt() {
       printf "%s" "| Perl: $version$PERL_SYMBOL$RESET"
     }
   }
-  ### lua ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # lua
   __iflua() {
     if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(command -v lua 2>/dev/null)" ]; then
       return 1
@@ -437,7 +434,8 @@ bashprompt() {
       printf "%s" "| Lua: $version$LUA_SYMBOL$RESET"
     }
   }
-  ### Git ########################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Git
   __ifgit() {
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
       return 1
@@ -465,7 +463,8 @@ bashprompt() {
       __git_info() { return; }
     fi
   }
-  ### Git reminder ###############################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Git reminder
   __git_prompt_message_warn() {
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
       return 1
@@ -479,7 +478,8 @@ bashprompt() {
       fi
     fi
   }
-  ### WakaTime ####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # WakaTime
   __ifwakatime() {
     if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
       ___wakatime_show() { return 1; }
@@ -513,7 +513,8 @@ bashprompt() {
       (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity &>/dev/null &)
     fi
   }
-  ### Add time ########################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Add time
   __ifdate() {
     if [ -f "$HOME/.config/bash/noprompt/date" ]; then
       return 1
@@ -524,7 +525,8 @@ bashprompt() {
       DATETIME_PROMPT_MESSAGE=" ${RESET}${BG_PURPLE}${FG_BLACK}${DATETIME_PROMPT}${RESET}"
     }
   }
-  ### Add bash/screen/tmux version ########################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Add bash/screen/tmux version
   __prompt_version() {
     local bash tmux screen byobu shell
     bash="${BASH_VERSION%.*}"
@@ -549,7 +551,8 @@ bashprompt() {
     fi
     printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${version}${RESET}"
   }
-  ### Add bin to path ########################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Add bin to path
   ___add_bin_path() {
     if [[ -d "$PWD/bin" ]]; then
       if [[ -z "$RESET_PATH" ]]; then
@@ -563,12 +566,14 @@ bashprompt() {
       fi
     fi
   }
-  ### Change cursor ########################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Change cursor
   ___set_cursor() {
     printf "\x1b[\x35 q" 2>/dev/null
     printf "\e]12;cyan\a" 2>/dev/null
   }
-  ### Add PROMPT Message ########################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Add PROMPT Message
   __ps1_additional() {
     if [ -n "$PS1_ADD" ]; then
       printf "%s" "${BG_BLACK:-$ADD_BGCOLOR}${FG_GREEN:-$ADD_FG}|${PS1_ADD:-}${RESET:-$ADD_RESET}"
@@ -578,7 +583,8 @@ bashprompt() {
     __git_prompt_message_warn
     __ps1_additional
   }
-  ### PROMPT #####################################################
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # PROMPT
   __title_info() {
     echo -ne "${USER}@${HOSTNAME}:${PWD//$HOME/\~}"
   }
@@ -594,6 +600,7 @@ bashprompt() {
   __post_prompt_command() {
     history -a &>/dev/null && history -r &>/dev/null
   }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case $TERM in
   *-256color)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
@@ -608,6 +615,7 @@ bashprompt() {
     title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
   esac
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ps1() {
     local EXIT=$?
     if [ $EXIT -eq 0 ]; then
@@ -646,6 +654,7 @@ bashprompt() {
       PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET:"
     fi
   }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
@@ -665,7 +674,6 @@ bashprompt() {
   export PS4
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-complete -F _noprompt_completion -o default noprompt
 bashprompt 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
