@@ -40,7 +40,9 @@ printf_execute_result() {
   if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi
   return "$1"
 }
-printf_execute_error_stream() { while read -r line; do printf_execute_error "↳ ERROR: $line"; done; }
+printf_execute_error_stream() {
+  while read -r line; do printf_execute_error "↳ ERROR: $line"; done
+}
 
 printf_exit() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
@@ -155,7 +157,6 @@ if [[ -f "$(command -v grc)" ]]; then
   if [[ "$USEGRC" = "yes" ]]; then
     grc() {
       if [[ -f "$(command -v grc)" ]]; then
-        #grc --colour=auto
         $(command -v grc) --colour=on "$@"
       else
         "$@"
@@ -183,7 +184,7 @@ cd() {
     [[ $# -eq 0 ]] && CD_DIR="$CDD_CWD_DIR" || CD_DIR="$CDD_CWD_DIR/${*:-}"
     cd_cdd "$CDD_CWD_DIR"
   else
-    local CD_DIR="${1:-$HOME}"
+    local CD_DIR="${1:-$HOME/}"
     [ -n "$CD_DIR" ] && [ -d "$CD_DIR" ] || mkdir -p "$CD_DIR"
     builtin cd "$CD_DIR" || { printf_red "failed to cd into $CD_DIR" && return 1; }
   fi
@@ -248,17 +249,17 @@ detectostype() {
   elif [[ "$distroname" =~ "Scientific" ]] || [[ "$distroname" =~ "RedHat" ]] || [[ "$distroname" =~ "CentOS" ]] || [[ "$distroname" =~ "Casjay" ]]; then
     DISTRO=RHEL
   #Various Debian Distros
-  elif [[ "$distroname" =~ "Kali" ]] || [[ "$distroname" =~ "Parrot" ]] || [[ "$distroname" =~ "Debian" ]]; then
+  elif [[ "$distroname" =~ "Debian" ]] || [[ "$distroname" =~ "Peppermint" ]] || [[ "$distroname" =~ "Linuxmint" ]]; then
     DISTRO=Debian
     if [[ "$distroname" =~ "Debian" ]]; then
       CODENAME=$(lsb_release -a 2>/dev/null | grep Code | sed 's#Codename:##g' | awk '{print $1}')
     fi
-    if [[ "$distroname" =~ "Kali" ]]; then
-      CODENAME=kali
-    fi
-    if [[ "$distroname" =~ "Parrot" ]]; then
-      CODENAME=parrot
-    fi
+  elif [[ "$distroname" =~ "Kali" ]]; then
+    DISTRO=Debian
+    CODENAME=kali
+  elif [[ "$distroname" =~ "Parrot" ]]; then
+    DISTRO=Debian
+    CODENAME=parrot
   elif [[ "$distroname" =~ "Ubuntu" ]] || [[ "$distroname" =~ "Mint" ]] || [[ "$distroname" =~ "Elementary" ]] || [[ "$distroname" =~ "KDE neon" ]]; then
     DISTRO=Ubuntu
     CODENAME=$(lsb_release -a 2>/dev/null | grep Code | sed 's#Codename:##g' | awk '{print $1}')
