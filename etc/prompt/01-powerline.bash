@@ -53,20 +53,22 @@ noprompt() {
   eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
     case "$1" in
-    --enable | --show | -e | -s)
+    --disable | -d)
+      shift 1
+      ;;
+    --enable | -e | -s)
       shift 1
       action="rm -Rf"
       message="Enabled"
       ;;
-    --disable | -d)
-      shift 1
-      ;;
     --help)
+      shift 1
       printf_blue "Disable prompt messages"
       printf_blue "${array}"
       return
       ;;
     --disable-all)
+      shift 1
       for f in ${array}; do
         printf_blue "Disabled ${f}"
         touch "$HOME/.config/bash/noprompt/$f"
@@ -78,6 +80,7 @@ noprompt() {
       return
       ;;
     --enable-all)
+      shift 1
       for f in ${array}; do
         printf_blue "Enabled ${f}"
         [[ -f "$HOME/.config/bash/noprompt/$f" ]] && rm -Rf "$HOME/.config/bash/noprompt/$f"
@@ -87,6 +90,12 @@ noprompt() {
         exec bash -s "${BASH_SOURCE[0]}"
       fi
       return
+      ;;
+    --show)
+      shift 1
+      for f in ${array}; do
+        [[ -f "$HOME/.config/bash/noprompt/$f" ]] && printf_yellow "$f is disabled" || printf_green "$f is enabled"
+      done
       ;;
     --)
       shift 1
