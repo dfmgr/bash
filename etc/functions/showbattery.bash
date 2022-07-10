@@ -24,7 +24,7 @@ showbattery() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # shows battery full statistics
 showbatteryfull() {
-  upower -i $(upower -e | grep BAT)
+  type -P upower &>/dev/null && upower -i $(upower -e | grep BAT)
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
