@@ -49,8 +49,8 @@ shopt -s no_empty_cmd_completion 2>/dev/null
 # Match filenames in a case-insensitive fashion when performing filename expansion.
 shopt -s nocaseglob 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# expand aliases -u disable, -s enable
-shopt -u expand_aliases 2>/dev/null
+# expand aliases
+shopt -s expand_aliases 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set mouse type - changes to blinking bar
 echo -e -n "\x1b[\x35 q"
