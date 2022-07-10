@@ -145,9 +145,9 @@ show_welcome
 #fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Send an e-mail every time you login
-builtin type -P mail &>/dev/null &&
-  echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" |
-  mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
+#builtin type -P mail &>/dev/null &&
+#  echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" |
+#  mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 unset -f userbashfunctions userbashexports userbashprofile
 unset -f userbashaliases userbashcompletions userbashplugins
