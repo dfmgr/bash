@@ -14,50 +14,49 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
-alias q='exit'
-alias :q='exit'
-alias :q!='exit'
-alias :w='history -a'
-alias c='clear'
-alias ch='history -c &>/dev/null && history -w &>/dev/null'
-alias g='git'
-alias m='man'
-alias map='xargs -n1'
-alias n='npm'
-alias path='printf "%b\n" "${PATH//:/\\n}"'
-alias t='tmux'
-alias bashrc='clear && source ~/.bashrc'
-alias inputrc='bind -f ~/.inputrc'
-alias tailf='tail -f'
-alias mount='mount -l'
-alias h='history'
-alias j='jobs -l'
-alias nowtime='date +"%T"'
-alias nowdate='date +"%m-%d-%Y"'
-alias wget='wget -c'
-alias df='df -H'
-alias du='du -ch'
-alias setverfile='setver --file'
-alias userlist='cut -d: -f1 /etc/passwd'
-alias muttsync='__muttsync'
-alias mutt='neomutt'
-alias sort='LC_ALL=C sort'
-alias uniq='LC_ALL=C uniq'
-alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.lss'
-alias grep='grep --color=auto'
-alias egrep='grep -E --color=auto'
-alias fgrep='grep -F --color=auto'
-alias cp_rpf='cp --parents -Rfv'
-alias less='less -r'
-alias tmux_ssh='tmux -f "\$HOME/.config/tmux/tmux.ssh.conf" new-session -D -A -s ssh'
+alias q='exit '
+alias :q='exit '
+alias :q!='exit '
+alias :w='history -a '
+alias c='clear '
+alias ch='history -c &>/dev/null && history -w &>/dev/null '
+alias g='git '
+alias m='man '
+alias map='xargs -n1 '
+alias n='npm '
+alias path='printf "%b\n" "${PATH//:/\\n}" '
+alias t='tmux attach  '
+alias bashrc='clear && source ~/.bashrc '
+alias inputrc='bind -f ~/.inputrc '
+alias tailf='tail -f '
+alias mount='mount -l '
+alias h='history '
+alias j='jobs -l '
+alias nowtime='date +"%T" '
+alias nowdate='date +"%m-%d-%Y" '
+alias wget='wget -c '
+alias df='df -H '
+alias du='du -ch '
+alias setverfile='setver --file '
+alias userlist='cut -d: -f1 /etc/passwd '
+alias muttsync='__muttsync '
+alias mutt='neomutt '
+alias sort='LC_ALL=C sort '
+alias uniq='LC_ALL=C uniq '
+alias lynx='lynx -cfg=$HOME/.config/lynx/lynx.cfg -lss=$HOME/.config/lynx/lynx.lss '
+alias grep='grep --color=auto '
+alias egrep='grep -E --color=auto '
+alias fgrep='grep -F --color=auto '
+alias cp_rpf='cp --parents -Rfv '
+alias less='less -r '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -n "$DISPLAY" ] && alias ssh='ssh -qX' || alias ssh='ssh -q'
+[ -n "$DISPLAY" ] && alias ssh='ssh -qX ' || alias ssh='ssh -q '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # VisualStudio code
 if [ -n "$(command -v code-oss 2>/dev/null)" ]; then
-  alias code='code-oss'
+  alias code='code-oss '
 elif [ -n "$(command -v code-insiders 2>/dev/null)" ]; then
-  alias code='code-insiders'
+  alias code='code-insiders '
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
@@ -85,34 +84,34 @@ alias l.='ls -LA --color=auto '
 alias la='ls -A --color=auto'
 alias lla='ls -lA --color=auto '
 alias ll='ls -l --color=auto '
-alias dir='ls -D --color=auto'
+alias dir='ls -D --color=auto  '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
-alias ~='builtin cd ~'
-alias ..='builtin cd ..'
-alias ...='builtin cd ../..'
-alias ....='builtin cd ../../..'
-alias .....='builtin cd ../../../..'
-alias cd..='builtin cd ..'
+alias ~='builtin cd ~ '
+alias ..='builtin cd .. '
+alias ...='builtin cd ../.. '
+alias ....='builtin cd ../../.. '
+alias .....='builtin cd ../../../.. '
+alias cd..='builtin cd .. '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
 alias vi='vim '
 alias vim='vim '
 alias vis='vim +set si '
-alias svim='sudo vim'
+alias svim='sudo vim '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-[ -f "$(command -v nvim)" ] && [ -f "$HOME/.config/neovim/init.vim" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim' ||
-  [ -f "$(command -v nvim)" ] && [ -f "$HOME/.config/nvim/init.vim" ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim'
+[ -f "$(command -v nvim)" ] && [ -f "$HOME/.config/neovim/init.vim" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim ' ||
+  [ -f "$(command -v nvim)" ] && [ -f "$HOME/.config/nvim/init.vim" ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set docker
 if [ -f "$(command -v docker)" ]; then
   alias docker='sudo docker '
-  alias drun='docker run --rm -it -v "${PWD}":/app -w /app'
+  alias run='docker run --rm -it -v "${PWD}":/app -w /app '
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(command -v trash)" ] && alias empty-trash='trash empty' || alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
+[ -f "$(command -v trash)" ] && alias empty-trash='trash empty ' || alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
 alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
@@ -150,7 +149,7 @@ alias open='xdg-open '
 [ -f "$(command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
 [ -f "$(command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
 [ -f "$(command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
-[ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer'
+[ -f "$(command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer '
 [ -f "$(command -v mpc)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
