@@ -21,7 +21,7 @@ git_prompt_message() {
       printf_red "This message will only appear once per repo:"
       printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
       printf_custom "3" "echo ignoredirmessage >> .gitignore or by running"
-      printf_custom "3" 'touch "$HOME/.config/bash/noprompt/git_message"'
+      printf_custom "3" "touch \$HOME/.config/bash/noprompt/git_message"
     fi
   fi
 }
@@ -31,27 +31,26 @@ get_git_repository_details() {
   local tmp=""
   ! git rev-parse &>/dev/null && return
   [ "$(git rev-parse --is-inside-git-dir)" == "true" ] && return
-
   if ! git diff --quiet --ignore-submodules --cached; then tmp="$tmp+"; fi
   if ! git diff-files --quiet --ignore-submodules --; then tmp="$tmp!"; fi
   if [ -n "$(git ls-files --others --exclude-standard)" ]; then tmp="$tmp?"; fi
   if git rev-parse --verify refs/stash &>/dev/null; then tmp="$tmp$"; fi
   [ -n "$tmp" ] && tmp=" [$tmp]"
-
   branchName="$(printf "%s" "$(git rev-parse --abbrev-ref HEAD 2>/dev/null ||
     git rev-parse --short HEAD 2>/dev/null ||
     printf " (unknown)")" | tr -d "\n")"
   printf "%s" "$1$branchName$tmp"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-function git() {
+git() {
   command git "$@"
   if [[ "$1" == "init" && "$*" != *"--help"* ]]; then
     git symbolic-ref HEAD refs/heads/main
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-function hub() {
+hub() {
+  builtin type -P hub &>/dev/null || return 0
   if [[ "$1" == "default-branch" && "$*" != *"--help"* ]]; then
     local BRANCH="${2:-main}"
     git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
