@@ -35,9 +35,7 @@ Linux)
     . "$HOME/.config/bash/exports/00-default.lin"
   fi
   ;;
-*)
-  printf "\t\tUnknown OS or OS not supported"
-  ;;
+*) ;;
 esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
