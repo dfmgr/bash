@@ -10,21 +10,21 @@ PATH="/usr/local/bin:$PATH"
 [ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt" &>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source System Bash
-if [ -f /etc/bashrc ]; then # Fedora/Redhat/CentOS
-  . /etc/bashrc
-elif [ -f /etc/bash.bashrc ]; then # Debian/Ubuntu/Arch/Mac/Win
-  . /etc/bash.bashrc
+if [ -f "/etc/bashrc" ]; then # Fedora/Redhat/CentOS
+  . "/etc/bashrc"
+elif [ -f "/etc/bash.bashrc" ]; then # Debian/Ubuntu/Arch/Mac/Win
+  . "/etc/bash.bashrc"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source .profile
-if [ -f "$HOME"/.profile ]; then
-  . "$HOME"/.profile
+if [ -f "$HOME/.profile" ]; then
+  . "$HOME/.profile"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
 userbashfunctions() {
-  if [ "$(find "$HOME"/.config/bash/functions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/functions/*.bash; do
+  if [ "$(find "$HOME/.config/bash/functions"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/functions"/*.bash; do
       . "$f"
     done
   fi
@@ -32,80 +32,80 @@ userbashfunctions() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
 userbashexports() {
-  if [ "$(find "$HOME"/.config/bash/exports/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/exports/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/exports"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/exports"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional bash scripts
 userbashprofile() {
-  if [ "$(find "$HOME"/.config/bash/profile/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/profile/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/profile"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/profile"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional aliases scripts
 userbashaliases() {
-  if [ "$(find "$HOME"/.config/bash/aliases/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/aliases/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/aliases"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/aliases"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
-  if [ "$(find "$HOME"/.config/bash/completions/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/completions/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/completions"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/completions"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source plugins
 userbashplugins() {
-  if [ "$(find "$HOME"/.config/bash/plugins/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/plugins/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/plugins"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/plugins"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
-  if [ "$(find "$HOME"/.config/bash/prompt/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/prompt/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/prompt"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/prompt"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source OS specific
 userbashos() {
-  if [ "$(find "$HOME"/.config/bash/*/*.load 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/*/*.load; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash"/*/*.load 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash"/*/*.load; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional user bash scripts
 userbashprofilelocal() {
-  if [ "$(find "$HOME"/.config/bash/local/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/local/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/local"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/local"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 userbashprofilepost() {
-  if [ "$(find "$HOME"/.config/bash/post/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME"/.config/bash/post/*.bash; do
-      . "$f" >/dev/null 2>&1
+  if [ "$(find "$HOME/.config/bash/post"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/bash/post"/*.bash; do
+      . "$f" &>/dev/null
     done
   fi
 }
@@ -117,21 +117,21 @@ for executeuserfunct in userbashfunctions userbashexports userbashprofile userba
 done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Local file
-if [ -f "$HOME"/.config/local/bash.local ]; then
-  . "$HOME"/.config/local/bash.local
+if [ -f "$HOME/.config/local/bash.local" ]; then
+  . "$HOME/.config/local/bash.local"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Servers specific
-if [ -f "$HOME"/.config/local/bash.servers.local ]; then
-  . "$HOME"/.config/local/bash.servers.local
+if [ -f "$HOME/.config/local/bash.servers.local" ]; then
+  . "$HOME/.config/local/bash.servers.local"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #System specific
-if [ -f "$HOME"/.config/local/bash."$(hostname)".local ]; then
-  . "$HOME"/.config/local/bash."$(hostname)".local
+if [ -f "$HOME/.config/local/bash.$(hostname).local" ]; then
+  . "$HOME/.config/local/bash.$(hostname).local"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-BASHRCSRC="$HOME"/.bashrc
+BASHRCSRC="$HOME/.bashrc"
 PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -145,6 +145,12 @@ show_welcome
 #fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Send an e-mail every time you login
-#echo "ALERT - Shell Access on $HOSTNAME from $USER on: `date`" | mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
+builtin type -P mail &>/dev/null &&
+  echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" |
+  mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+unset -f userbashfunctions userbashexports userbashprofile
+unset -f userbashaliases userbashcompletions userbashplugins
+unset -f userbashprompt userbashos userbashprofilelocal userbashprofilepost
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
