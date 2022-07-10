@@ -13,28 +13,6 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-_add2path_completion() {
-  local i cur prev opts paths
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD - 1]}"
-  opts="--help --remove --add --list"
-  paths="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$')"
-  if [[ ${prev} == '--help' ]]; then
-    COMPREPLY=($(compgen -W '' -- ${cur}))
-    return 0
-  elif [[ ${prev} == 'remove' ]] || [[ ${prev} = '--remove' ]] || [[ ${prev} = 'delete' ]] || [[ ${prev} = '--delete' ]]; then
-    COMPREPLY=($(compgen -W "${paths}" -- ${cur}))
-    return
-  elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-    return 0
-  else
-    _filedir -d
-  fi
-}
-complete -F _add2path_completion add2path
-
 add2path() {
   __test_path() { echo "$PATH" | tr ':' '\n' | grep -qsx "${1:-$dir}" &>/dev/null && return 0 || return 1; }
   __help() {
