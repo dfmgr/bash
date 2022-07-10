@@ -15,41 +15,39 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if find ~/.config/shell/profile/*.win >/dev/null 2>&1; then
-    for f in ~/.config/shell/profile/*.win; do
+  if find "$HOME.config/shell/profile"/*.win &>/dev/null; then
+    for f in "$HOME.config/shell/profile"/*.win; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.win >/dev/null 2>&1; then
-    for f in ~/.config/bash/profile/*.win; do
+  elif find "$HOME.config/bash/profile"/*.win &>/dev/null; then
+    for f in "$HOME.config/bash/profile"/*.win; do
       . "$f"
     done
   fi
   ;;
 Darwin)
-  if find ~/.config/shell/profile/*.mac >/dev/null 2>&1; then
-    for f in ~/.config/shell/profile/*.mac; do
+  if find "$HOME.config/shell/profile"/*.mac &>/dev/null; then
+    for f in "$HOME.config/shell/profile"/*.mac; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.mac >/dev/null 2>&1; then
-    for f in ~/.config/bash/profile/*.mac; do
+  elif find "$HOME.config/bash/profile/"*.mac &>/dev/null; then
+    for f in "$HOME.config/bash/profile"/*.mac; do
       . "$f"
     done
   fi
   ;;
 Linux)
-  if find ~/.config/shell/profile/*.lin >/dev/null 2>&1; then
-    for f in ~/.config/shell/profile/*.lin; do
+  if find "$HOME.config/shell/profile"/*.lin &>/dev/null; then
+    for f in "$HOME.config/shell/profile"/*.lin; do
       . "$f"
     done
-  elif find ~/.config/bash/profile/*.lin >/dev/null 2>&1; then
-    for f in ~/.config/bash/profile/*.lin; do
+  elif find "$HOME.config/bash/profile"/*.lin &>/dev/null; then
+    for f in "$HOME.config/bash/profile"/*.lin; do
       . "$f"
     done
   fi
   ;;
-*)
-  printf "\t\tUnknown OS or OS not supported"
-  ;;
+*) ;;
 esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
