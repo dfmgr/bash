@@ -39,9 +39,7 @@ Linux)
     . "$HOME/.config/bash/aliases/00-default.lin"
   fi
   ;;
-*)
-  printf '\t\t%s\n' "Unknown OS or OS not supported"
-  ;;
+*) ;;
 esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
