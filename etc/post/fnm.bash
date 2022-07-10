@@ -14,4 +14,4 @@
 # @Resource      : https://github.com/Schniz/fnm
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Load fnm
-[[ -n "$(builtin type fnm 2>/dev/null)" ]] && eval "$(fnm env)"
+[[ "$NODE_MANAGER" = "fnm" ]] && [[ -n "$(builtin type fnm 2>/dev/null)" ]] && eval "$(fnm env)"
