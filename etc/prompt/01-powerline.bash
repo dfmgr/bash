@@ -510,7 +510,7 @@ bashprompt() {
       else
         project="Terminal"
       fi
-      (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity >/dev/null 2>&1 &)
+      (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity &>/dev/null &)
     fi
   }
   ### Add time ########################################
