@@ -35,16 +35,16 @@ show_welcome() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 show_welcome_tor() {
   if [ ! -f "$HOME/.config/bash/welcome_tor.msg" ]; then
-    if [ ! -f /usr/local/etc/tor/install.sh ]; then
+    if [ ! -f "/usr/local/etc/tor/install.sh" ]; then
       printf_info "The tor package has not been installed"
-      printf_green "You can install it by running dotfiles install tor"
+      printf_cyan "You can install it by running systemmgr install tor"
     else
       if (sudo -vn && sudo -ln) 2>&1 | grep -v 'may not' >/dev/null; then
         if sudo bash -c '[ -f /var/lib/tor/hidden_service/hostname ]'; then
           printf_green "the tor hostname of this system is:"
           printf_green "$(sudo cat /var/lib/tor/hidden_service/hostname)"
           printf_info "The hostname has been saved to $HOME/tor_hostname"
-          sudo cat /var/lib/tor/hidden_service/hostname >"$HOME/tor_hostname"
+          cat /var/lib/tor/hidden_service/hostname | sudo tee "$HOME/tor_hostname" &>/dev/null
           printf_read_question "3" "$ICON_QUESTION Show this message again?" "1"
           printf "\n"
           if ! printf_answer_yes; then
