@@ -14,73 +14,80 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Use custom `less` colors for `man` pages.
-export LESS_TERMCAP_mb=$(printf "\e[1;31m")
-export LESS_TERMCAP_md=$(printf "\e[1;31m")
-export LESS_TERMCAP_me=$(printf "\e[0m")
-export LESS_TERMCAP_se=$(printf "\e[0m")
-export LESS_TERMCAP_so=$(printf "\e[1;44;33m")
-export LESS_TERMCAP_ue=$(printf "\e[0m")
-export LESS_TERMCAP_us=$(printf "\e[1;32m")
-
+LESS_TERMCAP_mb=$(printf "\e[1;31m")
+LESS_TERMCAP_md=$(printf "\e[1;31m")
+LESS_TERMCAP_me=$(printf "\e[0m")
+LESS_TERMCAP_se=$(printf "\e[0m")
+LESS_TERMCAP_so=$(printf "\e[1;44;33m")
+LESS_TERMCAP_ue=$(printf "\e[0m")
+LESS_TERMCAP_us=$(printf "\e[1;32m")
+export LESS_TERMCAP_mb LESS_TERMCAP_md LESS_TERMCAP_me LESS_TERMCAP_se
+export LESS_TERMCAP_so LESS_TERMCAP_ue LESS_TERMCAP_us
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Don't clear the screen after quitting a `man` page.
-export MANPAGER="less -X"
-
+MANPAGER="less -X"
+export MANPAGER
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # export browser
 if [ -z "$BROWSER" ]; then
   if [ -f "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
-    export BROWSER="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    BROWSER="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   elif [ -f "/Applications/Firefox.app/Contents/MacOS/firefox-bin" ]; then
-    export BROWSER="/Applications/Firefox.app/Contents/MacOS/firefox-bin"
+    BROWSER="/Applications/Firefox.app/Contents/MacOS/firefox-bin"
   fi
 fi
+export BROWSER
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # export terminal
 if [ -z "$TERMINAL" ]; then
   if [ -f "/Applications/iTerm.app/Contents/MacOS/iTerm)" ]; then
-    export TERMINAL="/Applications/iTerm.app/Contents/MacOS/iTerm"
+    TERMINAL="/Applications/iTerm.app/Contents/MacOS/iTerm"
   elif [ -f "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal" ]; then
-    export TERMINAL="/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
+    TERMINAL="/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
   fi
 fi
+export TERMINAL
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # export torrent client
 if [ -z "$TORRENT" ]; then
   if [ -f "/Applications/Transmission.app/Contents/MacOS/Transmission" ]; then
-    export TORRENT="/Applications/Transmission.app/Contents/MacOS/Transmission"
+    TORRENT="/Applications/Transmission.app/Contents/MacOS/Transmission"
   fi
 fi
+export TORRENT
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # export editor
 if [ -z "$EDITOR" ]; then
   if [ -n "$(command -v code 2>/dev/null)" ]; then
-    export EDITOR="$(command -v code 2>/dev/null)"
+    EDITOR="$(command -v code 2>/dev/null)"
   elif [ -n "$(command -v atom 2>/dev/null)" ]; then
-    export EDITOR="$(command -v atom 2>/dev/null)"
+    EDITOR="$(command -v atom 2>/dev/null)"
   elif [ -n "$(command -v brackets 2>/dev/null)" ]; then
-    export EDITOR="$(command -v brackets 2>/dev/null)"
+    EDITOR="$(command -v brackets 2>/dev/null)"
   elif [ -n "$(command -v vim 2>/dev/null)" ]; then
-    export EDITOR="$(command -v vim 2>/dev/null)"
+    EDITOR="$(command -v vim 2>/dev/null)"
   elif [ -n "$(command -v nvim 2>/dev/null)" ]; then
-    export EDITOR="$(command -v nvim 2>/dev/null)"
+    EDITOR="$(command -v nvim 2>/dev/null)"
   elif [ -n "$(command -v emacs 2>/dev/null)" ]; then
-    export EDITOR="$(command -v emacs 2>/dev/null)"
+    EDITOR="$(command -v emacs 2>/dev/null)"
   fi
 fi
+export EDITOR
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # export color
-export CLICOLOR=1
-export GREP_COLORS="mt=37;45"
+CLICOLOR=1
+GREP_COLORS="mt=37;45"
+LSCOLORS=exfxcxdxbxegedabagacad
 if [ -f "$HOME/.dircolors" ]; then
-  export DIRCOLOR="$HOME/.dircolors"
+  DIRCOLOR="$HOME/.dircolors"
 else
-  export DIRCOLOR="$HOME/.config/dircolors/dracula"
+  DIRCOLOR="$HOME/.config/dircolors/dracula"
 fi
-export LSCOLORS=exfxcxdxbxegedabagacad
+export CLICOLOR GREP_COLORS LSCOLORS DIRCOLOR
 eval "$(gdircolors "$DIRCOLOR")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
+PATH="$(echo "$PATH" | tr ':' '\n' | grep -v "$HOME/.local/bin" | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
+export PATH="$HOME/.local/bin:$PATH"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
