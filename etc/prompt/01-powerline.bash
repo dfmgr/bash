@@ -661,9 +661,9 @@ bashprompt() {
     PS1+="${BG_PURPLE}${FG_BLACK}${PS_TIME}$RESET\n"
     PS1+="${BG_GRAY2}${FG_BLACK}\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
     if [[ $USER == root ]] || [[ $UID == 0 ]]; then
-      PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET$"
+      PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET$ "
     else
-      PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET:"
+      PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET: "
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
