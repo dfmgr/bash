@@ -14,13 +14,13 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 orig_command_not_found_handle() {
-  local cmd="$1"
+  local cmd=$1
   local possibilities=""
   printf_red "$cmd: command not found"
   if type -P pkmgr &>/dev/null; then
     printf_green "Searching the repo for $cmd"
-    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -aw "$cmd" | sort -u | head -n10 | grep '^' || echo '')"
-    results="$(pkmgr search show-raw "$cmd" 2>/dev/null | awk '{print $1}' | sort -u | grep -w "$cmd" | head -n1 | grep '^' || echo '')"
+    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
+    results="$(pkmgr search show-raw "$cmd" 2>/dev/null | awk '{print $1}' | grep -a "$cmd"|sort -u | head -n1 | grep '^' || echo '')"
     [[ -n "$results" ]] && pkmgr silent install "$results" 2>/dev/null
     if type -P "$cmd" &>/dev/null || [[ $? = 0 ]]; then
       printf_green "$cmd has been Installed"
