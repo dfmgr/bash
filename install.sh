@@ -168,10 +168,10 @@ run_postinst() {
     mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
   [[ -f "$HOME/.bashrc" ]] && . "$HOME/.bashrc"
-  history -r &>/dev/null
   history -a &>/dev/null
   history -w &>/dev/null
   history -a &>/dev/null
+  history -r &>/dev/null
 }
 #
 execute "run_postinst" "Running post install scripts"
@@ -181,5 +181,4 @@ dfmgr_install_version
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # exit
 run_exit
-exec bash -l
 # end
