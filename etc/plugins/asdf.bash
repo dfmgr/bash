@@ -14,11 +14,10 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # asdf
+[ -f "$ASDF_DIR/asdf.sh" ] || return 0
 if [ -n "$BASH_VERSION" ]; then
-  if [ -f "$ASDF_DIR/asdf.sh" ]; then
-    . "$ASDF_DIR/asdf.sh"
-    . "$ASDF_DIR/completions/asdf.bash"
-  fi
+  . "$ASDF_DIR/asdf.sh"
+  [ -f "$ASDF_DIR/completions/asdf.bash" ] && . "$ASDF_DIR/completions/asdf.bash"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
