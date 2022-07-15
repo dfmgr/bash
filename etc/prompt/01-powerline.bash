@@ -603,6 +603,7 @@ bashprompt() {
   # Add all additional pre commands here command
   __pre_prompt_command() {
     local EXIT=$? # Keep this here as it is needed for prompt
+    history -r &>/dev/null
     ___time_it
     ___wakatime_prompt
     ___set_cursor
@@ -610,7 +611,7 @@ bashprompt() {
   }
   # Add all additional post commands here command
   __post_prompt_command() {
-    history -a &>/dev/null && history -r &>/dev/null
+    history -a &>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case $TERM in
