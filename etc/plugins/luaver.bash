@@ -14,7 +14,7 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # luaver
-type -P luaver &>/dev/null && return
+type -P luaver &>/dev/null || return 0
 if [ -n "$BASH_VERSION" ]; then
   if [ -f "$LUAVER_HOME/luaver" ]; then
     source "$LUAVER_HOME/luaver"
