@@ -603,15 +603,15 @@ bashprompt() {
   # Add all additional pre commands here command
   __pre_prompt_command() {
     local EXIT=$? # Keep this here as it is needed for prompt
-    history -r &>/dev/null
     ___time_it
     ___wakatime_prompt
     ___set_cursor
+    history -n &>/dev/null
     return $EXIT
   }
   # Add all additional post commands here command
   __post_prompt_command() {
-    history -a &>/dev/null
+    history -a &>/dev/null && history -r &>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case $TERM in
@@ -636,7 +636,7 @@ bashprompt() {
       local PS_SYMBOL="${PS_SYMBOL:- 😇 }"
     else
       local BG_EXIT="$BG_RED"
-      local PS_SYMBOL=" 😔 "
+      local PS_SYMBOL=" 😔 E:$EXIT"
     fi
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
