@@ -14,10 +14,9 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # basher
+[ -f "$BASHER_ROOT/bin/basher" ] || return 0
 if [ -n "$BASH_VERSION" ]; then
-  if [ -f "$BASHER_ROOT/bin/basher" ]; then
-    eval "$($BASHER_ROOT/bin/basher init - bash)"
-  fi
+  eval "$($BASHER_ROOT/bin/basher init - bash)"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
