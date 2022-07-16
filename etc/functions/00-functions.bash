@@ -174,13 +174,14 @@ if [[ -z "$(builtin command -v random-string 2>/dev/null)" ]]; then
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# generate a random password
 if [[ -z "$(builtin command -v mkpasswd 2>/dev/null)" ]]; then
   mkpasswd() {
     cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -n "$CDD_STATUS" ] || cd() {
+[ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "$@"; } || cd() {
   [[ $# -ge 4 ]] && printf_return "Usage: cd ~/location/to/dir"
   [[ $# -eq 3 ]] && shift 2 && dir="$1"
   [[ $# -eq 2 ]] && shift 1 && dir="$1"
