@@ -59,18 +59,18 @@ export TORRENT
 
 # export editor
 if [ -z "$EDITOR" ]; then
-  if [ -n "$(command -v code 2>/dev/null)" ]; then
-    EDITOR="$(command -v code 2>/dev/null)"
-  elif [ -n "$(command -v atom 2>/dev/null)" ]; then
-    EDITOR="$(command -v atom 2>/dev/null)"
-  elif [ -n "$(command -v brackets 2>/dev/null)" ]; then
-    EDITOR="$(command -v brackets 2>/dev/null)"
-  elif [ -n "$(command -v vim 2>/dev/null)" ]; then
-    EDITOR="$(command -v vim 2>/dev/null)"
-  elif [ -n "$(command -v nvim 2>/dev/null)" ]; then
-    EDITOR="$(command -v nvim 2>/dev/null)"
-  elif [ -n "$(command -v emacs 2>/dev/null)" ]; then
-    EDITOR="$(command -v emacs 2>/dev/null)"
+  if [ -n "$(builtin command -v code 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v code 2>/dev/null)"
+  elif [ -n "$(builtin command -v atom 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v atom 2>/dev/null)"
+  elif [ -n "$(builtin command -v brackets 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v brackets 2>/dev/null)"
+  elif [ -n "$(builtin command -v vim 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v vim 2>/dev/null)"
+  elif [ -n "$(builtin command -v nvim 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v nvim 2>/dev/null)"
+  elif [ -n "$(builtin command -v emacs 2>/dev/null)" ]; then
+    EDITOR="$(builtin command -v emacs 2>/dev/null)"
   fi
 fi
 export EDITOR

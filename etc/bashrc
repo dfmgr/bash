@@ -139,7 +139,7 @@ show_welcome
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run neofetch
 #if echo "$-" | grep i >/dev/null; then
-#  if [ -n "$(command -v neofetch 2>/dev/null)" ]; then
+#  if [ -n "$(builtin command -v neofetch 2>/dev/null)" ]; then
 #    neofetch
 #  fi
 #fi

@@ -1,24 +1,26 @@
 #!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202103251632-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.com
-# @License       : LICENSE.md
-# @ReadME        : 00-functions.bash --help
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 16:41 EDT
-# @File          : 00-functions.bash
-# @Description   :
-# @TODO          :
-# @Other         :
-# @Resource      :
+##@Version           :  202207161759-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  jason@casjaysdev.com
+# @@License          :  WTFPL
+# @@ReadME           :  00-functions.bash --help
+# @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @@Created          :  Saturday, Jul 16, 2022 17:59 EDT
+# @@File             :  00-functions.bash
+# @@Description      :  Default function for bash
+# @@Changelog        :
+# @@TODO             :
+# @@Other            :
+# @@Resource         :
+# @@sudo/root        :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Icons
-ICON_INFO="[ ℹ️ ]"
-ICON_GOOD="[ ✔ ]"
-ICON_WARN="[ ❗ ]"
-ICON_ERROR="[ ✖ ]"
-ICON_QUESTION="[ ❓ ]"
+ICON_INFO="${ICON_INFO:-[ ❕ ]}"
+ICON_GOOD="${ICON_GOOD:-[ ✅ ]}"
+ICON_WARN="${ICON_WARN:-[ ⚠️ ]}"
+ICON_ERROR="${ICON_ERROR:-[ ✖ ]}"
+ICON_QUESTION="${ICON_QUESTION:-[ ❓ ]}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_color() { printf "%b" "$(tput setaf "$2" 2>/dev/null)" "$1" "$(tput sgr0 2>/dev/null)"; }
 printf_normal() { printf_color "\t\t$1\n" "0"; }
@@ -153,11 +155,11 @@ printf_head() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use grc if it's installed or execute the command direct
-if [[ -f "$(command -v grc)" ]]; then
+if [[ -f "$(builtin command -v grc 2>/dev/null)" ]]; then
   if [[ "$USEGRC" = "yes" ]]; then
     grc() {
-      if [[ -f "$(command -v grc)" ]]; then
-        $(command -v grc) --colour=on "$@"
+      if [[ -f "$(builtin command -v grc 2>/dev/null)" ]]; then
+        $(builtin command -v grc 2>/dev/null) --colour=on "$@"
       else
         "$@"
       fi
@@ -166,28 +168,26 @@ if [[ -f "$(command -v grc)" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate random strings
-if [[ -z "$(command -v random-string)" ]]; then
+if [[ -z "$(builtin command -v random-string 2>/dev/null)" ]]; then
   random-string() {
     cat '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [[ -z "$(command -v mkpasswd)" ]]; then
+if [[ -z "$(builtin command -v mkpasswd 2>/dev/null)" ]]; then
   mkpasswd() {
     cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cd() {
-  [[ $# -gt 1 ]] && { printf_red "Usage: cd or cd directory" && return 1; }
-  if [[ -n "$CDD_CWD_DIR" ]]; then
-    [[ $# -eq 0 ]] && CD_DIR="$CDD_CWD_DIR" || CD_DIR="$CDD_CWD_DIR/${*:-}"
-    cd_cdd "$CDD_CWD_DIR"
-  else
-    local CD_DIR="${1:-$HOME/}"
-    [ -n "$CD_DIR" ] && [ -d "$CD_DIR" ] || mkdir -p "$CD_DIR"
-    builtin cd "$CD_DIR" || { printf_red "failed to cd into $CD_DIR" && return 1; }
-  fi
+[ -n "$CDD_STATUS" ] || cd() {
+  [[ $# -ge 4 ]] && printf_return "Usage: cd ~/location/to/dir"
+  [[ $# -eq 3 ]] && shift 2 && dir="$1"
+  [[ $# -eq 2 ]] && shift 1 && dir="$1"
+  [[ $# -eq 1 ]] && dir="$1"
+  [ -n "$dir" ] || dir="$PWD"
+  mkdir -p "$dir" &&
+    builtin command cd "$dir" || printf_return "Failed cd into $dir"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # the fuck
@@ -228,7 +228,7 @@ detectos() {
 detectostype() {
   arch=$(uname -m)
   kernel=$(uname -r)
-  if [ -n "$(command -v lsb_release)" ]; then
+  if [ -n "$(builtin command -v lsb_release 2>/dev/null)" ]; then
     distroname=$(lsb_release -s -d)
   elif [ -f "/etc/os-release" ]; then
     distroname=$(grep PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | tr -d '="')

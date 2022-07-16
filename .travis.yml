@@ -12,7 +12,7 @@ install:
   - pkmgr update
   - sudo dotfiles admin scripts
   - dotfiles install bash
-  - bash -c "[ -f $(command -v bash &>/dev/null) ] && timeout --signal=9 --foreground --preserve-status 5 bash || true"
+  - bash -c "[ -f $(builtin command -v bash &>/dev/null) ] && timeout --signal=9 --foreground --preserve-status 5 bash || true"
 
 matrix:
   include:

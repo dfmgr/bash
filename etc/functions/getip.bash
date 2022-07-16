@@ -14,12 +14,12 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 unset IFCONFIG NETDEV IFISONLINE CURRIP4 CURRIP6 CURRIP4WAN CURRIP6WAN
-if [ -n "$(command -v myip 2>/dev/null)" ]; then
+if [ -n "$(builtin command -v myip 2>/dev/null)" ]; then
   alias __getip="myip"
 else
   __getip() {
     IFCONFIG="$(sudo bash -c "command -v ifconfig 2>/dev/null")"
-    if [ ! -z "$IFCONFIG" ]; then
+    if [ -n "$IFCONFIG" ]; then
       if [[ "$OSTYPE" =~ ^darwin ]]; then
         NETDEV="$(route get default | grep interface | awk '{print $2}')"
       else

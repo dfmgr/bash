@@ -250,13 +250,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Rust
   __ifrust() {
-    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(command -v rustc 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(builtin command -v rustc 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [[ "$(___bash_find "$gitdir" -iname '*.rs')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rlib')" -ne 0 ]]; then
-      if [ -f "$(command -v rustc 2>/dev/null)" ]; then
+      if [ -f "$(builtin command -v rustc 2>/dev/null)" ]; then
         __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       else
         __rust_version() { return; }
@@ -273,13 +273,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # GO
   __ifgo() {
-    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(command -v go 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(builtin command -v go 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [[ "$(___bash_find "$gitdir" -iname '*.go')" -ne 0 ]]; then
-      if [ -f "$(command -v go 2>/dev/null)" ]; then
+      if [ -f "$(builtin command -v go 2>/dev/null)" ]; then
         __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       else
         __go_version() { return; }
@@ -296,17 +296,17 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Ruby
   __ifruby() {
-    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(command -v ruby 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(builtin command -v ruby 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [[ "$(___bash_find "$gitdir" -iname '*.gem')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rb')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'Gemfile')" -ne 0 ]]; then
-      if [ -f "$(command -v rbenv 2>/dev/null)" ]; then
+      if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
-      elif [ -f "$(command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
+      elif [ -f "$(builtin command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
         __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
-      elif [ -f "$(command -v ruby 2>/dev/null)" ]; then
+      elif [ -f "$(builtin command -v ruby 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "Ruby: $(ruby --version | cut -d' ' -f2)"; }
       else
         __ruby_version() { return; }
@@ -323,13 +323,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Node.js
   __ifnode() {
-    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(command -v node 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(builtin command -v node 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [[ "$(___bash_find "$gitdir" -iname '*.js')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'package.json')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'yarn.lock')" -ne 0 ]]; then
-      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(command -v nvm_ls_current 2>/dev/null)" ]] &&
+      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ]] &&
         [[ "$(nvm current)" != "system" ]]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
@@ -337,14 +337,14 @@ bashprompt() {
           [ -z "${version}" ] && return
           printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
         }
-      elif [[ -f "$(command -v fnm)" ]]; then
+      elif [[ -f "$(builtin command -v fnm)" ]]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
           version="$(__node_version)"
           [ -z "${version}" ] && return
           printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
         }
-      elif [[ -f "$(command -v node)" ]]; then
+      elif [[ -f "$(builtin command -v node)" ]]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
           version="$(__node_version)"
@@ -360,7 +360,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
   __ifpython() {
-    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(command -v python3 2>/dev/null)" ] || [ -z "$(command -v python2 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(builtin command -v python3 2>/dev/null)" ] || [ -z "$(builtin command -v python2 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir pythonBin PYTHON_VERSION
@@ -371,7 +371,7 @@ bashprompt() {
     [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
     if [[ -n "$VIRTUAL_ENV" ]] || [[ $(___bash_find "$gitdir" -name '*.py') -ne 0 ]] || [[ $(___bash_find "$gitdir" -name '*.py' -o -name 'requirements.txt') -ne 0 ]]; then
       __python_info() {
-        pythonBin="$(command -v python3 || command -v python2 || command -v python)"
+        pythonBin="$(builtin command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
         if [[ "$VIRTUAL_ENV" =~ venv ]]; then
           PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
@@ -391,7 +391,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
   __ifphp() {
-    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(command -v php 2>/dev/null)" ] || [ -z "$(command -v php8 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(builtin command -v php 2>/dev/null)" ] || [ -z "$(builtin command -v php8 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
@@ -410,7 +410,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # perl
   __ifperl() {
-    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(command -v perl 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(builtin command -v perl 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
@@ -429,7 +429,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # lua
   __iflua() {
-    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(command -v lua 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(builtin command -v lua 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir version
@@ -449,7 +449,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
-    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir marks git_eng branch stat aheadN behindN
@@ -478,7 +478,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git reminder
   __git_prompt_message_warn() {
-    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(command -v git 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir grepgitignore
@@ -493,7 +493,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # WakaTime
   __ifwakatime() {
-    if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(command -v wakatime 2>/dev/null)" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(builtin command -v wakatime 2>/dev/null)" ]; then
       ___wakatime_show() { return 1; }
       ___wakatime_prompt() { return 1; }
       return 1
