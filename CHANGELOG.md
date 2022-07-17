@@ -1,3 +1,17 @@
+#### Changelog: 2022-07-17 at 00:20:41  
+  
+etc/aliases/00-default.lin      🚀  
+etc/aliases/00-default.mac      🚀  
+etc/aliases/00-default.win      🚀  
+etc/bash_profile      🚀  
+etc/functions/projectdir_bin.bash      🚀  
+etc/plugins/luaver.bash      🚀  
+etc/prompt/01-powerline.bash      🚀  
+  
+#### End of changes for 202207161837-git - 2022-07-17 at 00:20:41  
+  
+----  
+  
 #### Changelog: 2022-07-16 at 23:23:09  
   
 etc/functions/00-functions.bash      🚀  
