@@ -25,16 +25,16 @@ fi
 if [ -z "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
   # Debian/Ubuntu/Arch
   if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
-    source "/usr/share/powerline/bindings/bash/powerline.sh"
+    . "/usr/share/powerline/bindings/bash/powerline.sh"
   # Redhat/CentOS
   elif [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
-    source "/usr/share/powerline/bash/powerline.sh"
+    . "/usr/share/powerline/bash/powerline.sh"
     # Try to find powerline.sh
     powerline_sh="$(find /usr/*/powerline /usr/lib/python*/dist-packages /usr/local/lib/python*/dist-packages -iname 'powerline.sh' 2>/dev/null | grep bindings/bash | head -n1)"
   elif [ -f "$powerline_sh" ]; then
-    source "$powerline_sh"
+    . "$powerline_sh"
+    unset powerline_sh
   fi
-  unset powerline_sh
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Start
   if [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
