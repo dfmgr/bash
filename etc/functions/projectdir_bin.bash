@@ -13,18 +13,20 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-set-project-path() {
-  BASH_PATH=${BASH_PATH:-$PATH}                  # only set variable if unset
-  for DIR in . .. ../.. ../../.. ../../../..; do # set to required lookup depth
-    DIR="$DIR/node_modules/.bin"
-    if [[ -d "$DIR" ]]; then
-      PATH=$(pwd "$DIR"):$BASH_PATH
-      [[ $1 != quit ]] || echo "set-project-path(): \$PATH += $(pwd $DIR)"
-      break
-    fi
-  done
-}
-unset-project-path() {
-  PATH="${BASH_PATH:-$PATH}" # reset to $BASH_PATH if previously set
-}
+# set-project-path() {
+#   BASH_PATH=${BASH_PATH:-$PATH} # only set variable if unset
+#   SEARCH_PATH="$(find "$PWD/" -maxdepth 1 -type d 2>/dev/null | grep '^')"
+#   [[ -n "$SEARCH_PATH" ]] || return 0
+#   for DIR in .. ../.. $SEARCH_PATH; do # set to required lookup depth
+#     DIR="$DIR/node_modules/.bin"
+#     if [[ -d "$DIR" ]]; then
+#       PATH=$(pwd "$DIR"):$BASH_PATH
+#       [[ $1 != quit ]] || echo "set-project-path(): \$PATH += $(pwd $DIR)"
+#       break
+#     fi
+#   done
+# }
+# unset-project-path() {
+#   PATH="${BASH_PATH:-$PATH}" # reset to $BASH_PATH if previously set
+# }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
