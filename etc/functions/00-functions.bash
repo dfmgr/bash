@@ -182,15 +182,18 @@ if [[ -z "$(builtin command -v mkpasswd 2>/dev/null)" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "$@"; } || cd() {
-  local dir
-  { [[ $# = "" ]] || [[ -z "$1" ]]; } && builtin cd "$HOME" || printf_return "Failed cd into ~"
+  local dir=""
+  [[ "$dir" = "" ]] && builtin cd "$HOME" || printf_return "Failed cd into ~"
   [[ "$2" = "\--" ]] && dir="$3"
   [[ $# -ge 4 ]] && printf_return "Usage: cd ~/location/to/dir"
   [[ $# -eq 3 ]] && shift 2 && dir="$1"
   [[ $# -eq 2 ]] && shift 1 && dir="$1"
   [[ $# -eq 1 ]] && dir="$1"
-  [ -n "$dir" ] || dir="$PWD"
-  [ ! -f "$dir" ] && mkdir -p "$dir" && builtin command cd "$dir" 2>/dev/null || printf_return "Failed cd into $dir"
+  [[ -n "$dir" ]] || dir="$PWD"
+  [[ -f "$dir" ]] && printf_exit "$dir is a file"
+  [[ -d "$dir" ]] || mkdir -p "$dir"
+  [[ -d "$dir" ]] && builtin cd "$dir" || printf_return "Failed cd into $dir"
+return $?
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # the fuck
