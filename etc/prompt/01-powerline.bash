@@ -227,7 +227,7 @@ bashprompt() {
     local st es
     local es=${EPOCHSECONDS:-$(date +%s)}
     [ -f "$HOME/.config/bash/noprompt/timer" ] && return 1
-    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-0})
+    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-$(date +%s)})
     if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
       TIMER_ENDTIME=${EPOCHSECONDS:-1}
       TIMER_STARTTIME=${st:-0}
@@ -606,12 +606,11 @@ bashprompt() {
     ___time_it
     ___wakatime_prompt
     ___set_cursor
-    history -n &>/dev/null
     return $EXIT
   }
   # Add all additional post commands here command
   __post_prompt_command() {
-    history -a &>/dev/null && history -r &>/dev/null
+    true
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case $TERM in
@@ -636,7 +635,7 @@ bashprompt() {
       local PS_SYMBOL="${PS_SYMBOL:- 😇 }"
     else
       local BG_EXIT="$BG_RED"
-      local PS_SYMBOL=" 😔 E:$EXIT"
+      local PS_SYMBOL=" 😔 ${BG_RED}E:${EXIT}${RESET}"
     fi
     [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
@@ -668,7 +667,7 @@ bashprompt() {
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command; "
+  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command;history -a && history -r; "
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
