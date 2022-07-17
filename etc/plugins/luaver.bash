@@ -16,12 +16,10 @@
 # luaver
 type -P luaver &>/dev/null || return 0
 if [ -n "$BASH_VERSION" ]; then
-  if [ -f "$LUAVER_HOME/luaver" ]; then
-    source "$LUAVER_HOME/luaver"
-  fi
-  if [ -f "$LUAVER_HOME/completions/luaver.bash" ]; then
-    source "$LUAVER_HOME/completions/luaver.bash"
-  fi
+  [ -f "$LUAVER_HOME/luaver" ] &&
+    . "$LUAVER_HOME/luaver"
+  [ -f "$LUAVER_HOME/completions/luaver.bash" ] &&
+    . "$LUAVER_HOME/completions/luaver.bash"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
