@@ -181,18 +181,34 @@ if [[ -z "$(builtin command -v mkpasswd 2>/dev/null)" ]]; then
   }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "${@:-}"; } || cd() {
-  local dir=""
-  [[ "$dir" = "" ]] && builtin cd "$HOME" || printf_return "Failed cd into ~"
-  [[ "$2" = "\--" ]] && dir="$3"
-  [[ $# -ge 4 ]] && printf_return "Usage: cd ~/location/to/dir"
-  [[ $# -eq 3 ]] && shift 2 && dir="$1"
-  [[ $# -eq 2 ]] && shift 1 && dir="$1"
-  [[ $# -eq 1 ]] && dir="$1"
-  [[ -n "$dir" ]] || dir="$PWD"
-  [[ -f "$dir" ]] && printf_exit "$dir is a file"
-  [[ -d "$dir" ]] || mkdir -p "$dir"
-  [[ -d "$dir" ]] && builtin cd "$dir" || printf_return "Failed cd into $dir"
+#[ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "${@:-}"; } || \
+  cd() {
+    local dir=""
+    if [[ $# -ge 4 ]]; then
+      printf_return "Usage: cd ~/location/to/dir"
+    elif [[ "$2" = "\--" ]]; then
+	    dir="$3" 
+	    shift 3
+    elif [[ $# -eq 3 ]]; then 
+	    dir="$3" 
+	    shift 3 
+    elif [[ $# -eq 2 ]]; then 
+	    dir="$2" 
+	    shift 2
+    elif [[ $# -eq 1 ]]; then
+	    dir="$1" 
+	    shift 1
+    elif [[ "$dir" =~ '..' ]]; then
+	    builtin cd "$dir" 
+	    return $?
+    elif [[ "$dir" = "" ]]; then
+	    builtin cd "$HOME"
+	    return $?
+    fi
+    [[ -n "$dir" ]] || dir="$PWD"
+    [[ -d "$dir" ]] || mkdir -p "$dir"
+    [[ -f "$dir" ]] && printf_return "$dir is a file"
+    [[ -d "$dir" ]] && builtin cd "$dir" || printf_return "Failed cd into $dir"
 return $?
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
