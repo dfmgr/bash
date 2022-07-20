@@ -25,9 +25,7 @@ alias m='man '
 alias map='xargs -n1 '
 alias n='npm '
 alias path='printf "%b\n" "${PATH//:/\\n}" '
-alias t='tmux attach  '
-alias bashrc='clear &&. ~/.bashrc '
-alias inputrc='bind -f ~/.inputrc '
+alias t='tmux '
 alias tailf='tail -f '
 alias mount='mount -l '
 alias h='history '
@@ -49,18 +47,31 @@ alias egrep='grep -E --color=auto '
 alias fgrep='grep -F --color=auto '
 alias cp_rpf='cp --parents -Rfv '
 alias less='less -r '
+alias update-system='printf_blue "Updating your system. This may take a while......" && pkmgr silent upgrade && sudo systemmgr update &>/dev/null && dfmgr update &>/dev/null && printf_green "Your system has been updated" || printf_red "Failed to update your system"'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -n "$DISPLAY" ] && alias ssh='ssh -qX ' || alias ssh='ssh -q '
+# TMUX
+[ -f "$HOME/.config/tmux/singlerc.conf" ] && [ -f "$(builtin type -P tmux 2>/dev/null)" ] && alias tmux-single='tmux -f $HOME/.config/tmux/singlerc.conf new-session -D -A -s single ' || alias tmux-ssh='tmux '
+[ -f "$HOME/.config/tmux/tmux.ssh.conf" ] && [ -f "$(builtin type -P tmux 2>/dev/null)" ] && alias tmux-ssh='tmux -f $HOME/.config/tmux/tmux.ssh.conf new-session -D -A -s ssh ' || alias tmux-ssh='tmux '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# VisualStudio code
-if [ -n "$(builtin command -v code-oss 2>/dev/null)" ]; then
-  alias code='code-oss '
-elif [ -n "$(builtin command -v code-insiders 2>/dev/null)" ]; then
-  alias code='code-insiders '
-fi
+# Screen
+[ -f "$(builtin type -P myscreen 2>/dev/null)" ] && [ -f "$(builtin type -P screen 2>/dev/null)" ] && alias screen='myscreen single ' || alias screen='screen -t default '
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shell
+alias profilerc='source ~/.profile'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# zsh specific
+[ "$(basename "$SHELL" 2>/dev/null)" = "zsh" ] && alias zshrc='clear && source ~/.zshrc'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# bash specific
+[ "$(basename "$SHELL" 2>/dev/null)" = "bash" ] && alias inputrc='bind -f ~/.inputrc'
+[ "$(basename "$SHELL" 2>/dev/null)" = "bash" ] && alias bashrc='clear && source ~/.bashrc'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ssh aliases
+[ -n "$DISPLAY" ] && alias ssh='ssh -X' || alias ssh='ssh '
+[ -n "$DISPLAY" ] && alias sshq='ssh -qX' || alias ssh='ssh -q'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sudo commands
-alias sudo='sudo -H '
+alias sudo='sudo --preserve-env=PATH '
 alias svi='sudo vim '
 alias adb='sudo adb '
 alias npmg='sudo npm -g '
@@ -71,28 +82,52 @@ alias systemctl='sudo systemctl '
 alias ports='sudo netstat -taupln | grep --color=auto LISTEN '
 alias flushdns='sudo systemd-resolve --flush-caches '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# systemctl
+alias systemctl-start='sudo systemctl start '
+alias systemctl-stop='sudo systemctl stop '
+alias systemctl-restart='sudo systemctl restart '
+alias systemctl-reload='sudo systemctl reload '
+alias systemctl-status='sudo systemctl status '
+alias systemctl-enable='sudo systemctl enable '
+alias systemctl-disable='sudo systemctl disable '
+alias systemctl-list-units='sudo systemctl list-units |sed "s|                                                 ||g"|grep -E "\.service|\.socket"|grep "active" '
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Package management
-[ "$(uname -s)" = Linux ] && [ -f "$(builtin command -v apt 2>/dev/null)" ] && alias apt='sudo apt '
-[ "$(uname -s)" = Linux ] && [ -f "$(builtin command -v apt-get 2>/dev/null)" ] && alias apt-get='sudo apt-get '
-[ "$(uname -s)" = Linux ] && [ -f "$(builtin command -v dnf 2>/dev/null)" ] && alias dnf='sudo dnf '
-[ "$(uname -s)" = Linux ] && [ -f "$(builtin command -v yum 2>/dev/null)" ] && alias yum='sudo yum '
-[ "$(uname -s)" = Linux ] && [ -f "$(builtin command -v pacman 2>/dev/null)" ] && alias pacman='sudo pacman '
+[ "$(uname -s)" = Linux ] && [ -n "$(builtin type -P apt 2>/dev/null)" ] && alias apt='sudo apt '
+[ "$(uname -s)" = Linux ] && [ -n "$(builtin type -P apt-get 2>/dev/null)" ] && alias apt-get='sudo apt-get '
+[ "$(uname -s)" = Linux ] && [ -n "$(builtin type -P dnf 2>/dev/null)" ] && alias dnf='sudo dnf '
+[ "$(uname -s)" = Linux ] && [ -n "$(builtin type -P yum 2>/dev/null)" ] && alias yum='sudo yum '
+[ "$(uname -s)" = Linux ] && [ -n "$(builtin type -P pacman 2>/dev/null)" ] && alias pacman='sudo pacman '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ls
+alias l.='ls -A | grep -E --color=auto '\''^\.'\'''
 alias ls='ls --color=auto '
-alias l.='ls -LA --color=auto '
 alias la='ls -A --color=auto'
-alias lla='ls -lA --color=auto '
 alias ll='ls -l --color=auto '
-alias dir='ls -D --color=auto  '
+alias lla='ls -lA --color=auto '
+alias dir='ls -D --color=auto'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
-alias ~='builtin cd ~ '
+alias ~='builtin cd '
 alias ..='builtin cd .. '
 alias ...='builtin cd ../.. '
 alias ....='builtin cd ../../.. '
 alias .....='builtin cd ../../../.. '
 alias cd..='builtin cd .. '
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# VisualStudio code
+if [ -n "$(builtin type -P code-oss 2>/dev/null)" ]; then
+  alias code='code-oss'
+elif [ -n "$(builtin type -P code-insiders 2>/dev/null)" ]; then
+  alias code='code-insiders'
+fi
+builtin type -t code &>/dev/null && alias codew='code -w'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Powershell
+[ -f "$(builtin type -P pwsh-preview 2>/dev/null)" ] && alias pwsh='pwsh-preview '
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Geany
+[ -f "$(builtin type -P geany 2>/dev/null)" ] && alias='geany --socket-file=/tmp/geany.sock &>/dev/null '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set vim
 alias vi='vim '
@@ -101,66 +136,74 @@ alias vis='vim +set si '
 alias svim='sudo vim '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Set neovim
-[ -f "$(builtin command -v nvim 2>/dev/null)" ] && [ -f "$HOME/.config/neovim/init.vim" ] && alias nvim='nvim -u $HOME/.config/neovim/init.vim ' ||
-  [ -f "$(builtin command -v nvim 2>/dev/null)" ] && [ -f "$HOME/.config/nvim/init.vim" ] && alias nvim='nvim -u $HOME/.config/nvim/init.vim '
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#Set docker
-if [ -f "$(builtin command -v docker 2>/dev/null)" ]; then
-  alias docker='sudo docker '
-  alias run='docker run --rm -it -v "${PWD}":/app -w /app '
+if [ -n "$(builtin type -P nvim 2>/dev/null)" ] && [ -f "$HOME/.config/neovim/init.vim" ]; then
+  alias nvim='nvim -u $HOME/.config/neovim/init.vim '
+elif [ -n "$(builtin type -P nvim 2>/dev/null)" ] && [ -f "$HOME/.config/nvim/init.vim" ]; then
+  alias nvim='nvim -u $HOME/.config/nvim/init.vim '
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#Set docker
+[ -n "$(builtin type -P docker 2>/dev/null)" ] && alias docker='sudo docker '
+[ -n "$(builtin type -P docker 2>/dev/null)" ] && alias drun='docker run --rm -it -v "${PWD}":/app -w /app '
+[[ -f "$(builtin type -P minikube 2>/dev/null)" ]] && alias kubectl='minikube kubectl'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # trash aliases.
-[ -f "$(builtin command -v trash 2>/dev/null)" ] && alias empty-trash='trash empty ' || alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/*'
+[ -n "$(builtin type -P trash 2>/dev/null)" ] && alias empty-trash='trash empty ' ||
+  alias empty-trash='rm -Rf ~/.local/share/Trash/files/* && ~/.local/share/Trash/files/info/* '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Hide/show icons.
-alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false'
-alias desktop-icons-show='gsettings set org.gnome.desktop.background show-desktop-icons true'
+[ -n "$(builtin type -P gsettings 2>/dev/null)" ] && alias desktop-icons-hide='gsettings set org.gnome.desktop.background show-desktop-icons false '
+[ -n "$(builtin type -P gsettings 2>/dev/null)" ] && alias desktop-icons-show='gsettings set org.gnome.desktop.background show-desktop-icons true '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lock Screen
-[ -f "$(builtin command -v gnome-screensaver-command 2>/dev/null)" ] && alias afk='gnome-screensaver-command --lock'
-[ -f "$(builtin command -v xflock4 2>/dev/null)" ] && alias afk='xflock4'
+[ -n "$(builtin type -P xflock4 2>/dev/null)" ] && alias afk='xflock4 '
+[ -n "$(builtin type -P gnome-screensaver-command 2>/dev/null)" ] && alias afk='gnome-screensaver-command --lock '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # logout
-[ -f "$(builtin command -v xfce4-session-logout)" ] && alias logout='xfce4-session-logout'
+[ -n "$(builtin type -P xfce4-session-logout 2>/dev/null)" ] && alias logout='xfce4-session-logout '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Open command
-alias o='xdg-open '
-alias open='xdg-open '
+[ "$(uname -s)" = Linux ] && alias open='xdg-open '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #youtube-dl
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-mp3='youtube-dl --audio-quality 320k --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias ytda='youtube-dl -f bestaudio --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
-[ -f "$(builtin command -v youtube-dl 2>/dev/null)" ] && alias ytstream='ytstream '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias nightcorea='youtube-dl --extract-audio --audio-format mp3 --embed-thumbnail --add-metadata --audio-quality 320k --config-location $HOME/.config/youtube-dl/nightcorea '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias nightcorev='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/nightcorev '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytv-best='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-aac='youtube-dl --extract-audio --audio-format aac --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-best='youtube-dl --extract-audio --audio-format best --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-flac='youtube-dl --extract-audio --audio-format flac --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-m4a='youtube-dl --extract-audio --audio-format m4a --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-mp3='youtube-dl --audio-quality 320k --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-opus='youtube-dl --extract-audio --audio-format opus --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-vorbis='youtube-dl --extract-audio --audio-format vorbis --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-wav='youtube-dl --extract-audio --audio-format wav --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytda='youtube-dl -f bestaudio --extract-audio --audio-format mp3 --config-location $HOME/.config/youtube-dl/music '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytdv='youtube-dl -f bestvideo+bestaudio --config-location $HOME/.config/youtube-dl/videos '
+[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytstream='ytstream '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Media
-[ -f "$(builtin command -v castero 2>/dev/null)" ] && alias podcasts='castero'
-[ -f "$(builtin command -v spotifyd 2>/dev/null)" ] && alias spotify='spotifyd'
-[ -f "$(builtin command -v pianobar 2>/dev/null)" ] && alias pandora='pianobar'
-[ -f "$(builtin command -v tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia'
-[ -f "$(builtin command -v youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer '
-[ -f "$(builtin command -v mpc 2>/dev/null)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
+[ -n "$(builtin type -P castero 2>/dev/null)" ] && alias podcasts='castero '
+[ -n "$(builtin type -P spotifyd 2>/dev/null)" ] && alias spotify='spotifyd '
+[ -n "$(builtin type -P pianobar 2>/dev/null)" ] && alias pandora='pianobar '
+[ -n "$(builtin type -P tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia '
+[ -n "$(builtin type -P youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer '
+[ -n "$(builtin type -P mpc 2>/dev/null)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Python
+[ -z "$(builtin type -P pipx 2>/dev/null)" ] && alias='pip install -U pipx && alias pipx="pipx"'
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Other
+[ -n "$(builtin type -P anime-dl 2>/dev/null)" ] && alias anime-cli='anime-dl'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # list functions
-alias list-my-functions='typeset -F | less'
-alias list-my-aliases='alias | less'
+alias list-my-functions='typeset -F | less '
+alias list-my-aliases='alias | less '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Fun alias
-alias tw='rainbowstream -iot'
-alias twitter='twitter'
-alias mylatlong='mylocation | grep --color=none "LAT\|LON"'
-alias emj='emojis'
+alias tw='rainbowstream -iot '
+alias twitter='twitter '
+alias mylatlong='mylocation | grep --color=none "LAT\|LON" '
+alias emj='emojis '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # other
 
