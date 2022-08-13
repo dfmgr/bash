@@ -108,4 +108,4 @@ add2path() {
     fi
   fi
   return ${exitCode:-$?}
-}
+} && export -f add2path

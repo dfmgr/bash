@@ -1,3 +1,14 @@
+#### Changelog: 2022-08-12 at 22:12:53  
+#### 🗃️ Committing everything that changed 🗃️  
+  
+etc/functions/00-functions.bash      🚀  
+etc/functions/add2path.bash      🚀  
+etc/functions/getip.bash      🚀  
+  
+#### End of changes for 202207200757-git - 2022-08-12 at 22:12:53  
+  
+----  
+  
 #### Changelog: 2022-07-20 at 08:46:13  
   
 etc/functions/00-functions.bash      🚀  
