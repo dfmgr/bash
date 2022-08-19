@@ -14,7 +14,7 @@
 # @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Install fonts
-if [[ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ]] || [[ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]]; then
+if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]; then
   mkdir -p "$HOME/.local/share/fonts" &>/dev/null
   curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
     curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
@@ -76,7 +76,7 @@ noprompt() {
         printf_blue "Disabled ${f}"
         touch "$HOME/.config/bash/noprompt/$f"
       done
-      if [[ -f "${BASH_SOURCE[0]}" ]]; then
+      if [ -f "${BASH_SOURCE[0]}" ]; then
         printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
         exec bash -s "${BASH_SOURCE[0]}"
       fi
@@ -86,9 +86,9 @@ noprompt() {
       shift 1
       for f in ${array}; do
         printf_blue "Enabled ${f}"
-        [[ -f "$HOME/.config/bash/noprompt/$f" ]] && rm -Rf "$HOME/.config/bash/noprompt/$f"
+        [ -f "$HOME/.config/bash/noprompt/$f" ] && rm -Rf "$HOME/.config/bash/noprompt/$f"
       done
-      if [[ -f "${BASH_SOURCE[0]}" ]]; then
+      if [ -f "${BASH_SOURCE[0]}" ]; then
         printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
         exec bash -s "${BASH_SOURCE[0]}"
       fi
@@ -97,7 +97,7 @@ noprompt() {
     --show)
       shift 1
       for f in ${array}; do
-        [[ -f "$HOME/.config/bash/noprompt/$f" ]] && printf_yellow "$f is disabled" || printf_green "$f is enabled"
+        [ -f "$HOME/.config/bash/noprompt/$f" ] && printf_yellow "$f is disabled" || printf_green "$f is enabled"
       done
       ;;
     --)
@@ -106,7 +106,7 @@ noprompt() {
       ;;
     esac
   done
-  [[ $# -eq 0 ]] && return
+  [ $# -eq 0 ] && return
   while :; do
     case "$1" in
     date | time) $action "$HOME/.config/bash/noprompt/date" ;;
@@ -126,9 +126,9 @@ noprompt() {
     esac
     printf_blue "$message $1"
     shift 1
-    [[ $# -ne 0 ]] || break
+    [ $# -ne 0 ] || break
   done
-  if [[ -f "${BASH_SOURCE[0]}" ]]; then
+  if [ -f "${BASH_SOURCE[0]}" ]; then
     printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
     exec bash -s "${BASH_SOURCE[0]}"
   fi
@@ -141,7 +141,7 @@ bashprompt() {
   ___bash_find() {
     local dir="${1:-$PWD}"
     local args=""
-    [[ -d "$1" ]] && dir="$1" && shift 1
+    [ -d "$1" ] && dir="$1" && shift 1
     [ $# -eq 0 ] && return 1 || args="$*"
     find -L "$dir" -maxdepth 1 -type f ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
   }
@@ -228,7 +228,7 @@ bashprompt() {
     local es=${EPOCHSECONDS:-$(date +%s)}
     [ -f "$HOME/.config/bash/noprompt/timer" ] && return 1
     st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-$(date +%s)})
-    if [[ -z "$STARTTIME" ]] || { [[ -n "$STARTTIME" ]] && [[ "$STARTTIME" -ne "$st" ]]; }; then
+    if [ -z "$STARTTIME" ] || { [ -n "$STARTTIME" ] && [ "$STARTTIME" -ne "$st" ]; }; then
       TIMER_ENDTIME=${EPOCHSECONDS:-1}
       TIMER_STARTTIME=${st:-0}
     else
@@ -239,8 +239,8 @@ bashprompt() {
   ___time_it() {
     [ -f "$HOME/.config/bash/noprompt/timer" ] && ___time_show() { return; } && return 1
     ___time_it_pre
-    [[ -n "$TIMER_ENDTIME" ]] || TIMER_ENDTIME=$EPOCHSECONDS
-    [[ -n "$TIMER_STARTTIME" ]] || TIMER_STARTTIME=$EPOCHSECONDS
+    [ -n "$TIMER_ENDTIME" ] || TIMER_ENDTIME=$EPOCHSECONDS
+    [ -n "$TIMER_STARTTIME" ] || TIMER_STARTTIME=$EPOCHSECONDS
     if ((TIMER_ENDTIME - TIMER_STARTTIME > 0)); then
       ___time_show() { printf 'Time:[%ds]|' $((TIMER_ENDTIME - TIMER_STARTTIME)); }
     else
@@ -255,7 +255,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.rs')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rlib')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.rs')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.rlib')" -ne 0 ]; then
       if [ -f "$(builtin command -v rustc 2>/dev/null)" ]; then
         __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       else
@@ -278,7 +278,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.go')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.go')" -ne 0 ]; then
       if [ -f "$(builtin command -v go 2>/dev/null)" ]; then
         __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       else
@@ -301,7 +301,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.gem')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.rb')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'Gemfile')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.gem')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.rb')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'Gemfile')" -ne 0 ]; then
       if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -f "$(builtin command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -328,23 +328,23 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.js')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'package.json')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -name 'yarn.lock')" -ne 0 ]]; then
-      if [[ -f "$NVM_DIR/nvm.sh" ]] && [[ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ]] &&
-        [[ "$(nvm current)" != "system" ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.js')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'package.json')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'yarn.lock')" -ne 0 ]; then
+      if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ] &&
+        [ "$(nvm current)" != "system" ]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
           version="$(__node_version)"
           [ -z "${version}" ] && return
           printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
         }
-      elif [[ -f "$(builtin command -v fnm)" ]]; then
+      elif [ -f "$(builtin command -v fnm)" ]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
           version="$(__node_version)"
           [ -z "${version}" ] && return
           printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
         }
-      elif [[ -f "$(builtin command -v node)" ]]; then
+      elif [ -f "$(builtin command -v node)" ]; then
         __node_version() { printf "%s" "$(node --version)"; }
         __node_info() {
           version="$(__node_version)"
@@ -360,21 +360,25 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
   __ifpython() {
+    set -x
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(builtin command -v python3 2>/dev/null)" ] || [ -z "$(builtin command -v python2 2>/dev/null)" ]; then
       return 1
     fi
     local gitdir pythonBin PYTHON_VERSION
+    local VIRTUAL_ENV="${VIRTUAL_ENV:-$}"
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    [[ -n "$VIRTUAL_ENV" ]] && [[ ! -f "$gitdir/.venv/bin/activate" ]] && type deactivate &>/dev/null && deactivate && return
-    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/bin/activate" ]] && . "$gitdir/bin/activate"
-    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/venv/bin/activate" ]] && . "$gitdir/venv/bin/activate"
-    [[ -z "$VIRTUAL_ENV" ]] && [[ -f "$gitdir/.venv/bin/activate" ]] && . "$gitdir/.venv/bin/activate"
-    if [[ -n "$VIRTUAL_ENV" ]] || [[ $(___bash_find "$gitdir" -name '*.py') -ne 0 ]] || [[ $(___bash_find "$gitdir" -name '*.py' -o -name 'requirements.txt') -ne 0 ]]; then
+    [ -n "$VIRTUAL_ENV" ] && [ ! -f "$gitdir/.venv/bin/activate" ] #&& type deactivate &>/dev/null && deactivate || true
+    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/bin/activate" ] && . "$gitdir/bin/activate"
+    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/venv/bin/activate" ] && . "$gitdir/venv/bin/activate"
+    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/.venv/bin/activate" ] && . "$gitdir/.venv/bin/activate"
+    if [ -n "$VIRTUAL_ENV" ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
       __python_info() {
         pythonBin="$(builtin command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
-        if [[ "$VIRTUAL_ENV" =~ venv ]]; then
+        if [[ "$VIRTUAL_ENV" = */venv ]] || [[ "$VIRTUAL_ENV" = */.venv ]]; then
           PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
+        elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
+          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
         else
           PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
         fi
@@ -387,6 +391,7 @@ bashprompt() {
     else
       __python_info() { return; }
     fi
+    set +x
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
@@ -396,7 +401,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ]; then
       __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
     else
       __php_version() { return; }
@@ -415,7 +420,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.pl')" -ne 0 ]] || [[ "$(___bash_find "$gitdir" -iname '*.cgi')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.pl')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.cgi')" -ne 0 ]; then
       __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -434,7 +439,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [[ "$(___bash_find "$gitdir" -iname '*.lua')" -ne 0 ]]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.lua')" -ne 0 ]; then
       luaversion="$(lua -v 2>&1)"
       __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
     else
@@ -482,7 +487,7 @@ bashprompt() {
       return 1
     fi
     local gitdir grepgitignore
-    if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
       grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
       if [ "$grepgitignore" -ne 0 ]; then
@@ -548,10 +553,10 @@ bashprompt() {
     if [ -n "$byobu" ]; then
       shell="byobu: "
       version="$byobu"
-    elif [ -n "$screen" ] && [[ -n "$SCREENEXCHANGE" ]]; then
+    elif [ -n "$screen" ] && [ -n "$SCREENEXCHANGE" ]; then
       shell="screen: "
       version="$screen"
-    elif [ -n "$tmux" ] && [[ -n "$TMUX" ]]; then
+    elif [ -n "$tmux" ] && [ -n "$TMUX" ]; then
       shell="TMUX: "
       version="$tmux"
     elif [ -n "$bash" ]; then
@@ -566,13 +571,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Add bin to path
   ___add_bin_path() {
-    if [[ -d "$PWD/bin" ]]; then
-      if [[ -z "$RESET_PATH" ]]; then
+    if [ -d "$PWD/bin" ]; then
+      if [ -z "$RESET_PATH" ]; then
         export RESET_PATH="$PATH"
         export PATH="$PWD/bin:$RESET_PATH"
       fi
     else
-      if [[ -n "$RESET_PATH" ]]; then
+      if [ -n "$RESET_PATH" ]; then
         export PATH="$RESET_PATH"
         unset RESET_PATH
       fi
@@ -637,8 +642,8 @@ bashprompt() {
       local BG_EXIT="$BG_RED"
       local PS_SYMBOL=" 😔 ${BG_RED}E:${EXIT}${RESET}"
     fi
-    [[ -n "$NEW_PS_SYMBOL" ]] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
-    [[ -n "$NEW_BG_EXIT" ]] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
+    [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
+    [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
 
     ___add_bin_path
     __ifdate && ___date_show
@@ -660,7 +665,7 @@ bashprompt() {
     PS1+="${BG_DARK_RED}${FG_BLACK}$(__ifgit && __git_info)${RESET}"
     PS1+="${BG_PURPLE}${FG_BLACK}${PS_TIME}$RESET\n"
     PS1+="${BG_GRAY2}${FG_BLACK}\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
-    if [[ $USER == root ]] || [[ $UID == 0 ]]; then
+    if [ $USER == root ] || [ $UID == 0 ]; then
       PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET$ "
     else
       PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET: "

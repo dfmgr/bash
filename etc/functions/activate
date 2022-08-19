@@ -16,11 +16,22 @@
 # @@sudo/root        :  no
 # @@Template         :  none
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ -f "$PWD/.venv/bin/activate" ]; then
-  . "$PWD/.venv/bin/activate"
-elif type setv &>/dev/null; then
-  setv -l | grep -vE 'List of virtual environments|^$' | grep "$1" && setv "$1" || return 1
-else
+_activate_completion() { 
+  _init_completion || return
+  local list=""
+  list="$(setv -l | grep -vE 'List of virtual environments|^$' | grep "^" || echo '')"
+  COMPREPLY=($(compgen -W '${list}' -- "$cur"))
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+activate() {
+  if [ -f "$PWD/.venv/bin/activate" ]; then
+    . "$PWD/.venv/bin/activate"
+  elif type setv &>/dev/null; then
+    if setv -l | grep -vE 'List of virtual environments|^$' | grep -q "$1"; then
+      setv "$1" || return 1
+    fi
+  #else
+  #  type deactivate &>/dev/null && deactivate || unset 
+  fi
   return 0
-fi
-
+} && export -f activate
