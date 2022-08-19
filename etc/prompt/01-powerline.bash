@@ -359,6 +359,21 @@ bashprompt() {
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
+  ___if_venv() {
+    local venv_dir="${1:-$gitdir}"
+    if [ -z "$VIRTUAL_ENV" ] && [ -f "$SETV_VIRTUAL_DIR_PATH/bin/activate" ]; then
+      . "$SETV_VIRTUAL_DIR_PATH/bin/activate"
+    elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/bin/activate" ]; then
+      . "$venv_dir/bin/activate"
+    elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/venv/bin/activate" ]; then
+      . "$venv_dir/venv/bin/activate"
+    elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/.venv/bin/activate" ]; then
+      . "$venv_dir/.venv/bin/activate"
+    else
+      return 1
+    fi
+  }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   __ifpython() {
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(builtin command -v python3 2>/dev/null)" ] || [ -z "$(builtin command -v python2 2>/dev/null)" ]; then
       return 1
@@ -366,11 +381,8 @@ bashprompt() {
     local gitdir pythonBin PYTHON_VERSION
     local VIRTUAL_ENV="${VIRTUAL_ENV:-$}"
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    [ -n "$VIRTUAL_ENV" ] && [ ! -f "$gitdir/.venv/bin/activate" ] #&& type deactivate &>/dev/null && deactivate || true
-    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/bin/activate" ] && . "$gitdir/bin/activate"
-    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/venv/bin/activate" ] && . "$gitdir/venv/bin/activate"
-    [ -z "$VIRTUAL_ENV" ] && [ -f "$gitdir/.venv/bin/activate" ] && . "$gitdir/.venv/bin/activate"
-    if [ -n "$VIRTUAL_ENV" ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
+    ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
+    if [ -n "$VIRTUAL_ENV" ] && { [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; }; then
       __python_info() {
         pythonBin="$(builtin command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
