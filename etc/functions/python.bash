@@ -1,29 +1,37 @@
-#!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202103251632-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.com
-# @License       : LICENSE.md
-# @ReadME        : python.bash --help
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 16:44 EDT
-# @File          : python.bash
-# @Description   :
-# @TODO          :
-# @Other         :
-# @Resource      :
+##@Version           :  202208122212-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.com
+# @@License          :  LICENSE.md
+# @@ReadME           :  activate --help
+# @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @@Created          :  Friday, Aug 19, 2022 04:42 EDT
+# @@File             :  activate
+# @@Description      :  activate a python virtual environment
+# @@Changelog        :  newScript
+# @@TODO             :  Refactor code
+# @@Other            :  
+# @@Resource         :  
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  none
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-getpythonver() {
-  if [[ "$(python3 -V 2>/dev/null)" =~ "Python 3" ]]; then
-    PYTHONVER="python3"
-    PIP="pip3"
-    PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin"
-  elif [[ "$(python2 -V 2>/dev/null)" =~ "Python 2" ]]; then
-    PYTHONVER="python"
-    PIP="pip"
-    PATH="${PATH}:$(python -c 'import site; print(site.USER_BASE)')/bin"
-  fi
-  export PATH
+_activate_completion() { 
+  _init_completion || return
+  local list=""
+  list="$(setv -l | grep -vE 'List of virtual environments|^$' | grep "^" || echo '')"
+  COMPREPLY=($(compgen -W '${list}' -- "$cur"))
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# end
+activate() {
+  if [ -f "$PWD/.venv/bin/activate" ]; then
+    . "$PWD/.venv/bin/activate"
+  elif type setv &>/dev/null; then
+    if setv -l | grep -vE 'List of virtual environments|^$' | grep -q "$1"; then
+      setv "$1" || return 1
+    fi
+  #else
+  #  type deactivate &>/dev/null && deactivate || unset 
+  fi
+  return 0
+} && export -f activate
