@@ -360,7 +360,6 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
   __ifpython() {
-    set -x
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(builtin command -v python3 2>/dev/null)" ] || [ -z "$(builtin command -v python2 2>/dev/null)" ]; then
       return 1
     fi
@@ -391,7 +390,6 @@ bashprompt() {
     else
       __python_info() { return; }
     fi
-    set +x
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
