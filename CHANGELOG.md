@@ -1,3 +1,14 @@
+#### Changelog: 2022-08-22 at 01:04:55  
+
+etc/plugins/asdf.bash : 🗃️ Plugin fixes 🗃️ 🚀  
+etc/post/fnm.bash : 🗃️ Plugin fixes 🗃️ 🚀  
+etc/post/nvm.bash : 🗃️ Plugin fixes 🗃️ 🚀  
+etc/post/zoxide.bash : 🗃️ Plugin fixes 🗃️ 🚀  
+  
+#### End of changes for 202208191109-git - 2022-08-22 at 01:04:55  
+  
+----  
+  
 #### Changelog: 2022-08-19 at 12:32:29  
   
   

@@ -13,5 +13,11 @@
 # @Other         :
 # @Resource      : https://github.com/Schniz/fnm
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Load fnm
-[[ "$NODE_MANAGER" = "fnm" ]] && [[ -n "$(builtin type fnm 2>/dev/null)" ]] && eval "$(fnm env)"
+# Load fnm if not loaded
+if [ "$NODE_MANAGER" = "fnm" ] && [ -z "$FNM_MULTISHELL_PATH" ]; then
+  if [ -n "$(builtin type fnm 2>/dev/null)" ]; then 
+    eval "$(fnm env)"
+  fi
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+

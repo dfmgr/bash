@@ -13,5 +13,10 @@
 # @Other         :
 # @Resource      : https://github.com/ajeetdsouza/zoxide
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-command -v zoxide &>/dev/null && eval "$(zoxide init bash)" ||
-  zoxide() { curl -q -LSsf "https://webinstall.dev/zoxide" | bash && eval "$(zoxide init bash)"; }
+if command -v zoxide &>/dev/null; then 
+  eval "$(zoxide init bash)" 
+else
+  zoxide() { curl -q -LSsf "https://webinstall.dev/zoxide" | bash && eval "$(zoxide init bash)" || return 1; }
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
