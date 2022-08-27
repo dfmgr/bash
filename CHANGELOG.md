@@ -1,3 +1,12 @@
+#### Changelog: 2022-08-27 at 15:10:42  
+
+etc/aliases/00-default.lin : 🗃️ Removed unused aliases 🗃️ 🚀  
+etc/aliases/00-default.mac : 🗃️ Removed unused aliases 🗃️ 🚀  
+  
+#### End of changes for 202208220104-git - 2022-08-27 at 15:10:42  
+  
+----  
+  
 #### Changelog: 2022-08-22 at 01:04:55  
 
 etc/plugins/asdf.bash : 🗃️ Plugin fixes 🗃️ 🚀  
