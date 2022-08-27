@@ -33,12 +33,19 @@ _activate_completion() {
 } && complete -F _activate_completion activate
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 activate() {
-  [ "$1" = "--help" ] && { printf_red "Usage: activate" && return || return 0; }
-  local setv_env_dir="" venv_name="" venv_dir="${venv_dir:-$PWD}"
-  venv_name="$(basename "$PWD")"
-  setv_env_dir="$SETV_VIRTUAL_DIR_PATH/$venv_name"
+  local setv_env_dir="" venv_name="" venv_dir=""
+  if [ "$1" = "--help" ]; then
+    printf_red "Usage: activate [name]"
+    exit
+  elif [ -f "$PWD/.venv_name" ]; then
+    venv_dir="$(grep -s 'VENV_VIRTUAL_DIR=' .venv_name | awk -F'=' '{printf $2}')"
+  elif [ -d "$PWD/.venv" ]; then
+    venv_dir="$PWD/.venv"
+    venv_name="$(basename "$PWD")"
+  elif [ -d "$SETV_VIRTUAL_DIR_PATH/$venv_name" ]; then
+    setv_env_dir="$SETV_VIRTUAL_DIR_PATH/$venv_name"
+  fi
   venv_dir="${setv_env_dir:-$venv_dir}"
-  [ -f "$PWD/.venv_name" ] && venv_dir="$(. "$PWD/.venv_name")"
   if [ -f "$venv_dir/bin/activate" ]; then
     . "$venv_dir/bin/activate"
   elif type setv &>/dev/null; then
