@@ -375,16 +375,15 @@ bashprompt() {
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   __ifpython() {
-    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$(builtin command -v python3 2>/dev/null)" ] || [ -z "$(builtin command -v python2 2>/dev/null)" ]; then
+    local gitdir PYTHON_VERSION
+    pythonBin="$(builtin type -P python3 || builtin type -P python2 || builtin type -P python || echo '')"
+    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
       return 1
     fi
-    local gitdir pythonBin PYTHON_VERSION
-    local VIRTUAL_ENV="${VIRTUAL_ENV:-$}"
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
-    if [ -n "$VIRTUAL_ENV" ] && { [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; }; then
+    if [ -n "$VIRTUAL_ENV" ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
       __python_info() {
-        pythonBin="$(builtin command -v python3 || command -v python2 || command -v python)"
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
         if [[ "$VIRTUAL_ENV" = */venv ]] || [[ "$VIRTUAL_ENV" = */.venv ]]; then
           PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
@@ -406,13 +405,14 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
   __ifphp() {
-    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$(builtin command -v php 2>/dev/null)" ] || [ -z "$(builtin command -v php8 2>/dev/null)" ]; then
+    phpBin="$(builtin type -P php8 || builtin type -P php7 builtin type -P php5 || builtin type -P php || echo '')"
+    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ]; then
-      __php_version() { printf "%s" "$(php --version | awk '{print $2}' | head -n 1)"; }
+      __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1)"; }
     else
       __php_version() { return; }
     fi
@@ -425,13 +425,14 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # perl
   __ifperl() {
-    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$(builtin command -v perl 2>/dev/null)" ]; then
+    perlBin="$(builtin type -P perl)"
+    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [ "$(___bash_find "$gitdir" -iname '*.pl')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.cgi')" -ne 0 ]; then
-      __perl_version() { printf "%s" "$(perl --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
+      __perl_version() { printf "%s" "$($perlBin --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
     fi
@@ -444,13 +445,14 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # lua
   __iflua() {
-    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$(builtin command -v lua 2>/dev/null)" ]; then
+    luaBin="$(builtin type -P lua || echo '')"
+    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
       return 1
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     if [ "$(___bash_find "$gitdir" -iname '*.lua')" -ne 0 ]; then
-      luaversion="$(lua -v 2>&1)"
+      luaversion="$($luaBin -v 2>&1)"
       __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
     else
       __lua_version() { return; }
@@ -464,14 +466,15 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
-    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
+    gitBin="$(builtin type -P git || echo '')"
+    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
       return 1
     fi
     local gitdir marks git_eng branch stat aheadN behindN
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      __git_version() { printf "%s" "| Git: $(git --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
+      __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
-        git_eng="env LANG=C git" # force git output in English to make our work easier
+        git_eng="env LANG=C git"
         branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
         [ -n "$branch" ] || return # git branch not found
         [ -n "$($git_eng status --porcelain 2>/dev/null)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
