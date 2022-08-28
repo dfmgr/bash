@@ -382,15 +382,17 @@ bashprompt() {
     fi
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
     ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
-    if [ -n "$VIRTUAL_ENV" ] || [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
+    if [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
       __python_info() {
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
-        if [[ "$VIRTUAL_ENV" = */venv ]] || [[ "$VIRTUAL_ENV" = */.venv ]]; then
-          PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
-        elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
-          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-        else
-          PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+        if [ -n "$VIRTUAL_ENV" ]; then
+          if [ "$VIRTUAL_ENV" = "$gitdir/venv" ] || [ "$VIRTUAL_ENV" = "$gitdir/.venv" ]; then
+            PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
+          elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
+            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          else
+            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
+          fi
         fi
         if [ -n "$PYTHON_VIRTUALENV" ]; then
           printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
