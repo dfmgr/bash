@@ -387,7 +387,7 @@ bashprompt() {
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
         if [ -n "$VIRTUAL_ENV" ]; then
           if [ "$VIRTUAL_ENV" = "$gitdir/venv" ] || [ "$VIRTUAL_ENV" = "$gitdir/.venv" ]; then
-            PYTHON_VIRTUALENV="$(basename "$(dirname "$VIRTUAL_ENV")")"
+            PYTHON_VIRTUALENV="$(basename "$(dirname "$gitdir")")"
           elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
             PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
           else
