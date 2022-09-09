@@ -385,7 +385,7 @@ bashprompt() {
       __python_info() {
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
         ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
-	if [ -n "$VIRTUAL_ENV" ]; then
+        if [ -n "$VIRTUAL_ENV" ]; then
           if [ -d "$gitdir/venv" ] || [ -d "$gitdir/.venv" ]; then
             PYTHON_VIRTUALENV="$(basename "$(dirname "$gitdir")")"
           elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
@@ -562,7 +562,7 @@ bashprompt() {
   __prompt_version() {
     local bash tmux screen byobu shell
     bash="${BASH_VERSION%.*}"
-    tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V 2>/dev/null | tr ' ' '\n' | grep [0-9.] | head -n1 | sed 's/[^.0-9]*//g' | grep '^')")"
+    tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V 2>/dev/null | tr ' ' '\n' | grep '[0-9].' | head -n1 | sed 's/[^.0-9]*//g' | grep -s '^')")"
     screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | sed 's/[^.0-9]*//g' | head -n1 | grep '^')")"
     byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version 2>/dev/null | grep byobu | tr ' ' '\n' | sed 's/[^.0-9]*//g' | grep '[0..9]')")"
     if [ -n "$byobu" ]; then
