@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Terminal=true
-Exec=bash
+Exec=myterminal -e bash
 Name=bash
-Icon=xfce4-terminal
+Icon=terminal
 Categories=System;
