@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=true
-Exec=myterminal -e 'bash -l'
-Name=bash
-Comment=Open bash shell
-Icon=terminal
-Categories=System;
