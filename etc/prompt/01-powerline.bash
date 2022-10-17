@@ -413,7 +413,7 @@ bashprompt() {
     fi
     local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ]; then
+    if [ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname 'composer.json')" -ne 0 ]; then
       __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1)"; }
     else
       __php_version() { return; }
