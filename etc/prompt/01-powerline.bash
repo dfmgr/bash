@@ -22,7 +22,7 @@ if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.lo
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Powerline check
-if [ -z "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
+if [ -z "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
   # Debian/Ubuntu/Arch
   if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
     . "/usr/share/powerline/bindings/bash/powerline.sh"
@@ -37,7 +37,7 @@ if [ -z "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
   fi
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Start
-  if [ -f "$(builtin type -P powerline-daemon 2>/dev/null)" ]; then
+  if [ -f "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
     export POWERLINE_BASH_CONTINUATION=1
     export POWERLINE_BASH_SELECT=1
     powerline-daemon -q
@@ -137,6 +137,7 @@ noprompt() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Initialize prompt
 bashprompt() {
+  BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
   printf_return() { return; }
   ___bash_find() {
     local findExitCode="1" dir="" count="" args=("")
@@ -253,17 +254,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Rust
   __ifrust() {
-    local gitdir version
-    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(builtin command -v rustc 2>/dev/null)" ]; then
+    local version
+    rustBin="$(builtin command -v rustc || false)"
+    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$rustBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.rs'; then
-      if [ -f "$(builtin command -v rustc 2>/dev/null)" ]; then
-        __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
-      else
-        __rust_version() { return; }
-      fi
+    if ___bash_find "$BASHRC_GITDIR" '*.rs'; then
+      __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       __rust_info() {
         version="$(__rust_version)"
         [ -z "${version}" ] && return
@@ -276,17 +273,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # GO
   __ifgo() {
-    local gitdir version
-    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(builtin command -v go 2>/dev/null)" ]; then
+    local version
+    goBin="$(builtin command -v go || false)"
+    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$goBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.go'; then
-      if [ -f "$(builtin command -v go 2>/dev/null)" ]; then
-        __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
-      else
-        __go_version() { return; }
-      fi
+    if ___bash_find "$BASHRC_GITDIR" '*.go'; then
+      __go_version() { printf "%s" "GO: $($goBin version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       __go_info() {
         version="$(__go_version)"
         [ -z "${version}" ] && return
@@ -299,18 +292,18 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Ruby
   __ifruby() {
-    local gitdir version
-    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(builtin command -v ruby 2>/dev/null)" ]; then
+    local version
+    rubyBin="$(builtin command -v ruby || false)"
+    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$rubyBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.gem' '*.rb' 'Gemfile'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.gem' '*.rb' 'Gemfile'; then
       if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -f "$(builtin command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
         __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
       elif [ -f "$(builtin command -v ruby 2>/dev/null)" ]; then
-        __ruby_version() { printf "%s" "Ruby: $(ruby --version | cut -d' ' -f2)"; }
+        __ruby_version() { printf "%s" "Ruby: $($rubyBin --version | cut -d' ' -f2)"; }
       else
         __ruby_version() { return; }
       fi
@@ -326,34 +319,19 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Node.js
   __ifnode() {
-    local gitdir version
-    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(builtin command -v node 2>/dev/null)" ]; then
+    local version
+    nodeBin="$(builtin command -v node || false)"
+    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$nodeBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.js' 'package.json' 'yarn.lock'; then
-      if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ] &&
-        [ "$(nvm current)" != "system" ]; then
-        __node_version() { printf "%s" "$(node --version)"; }
-        __node_info() {
-          version="$(__node_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "| NVM: ${version}$NODE_SYMBOL${RESET}"
-        }
+    if ___bash_find "$BASHRC_GITDIR" '*.js' 'package.json' 'yarn.lock'; then
+      __node_version() { printf "%s" "$($nodeBin --version)"; }
+      if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ] && [ "$(nvm current)" != "system" ]; then
+        __node_info() { printf "%s" "| NVM: $(__node_version)$NODE_SYMBOL${RESET}"; }
       elif [ -f "$(builtin command -v fnm)" ]; then
-        __node_version() { printf "%s" "$(node --version)"; }
-        __node_info() {
-          version="$(__node_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "| FNM: ${version}$NODE_SYMBOL${RESET}"
-        }
-      elif [ -f "$(builtin command -v node)" ]; then
-        __node_version() { printf "%s" "$(node --version)"; }
-        __node_info() {
-          version="$(__node_version)"
-          [ -z "${version}" ] && return
-          printf "%s" "| Node: ${version}$NODE_SYMBOL${RESET}"
-        }
+        __node_info() { printf "%s" "| FNM: $(__node_version)$NODE_SYMBOL${RESET}"; }
+      else
+        __node_info() { printf "%s" "| Node: $(__node_version)$NODE_SYMBOL${RESET}"; }
       fi
     else
       __node_version() { return; }
@@ -363,40 +341,40 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
   ___if_venv() {
-    local venv_dir="$1"
+    local venv_dir="${1:-$PWD}"
+    [ -n "$VIRTUAL_ENV_PROMPT" ] && [ -f "$PYTHON_SOURCE_FILE" ] && return 0
     if [ -z "$VIRTUAL_ENV" ] && [ -f "$SETV_VIRTUAL_DIR_PATH/bin/activate" ]; then
-      . "$SETV_VIRTUAL_DIR_PATH/bin/activate"
+      PYTHON_SOURCE_FILE="$SETV_VIRTUAL_DIR_PATH/bin/activate"
+      PYTHON_VIRTUALENV="$(basename "$(realpath "$SETV_VIRTUAL_DIR_PATH")")"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/bin/activate" ]; then
-      . "$venv_dir/bin/activate"
+      PYTHON_SOURCE_FILE="$venv_dir/bin/activate"
+      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/venv/bin/activate" ]; then
-      . "$venv_dir/venv/bin/activate"
+      PYTHON_SOURCE_FILE="$venv_dir/venv/bin/activate"
+      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/.venv/bin/activate" ]; then
-      . "$venv_dir/.venv/bin/activate"
+      PYTHON_SOURCE_FILE="$venv_dir/.venv/bin/activate"
+      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
     else
+      unset PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
+      type deactivate &>/dev/null && deactivate
       return 1
     fi
+    source "$PYTHON_SOURCE_FILE"
+    export PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   __ifpython() {
-    local gitdir PYTHON_VERSION
-    pythonBin="$(builtin type -P python3 || builtin type -P python2 || builtin type -P python || echo '')"
+    local PYTHON_VERSION
+    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$PWD"
+    pythonBin="$(builtin command -v python3 || builtin command -v python2 || builtin command -v python || false)"
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.py' 'requirements.txt'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' && [ -n "$pythonBin" ]; then
+      [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
       __python_info() {
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
-        ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
-        if [ -n "$VIRTUAL_ENV" ]; then
-          if [ -d "$gitdir/venv" ] || [ -d "$gitdir/.venv" ]; then
-            PYTHON_VIRTUALENV="$(basename "$(dirname "$gitdir")")"
-          elif [ "$(basename "$VIRTUALENVWRAPPER_VIRTUALENV")" = "venv" ]; then
-            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-          else
-            PYTHON_VIRTUALENV="$(basename "$VIRTUAL_ENV")"
-          fi
-        fi
         if [ -n "$PYTHON_VIRTUALENV" ]; then
           printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         else
@@ -410,13 +388,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
   __ifphp() {
-    local gitdir version
-    phpBin="$(builtin type -P php8 || builtin type -P php7 || builtin type -P php5 || builtin type -P php)"
+    local version
+    phpBin="$(builtin command -v php8 || builtin command -v php7 || builtin command -v php5 || builtin command -v php || false)"
     if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.php*' 'composer.json'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.php*' 'composer.json'; then
       __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
     else
       __php_version() { return; }
@@ -430,13 +407,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # perl
   __ifperl() {
-    local gitdir version
-    perlBin="$(builtin type -P perl)"
+    local version
+    perlBin="$(builtin command -v perl || false)"
     if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.pl' '*.cgi'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.pl' '*.cgi'; then
       __perl_version() { printf "%s" "$($perlBin --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -450,15 +426,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # lua
   __iflua() {
-    local gitdir version
-    luaBin="$(builtin type -P lua || echo '')"
+    local version
+    luaBin="$(builtin command -v lua || false)"
     if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
       return 1
     fi
-    gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if ___bash_find "$gitdir" '*.lua'; then
-      luaversion="$($luaBin -v 2>&1)"
-      __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.lua'; then
+      __lua_version() { printf "%s" "$($luaBin -v 2>&1 | head -n1 | awk '{print $2}')"; }
     else
       __lua_version() { return; }
     fi
@@ -471,8 +445,8 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
-    local gitdir marks git_eng branch stat aheadN behindN
-    gitBin="$(builtin type -P git || echo '')"
+    local marks git_eng branch stat aheadN behindN
+    gitBin="$(builtin command -v git || false)"
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
       return 1
     fi
@@ -501,13 +475,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git reminder
   __git_prompt_message_warn() {
-    local gitdir grepgitignore
+    local grepgitignore
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 1
     fi
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-      grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
+      grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
       if [ "$grepgitignore" -ne 0 ]; then
         printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
       fi
