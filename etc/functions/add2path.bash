@@ -19,8 +19,8 @@ add2path() {
     local red="\033[0;31m"
     local green="\033[0;32m"
     local reset="\033[0m"
-    echo -e "\t\t${green}Usage: add2path [options] [directory]${reset}"
-    echo -e "\t\t${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}\n"
+    echo -e "${green}Usage: add2path [options] [directory]${reset}"
+    echo -e "${red}Options: add2path [--add] [--help] [--remove] [--list]${reset}\n"
   }
   local dir=""
   local args=""
@@ -57,12 +57,12 @@ add2path() {
         if [[ -n "$args" ]] && echo "$PATH" | tr ':' '\n' | grep -qsx "$args" &>/dev/null; then
           path="$(echo "$PATH" | tr ':' '\n' | grep -v '^$' | grep -vsx "$args" | tr '\n' ':')"
           export PATH="$path"
-          printf "\t\t${green}Deleted %s from PATH ${reset}\n" "$args"
+          printf "${green}Deleted %s from PATH ${reset}\n" "$args"
         else
-          printf "\t\t${red}%s was not not found in PATH ${reset}\n" "$args"
+          printf "${red}%s was not not found in PATH ${reset}\n" "$args"
         fi
       else
-        printf "\t\t${red}An error has occured %s${reset}\n" "$args"
+        printf "${red}An error has occured %s${reset}\n" "$args"
       fi
     done
   else
@@ -70,15 +70,15 @@ add2path() {
     if [[ $# = 0 ]]; then
       if [[ -d "$PWD/bin" ]]; then
         if __test_path "$PWD/bin"; then
-          printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
+          printf "${red}%s is already in your PATH ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
           return
         else
           PATH="$PWD/bin:$PATH"
-          printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
+          printf "${green}Added %s to your path ${reset}\n" "$(realpath "$PWD/bin" 2>/dev/null)"
           return
         fi
       else
-        printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$PWD/bin"
+        printf "${red}Not adding %s to path due to it not existing ${reset}\n" "$PWD/bin"
         return
       fi
     else
@@ -92,17 +92,17 @@ add2path() {
           fi
           if [[ -d "$dir" ]]; then
             if __test_path; then
-              printf "\t\t${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
+              printf "${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
             else
               path="$dir:$PATH"
               export PATH="$path"
-              printf "\t\t${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
+              printf "${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
             fi
           else
-            printf "\t\t${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
+            printf "${red}Not adding %s to path due to it not existing ${reset}\n" "$args"
           fi
         else
-          printf "\t\t${red}An error has occured %s${reset}\n" "$args"
+          printf "${red}An error has occured %s${reset}\n" "$args"
         fi
       done
     fi

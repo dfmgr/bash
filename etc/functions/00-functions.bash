@@ -23,21 +23,21 @@ ICON_ERROR="${ICON_ERROR:-[ ✖ ]}"
 ICON_QUESTION="${ICON_QUESTION:-[ ❓ ]}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_color() { printf "%b" "$(tput setaf "$2" 2>/dev/null)" "$1" "$(tput sgr0 2>/dev/null)"; }
-printf_normal() { printf_color "\t\t$1\n" "0"; }
-printf_green() { printf_color "\t\t$1\n" 2; }
-printf_red() { printf_color "\t\t$1\n" 1; }
-printf_purple() { printf_color "\t\t$1\n" 5; }
-printf_yellow() { printf_color "\t\t$1\n" 3; }
-printf_blue() { printf_color "\t\t$1\n" 4; }
-printf_cyan() { printf_color "\t\t$1\n" 6; }
-printf_info() { printf_color "\t\t$ICON_INFO $1\n" 3; }
-printf_success() { printf_color "\t\t$ICON_GOOD $1\n" 2; }
-printf_error() { printf_color "\t\t$ICON_ERROR $1 $2\n" 1; }
-printf_warning() { printf_color "\t\t$ICON_WARN $1\n" 3; }
-printf_question() { printf_color "\t\t$ICON_QUESTION $1 " 6; }
+printf_normal() { printf_color "$1\n" "0"; }
+printf_green() { printf_color "$1\n" 2; }
+printf_red() { printf_color "$1\n" 1; }
+printf_purple() { printf_color "$1\n" 5; }
+printf_yellow() { printf_color "$1\n" 3; }
+printf_blue() { printf_color "$1\n" 4; }
+printf_cyan() { printf_color "$1\n" 6; }
+printf_info() { printf_color "$ICON_INFO $1\n" 3; }
+printf_success() { printf_color "$ICON_GOOD $1\n" 2; }
+printf_error() { printf_color "$ICON_ERROR $1 $2\n" 1; }
+printf_warning() { printf_color "$ICON_WARN $1\n" 3; }
+printf_question() { printf_color "$ICON_QUESTION $1 " 6; }
 printf_error_stream() { while read -r line; do printf_error "↳ ERROR: $line"; done; }
-printf_execute_success() { printf_color "\t\t$ICON_ERROR $1  \n" 2; }
-printf_execute_error() { printf_color "\t\t$ICON_ERROR $1 $2 \n" 1; }
+printf_execute_success() { printf_color "$ICON_ERROR $1  \n" 2; }
+printf_execute_error() { printf_color "$ICON_ERROR $1 $2 \n" 1; }
 printf_execute_result() {
   if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi
   return "$1"
@@ -50,7 +50,7 @@ printf_exit() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
   local msg="$*"
   shift
-  printf_color "\t\t$msg" "$color"
+  printf_color "$msg" "$color"
   echo ""
   return 0
 }
@@ -60,7 +60,7 @@ printf_help() {
   local msg="$*"
   shift
   echo ""
-  printf_color "\t\t$msg\n" "$color"
+  printf_color "$msg\n" "$color"
   echo ""
   return 0
 }
@@ -68,7 +68,7 @@ printf_help() {
 printf_pause() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="5"
   local msg="${*:-Press any key to continue}"
-  printf_color "\t\t$msg " "$color"
+  printf_color "$msg " "$color"
   read -r -n 1 -s
   printf "\n"
 }
@@ -77,7 +77,7 @@ printf_custom() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="5"
   local msg="$*"
   shift
-  printf_color "\t\t$msg" "$color"
+  printf_color "$msg" "$color"
   echo ""
 }
 
@@ -85,7 +85,7 @@ printf_read() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
   while read -r line; do
-    printf_color "\t\t$line" "$color"
+    printf_color "$line" "$color"
   done
   printf "\n"
   set +o pipefail
@@ -95,7 +95,7 @@ printf_readline() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
   while read -r line; do
-    printf_color "\t\t$line\n" "$color"
+    printf_color "$line\n" "$color"
   done
   set +o pipefail
 }
@@ -104,14 +104,14 @@ printf_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="4"
   local msg="$*"
   shift
-  printf_color "\t\t$ICON_QUESTION $msg? " "$color"
+  printf_color "$ICON_QUESTION $msg? " "$color"
 }
 
 printf_custom_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
   local msg="$*"
   shift
-  printf_color "\t\t$msg " "$color"
+  printf_color "$msg " "$color"
 }
 
 printf_answer() {
@@ -125,7 +125,7 @@ printf_read_question() {
   local msg="$1" && shift 1
   local lines="${1:-120}" && shift 1
   local reply="${1:-$__ANSWER}" && shift 1
-  printf_color "\t\t$msg " "$color"
+  printf_color "$msg " "$color"
   printf_answer "$reply" "$lines"
 }
 
@@ -143,15 +143,15 @@ printf_head() {
   local msg6="$1" && shift 1 || msg6=
   local msg7="$1" && shift 1 || msg7=
   shift
-  [ -z "$msg1" ] || printf_color "\t\t##################################################\n" "$color"
-  [ -z "$msg1" ] || printf_color "\t\t$msg1\n" "$color"
-  [ -z "$msg2" ] || printf_color "\t\t$msg2\n" "$color"
-  [ -z "$msg3" ] || printf_color "\t\t$msg3\n" "$color"
-  [ -z "$msg4" ] || printf_color "\t\t$msg4\n" "$color"
-  [ -z "$msg5" ] || printf_color "\t\t$msg5\n" "$color"
-  [ -z "$msg6" ] || printf_color "\t\t$msg6\n" "$color"
-  [ -z "$msg7" ] || printf_color "\t\t$msg7\n" "$color"
-  [ -z "$msg1" ] || printf_color "\t\t##################################################\n" "$color"
+  [ -z "$msg1" ] || printf_color "##################################################\n" "$color"
+  [ -z "$msg1" ] || printf_color "$msg1\n" "$color"
+  [ -z "$msg2" ] || printf_color "$msg2\n" "$color"
+  [ -z "$msg3" ] || printf_color "$msg3\n" "$color"
+  [ -z "$msg4" ] || printf_color "$msg4\n" "$color"
+  [ -z "$msg5" ] || printf_color "$msg5\n" "$color"
+  [ -z "$msg6" ] || printf_color "$msg6\n" "$color"
+  [ -z "$msg7" ] || printf_color "$msg7\n" "$color"
+  [ -z "$msg1" ] || printf_color "##################################################\n" "$color"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use grc if it's installed or execute the command direct

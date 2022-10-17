@@ -19,22 +19,22 @@ showcputemp() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 showsysteminfo() {
   echo ""
-  echo -e "\t\t${LIGHTRED}   CPU:$NC"
-  sed -nr 's/model name[^:*]: (.*)/\t\t\t\1/p' /proc/cpuinfo
-  echo -ne "\t\t${LIGHTRED}MEMORY:$NC\t"
+  echo -e "${LIGHTRED}   CPU:$NC"
+  sed -nr 's/model name[^:*]: (.*)/\t\1/p' /proc/cpuinfo
+  echo -ne "${LIGHTRED}MEMORY:$NC\t"
   awk '/MemTotal/{mt=$2};/MemFree/{mf=$2};/MemAvail/{ma=$2}END{print "Total: "mt" | Free: "mf" | Available: "ma" (kB)"}' /proc/meminfo
-  echo -ne "\t\t${LIGHTRED}    OS:$NC\t"
+  echo -ne "${LIGHTRED}    OS:$NC\t"
   lsb_release -cds | awk '{printf("%s ", $0)}'
   echo
-  echo -ne "\t\t${LIGHTRED}KERNEL:$NC\t"
+  echo -ne "${LIGHTRED}KERNEL:$NC\t"
   uname -a | awk '{ print $3 }'
-  echo -ne "\t\t${LIGHTRED}  ARCH:$NC\t"
+  echo -ne "${LIGHTRED}  ARCH:$NC\t"
   uname -m
-  echo -ne "\t\t${LIGHTRED}UPTIME:$NC\t"
+  echo -ne "${LIGHTRED}UPTIME:$NC\t"
   uptime -p
-  echo -ne "\t\t${LIGHTRED} USERS:$NC\t"
+  echo -ne "${LIGHTRED} USERS:$NC\t"
   w -h | awk '{print $1}' | uniq | awk '{users=users$1" "}END{print users}'
-  echo -ne "\t\t${LIGHTRED}  DISK:$NC"
+  echo -ne "${LIGHTRED}  DISK:$NC"
   df -h | grep -e"/dev/sd" -e"/mnt/" | awk '{print "\t"$0}'
   echo ""
 }

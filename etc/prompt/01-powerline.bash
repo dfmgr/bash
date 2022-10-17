@@ -77,7 +77,7 @@ noprompt() {
         touch "$HOME/.config/bash/noprompt/$f"
       done
       if [ -f "${BASH_SOURCE[0]}" ]; then
-        printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+        printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
         exec bash -s "${BASH_SOURCE[0]}"
       fi
       return
@@ -89,7 +89,7 @@ noprompt() {
         [ -f "$HOME/.config/bash/noprompt/$f" ] && rm -Rf "$HOME/.config/bash/noprompt/$f"
       done
       if [ -f "${BASH_SOURCE[0]}" ]; then
-        printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+        printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
         exec bash -s "${BASH_SOURCE[0]}"
       fi
       return
@@ -129,7 +129,7 @@ noprompt() {
     [ $# -ne 0 ] || break
   done
   if [ -f "${BASH_SOURCE[0]}" ]; then
-    printf "${GREEN}\t\tUpdating prompt from: %s\n" "${BASH_SOURCE[0]}"
+    printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
     exec bash -s "${BASH_SOURCE[0]}"
   fi
   return

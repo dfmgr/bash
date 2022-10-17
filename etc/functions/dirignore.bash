@@ -25,11 +25,11 @@ dirignore() {
     if grep -qs 'ignoredirmessage' "$IGNORE_FILE"; then
       printf_blue 'dirignore is already in .gitignore'
     else
-      printf_green '\t\tAdding dirignore to gitignore'
+      printf_green 'Adding dirignore to gitignore'
       printf '# Disable reminder in prompt\nignoredirmessage\n' >>"$IGNORE_FILE"
     fi
   else
-    printf_green '\t\tAdding dirignore to gitignore'
+    printf_green 'Adding dirignore to gitignore'
     printf '# gitignore created on %s\n' "$DATE_FMT" >"$IGNORE_FILE"
     printf '# Disable reminder in prompt\nignoredirmessage\n' >>"$IGNORE_FILE"
   fi
