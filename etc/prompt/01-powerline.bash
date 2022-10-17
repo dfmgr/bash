@@ -139,30 +139,33 @@ noprompt() {
 bashprompt() {
   printf_return() { return; }
   ___bash_find() {
-    local dir="${1:-$PWD}"
-    local args=""
-    [ -d "$1" ] && dir="$1" && shift 1
-    [ $# -eq 0 ] && return 1 || args="$*"
-    find -L "$dir" -maxdepth 1 -type f ${args:-} -not -path "$dir/.git/*" 2>/dev/null | wc -l
+    local findExitCode="1" dir="" count="" args=("")
+    [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
+    [ $# -eq 0 ] && return 1 || args=("$@")
+    for arg in "${args[@]}"; do
+      count="$(find -L "$dir" -maxdepth 1 -type f -iname "$arg" -not -path "$dir/.git/*" 2>/dev/null | wc -l | grep '^' || echo '')"
+      [ "$count" -ne 0 ] && return 0
+    done
+    return 1
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unicode symbols
-  PS_SYMBOL_DARWIN=' 🍎 ' 2>/dev/null
-  PS_SYMBOL_LINUX=' 🐧 ' >/dev/null
-  PS_SYMBOL_WIN=' 👽 ' >/dev/null
-  PS_SYMBOL_OTHER=' ❓ ' 2>/dev/null
-  GIT_BRANCH_SYMBOL='🎆 ' 2>/dev/null
-  GIT_BRANCH_CHANGED_SYMBOL=' 🌲 ' 2>/dev/null
-  GIT_NEED_PUSH_SYMBOL=' 🔼 ' 2>/dev/null
-  GIT_NEED_PULL_SYMBOL=' 🔽 ' 2>/dev/null
-  RUBY_SYMBOL=' 💎 ' 2>/dev/null
-  NODE_SYMBOL=' 🔥 ' 2>/dev/null
-  PYTHON_SYMBOL=' 🐍 ' 2>/dev/null
-  PHP_SYMBOL=' ♻️ ' 2>/dev/null
-  PERL_SYMBOL=' ☢️ ' 2>/dev/null
-  LUA_SYMBOL=' ⚠️ ' 2>/dev/null
-  GO_SYMBOL=' 👺 ' 2>/dev/null
-  RUST_SYMBOL=' 🏗 ' 2>/dev/null
+  PS_SYMBOL_DARWIN=' 🍎 '
+  PS_SYMBOL_LINUX=' 🐧 '
+  PS_SYMBOL_WIN=' 👽 '
+  PS_SYMBOL_OTHER=' ❓ '
+  GIT_BRANCH_SYMBOL='🎆 '
+  GIT_BRANCH_CHANGED_SYMBOL=' 🌲 '
+  GIT_NEED_PUSH_SYMBOL=' 🔼 '
+  GIT_NEED_PULL_SYMBOL=' 🔽 '
+  RUBY_SYMBOL=' 💎 '
+  NODE_SYMBOL=' 🔥 '
+  PYTHON_SYMBOL=' 🐍 '
+  PHP_SYMBOL=' ♻️ '
+  PERL_SYMBOL=' ☢️ '
+  LUA_SYMBOL=' ⚠️ '
+  GO_SYMBOL=' 👺 '
+  RUST_SYMBOL=' 🏗 '
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Foreground Colors
   __tput() { tput "$@" 2>/dev/null; }
@@ -250,12 +253,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Rust
   __ifrust() {
+    local gitdir version
     if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$(builtin command -v rustc 2>/dev/null)" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.rs')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.rlib')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.rs'; then
       if [ -f "$(builtin command -v rustc 2>/dev/null)" ]; then
         __rust_version() { printf "| Rust: %s" "$(rustc --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       else
@@ -273,12 +276,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # GO
   __ifgo() {
+    local gitdir version
     if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$(builtin command -v go 2>/dev/null)" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.go')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.go'; then
       if [ -f "$(builtin command -v go 2>/dev/null)" ]; then
         __go_version() { printf "%s" "GO: $(go version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       else
@@ -296,12 +299,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Ruby
   __ifruby() {
+    local gitdir version
     if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$(builtin command -v ruby 2>/dev/null)" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.gem')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.rb')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'Gemfile')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.gem' '*.rb' 'Gemfile'; then
       if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -f "$(builtin command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -323,12 +326,12 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Node.js
   __ifnode() {
+    local gitdir version
     if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$(builtin command -v node 2>/dev/null)" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.js')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'package.json')" -ne 0 ] || [ "$(___bash_find "$gitdir" -name 'yarn.lock')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.js' 'package.json' 'yarn.lock'; then
       if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ] &&
         [ "$(nvm current)" != "system" ]; then
         __node_version() { printf "%s" "$(node --version)"; }
@@ -381,7 +384,7 @@ bashprompt() {
       return 1
     fi
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ $(___bash_find "$gitdir" -name '*.py') -ne 0 ] || [ $(___bash_find "$gitdir" -name 'requirements.txt') -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.py' 'requirements.txt'; then
       __python_info() {
         PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
         ___if_venv "${gitdir:-$SETV_VIRTUAL_DIR_PATH}"
@@ -407,14 +410,14 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
   __ifphp() {
-    phpBin="$(builtin type -P php8 || builtin type -P php7 builtin type -P php5 || builtin type -P php || echo '')"
+    local gitdir version
+    phpBin="$(builtin type -P php8 || builtin type -P php7 || builtin type -P php5 || builtin type -P php)"
     if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.php*')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname 'composer.json')" -ne 0 ]; then
-      __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1)"; }
+    if ___bash_find "$gitdir" '*.php*' 'composer.json'; then
+      __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
     else
       __php_version() { return; }
     fi
@@ -427,13 +430,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # perl
   __ifperl() {
+    local gitdir version
     perlBin="$(builtin type -P perl)"
     if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.pl')" -ne 0 ] || [ "$(___bash_find "$gitdir" -iname '*.cgi')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.pl' '*.cgi'; then
       __perl_version() { printf "%s" "$($perlBin --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -447,13 +450,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # lua
   __iflua() {
+    local gitdir version
     luaBin="$(builtin type -P lua || echo '')"
     if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
       return 1
     fi
-    local gitdir version
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
-    if [ "$(___bash_find "$gitdir" -iname '*.lua')" -ne 0 ]; then
+    if ___bash_find "$gitdir" '*.lua'; then
       luaversion="$($luaBin -v 2>&1)"
       __lua_version() { printf "%s" "$(echo "$luaversion" | head -n1 | awk '{print $2}')"; }
     else
@@ -468,11 +471,11 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
+    local gitdir marks git_eng branch stat aheadN behindN
     gitBin="$(builtin type -P git || echo '')"
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
       return 1
     fi
-    local gitdir marks git_eng branch stat aheadN behindN
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
@@ -498,10 +501,10 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git reminder
   __git_prompt_message_warn() {
+    local gitdir grepgitignore
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 1
     fi
-    local gitdir grepgitignore
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       gitdir="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
       grepgitignore="$(grep -q ignoredirmessage "$gitdir/.gitignore" 2>/dev/null && echo 0 || echo 1)"
@@ -591,11 +594,9 @@ bashprompt() {
         export RESET_PATH="$PATH"
         export PATH="$PWD/bin:$RESET_PATH"
       fi
-    else
-      if [ -n "$RESET_PATH" ]; then
-        export PATH="$RESET_PATH"
-        unset RESET_PATH
-      fi
+    elif [ -n "$RESET_PATH" ]; then
+      export PATH="$RESET_PATH"
+      unset RESET_PATH
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
