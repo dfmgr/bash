@@ -137,7 +137,6 @@ noprompt() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Initialize prompt
 bashprompt() {
-  BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
   printf_return() { return; }
   ___bash_find() {
     local findExitCode="1" dir="" count="" args=("")
@@ -509,7 +508,7 @@ bashprompt() {
   ___wakatime_prompt() {
     local version entity project
     version="1.0.0"
-    entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || return)"
+    entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || false)"
     if [ -z "$entity" ]; then
       return 0
     else
@@ -633,6 +632,7 @@ bashprompt() {
     fi
     [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
+    BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
 
     ___add_bin_path
     __ifdate && ___date_show
