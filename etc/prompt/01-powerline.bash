@@ -553,8 +553,8 @@ bashprompt() {
       shell="bash: "
       version="$bash"
     else
-      shell="$(basename ${TERM:-$SHELL})"
-      version="$(eval $SHELL --version | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo unknown)"
+      shell="$(basename ${TERM:-$SHELL}) "
+      version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo '1.0')"
     fi
     [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
     printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
