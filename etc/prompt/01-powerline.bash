@@ -556,7 +556,8 @@ bashprompt() {
       shell="$(basename ${TERM:-$SHELL})"
       version="$(eval $SHELL --version | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo unknown)"
     fi
-    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${version}${RESET}"
+    [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
+    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Add bin to path
