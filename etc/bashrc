@@ -5,6 +5,9 @@ PATH="/usr/local/bin:$PATH"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+# Set hostname
+export HOSTNAME="${HOSTNAME:-$(hostname)}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create directories
 [ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt" &>/dev/null
@@ -127,8 +130,8 @@ if [ -f "$HOME/.config/local/bash.servers.local" ]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #System specific
-if [ -f "$HOME/.config/local/bash.$(hostname).local" ]; then
-  . "$HOME/.config/local/bash.$(hostname).local"
+if [ -f "$HOME/.config/local/bash.$HOSTNAME.local" ]; then
+  . "$HOME/.config/local/bash.$HOSTNAME.local"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 BASHRCSRC="$HOME/.bashrc"
