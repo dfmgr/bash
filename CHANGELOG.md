@@ -1,3 +1,12 @@
+#### Changelog: 2023-03-13 at 14:18:04  
+
+completions/add2path.bash : 🗃️ Committing everything that changed 🗃️ 🚀  
+etc/functions/add2path.bash : 🗃️ Committing everything that changed 🗃️ 🚀  
+  
+#### End of changes for 202303081037-git - 2023-03-13 at 14:18:04  
+  
+----  
+  
 #### Changelog: 2023-03-08 at 10:37:07  
 
 etc/bashrc : 🗃️ Committing everything that changed 🗃️ 🚀  

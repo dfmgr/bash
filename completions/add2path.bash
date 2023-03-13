@@ -19,16 +19,16 @@ _add2path_completion() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
-  opts="--help --remove --add --list"
+  opts="--init --help --remove --add --list"
   paths="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$' | grep '^')"
   if [[ ${prev} == '--help' ]]; then
     COMPREPLY=($(compgen -W '' -- ${cur}))
     return 0
   elif [[ ${prev} == 'remove' ]] || [[ ${prev} = '--remove' ]] || [[ ${prev} = 'delete' ]] || [[ ${prev} = '--delete' ]]; then
-    COMPREPLY=($(compgen -W "${paths}" -- ${cur}))
+    COMPREPLY=($(compgen -W '${paths}' -- ${cur}))
     return
   elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    COMPREPLY=($(compgen -W '${opts}' -- "${cur}"))
     return 0
   else
     _filedir -d
