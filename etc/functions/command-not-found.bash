@@ -20,10 +20,10 @@ orig_command_not_found_handle() {
   if type -P pkmgr &>/dev/null; then
     printf_green "Searching the repo for $cmd"
     possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
-    results="$(pkmgr search show-raw "$cmd" 2>/dev/null | awk '{print $1}' | grep -a "$cmd"|sort -u | head -n1 | grep '^' || echo '')"
-    [[ -n "$results" ]] && pkmgr silent install "$results" 2>/dev/null
-    if type -P "$cmd" &>/dev/null || [[ $? = 0 ]]; then
-      printf_green "$cmd has been Installed"
+    exact="$(echo "$possibilities" | awk -F ' ' '{print $1}' | sed 's| ||g' | grep -x "$cmd")"
+    [ -n "$exact" ] && pkmgr silent install "$exact" 2>/dev/null
+    if type -P "$exact" &>/dev/null || [[ $? = 0 ]]; then
+      printf_green "$exact has been Installed"
       sleep 2
       eval "$*"
       return $?
@@ -33,6 +33,9 @@ orig_command_not_found_handle() {
         printf '\n'
         printf_yellow "However, I did find packages matching $cmd"
         echo "$possibilities" | printf_readline "5"
+        if [ -n "$exact" ]; then
+          printf_cyan "Found exact match: $exact"
+        fi
         echo
       fi
       return 1
