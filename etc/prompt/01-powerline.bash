@@ -340,40 +340,39 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # python
   ___if_venv() {
-    local venv_dir="${1:-$PWD}"
-    [ -n "$VIRTUAL_ENV_PROMPT" ] && [ -f "$PYTHON_SOURCE_FILE" ] && return 0
-    if [ -z "$VIRTUAL_ENV" ] && [ -f "$SETV_VIRTUAL_DIR_PATH/bin/activate" ]; then
-      PYTHON_SOURCE_FILE="$SETV_VIRTUAL_DIR_PATH/bin/activate"
-      PYTHON_VIRTUALENV="$(basename "$(realpath "$SETV_VIRTUAL_DIR_PATH")")"
-    elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/bin/activate" ]; then
-      PYTHON_SOURCE_FILE="$venv_dir/bin/activate"
+    local venv_dir="${1:-${BASHRC_GITDIR:-$PWD}}"
+    if [ -n "$VIRTUAL_ENV_PROMPT" ] && [ ! -f "$PYTHON_SOURCE_FILE" ]; then
+      type deactivate &>/dev/null && deactivate
+      unset PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
+      return
+    fi
+    if [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/bin/activate" ]; then
+      PYTHON_SOURCE_FILE="$(realpath "$venv_dir/bin/activate")"
       PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/venv/bin/activate" ]; then
-      PYTHON_SOURCE_FILE="$venv_dir/venv/bin/activate"
+      PYTHON_SOURCE_FILE="$(realpath "$venv_dir/venv/bin/activate")"
       PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/.venv/bin/activate" ]; then
-      PYTHON_SOURCE_FILE="$venv_dir/.venv/bin/activate"
+      PYTHON_SOURCE_FILE="$(realpath "$venv_dir/.venv/bin/activate")"
       PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
-    else
-      unset PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
-      type deactivate &>/dev/null && deactivate
-      return 1
+    elif [ -z "$VIRTUAL_ENV" ] && [ -f "$SETV_VIRTUAL_DIR_PATH/bin/activate" ]; then
+      PYTHON_SOURCE_FILE="$(realpath "$SETV_VIRTUAL_DIR_PATH/bin/activate")"
+      PYTHON_VIRTUALENV="$(basename "$(realpath "$SETV_VIRTUAL_DIR_PATH")")"
     fi
-    source "$PYTHON_SOURCE_FILE"
-    export PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
+    [ -f "$PYTHON_SOURCE_FILE" ] && . "$PYTHON_SOURCE_FILE" && export PYTHON_VIRTUALENV PYTHON_SOURCE_FILE || true
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   __ifpython() {
     local PYTHON_VERSION
-    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$PWD"
     pythonBin="$(builtin command -v python3 || builtin command -v python2 || builtin command -v python || false)"
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
       return 1
     fi
+    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
     if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' && [ -n "$pythonBin" ]; then
       [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
       __python_info() {
-        PYTHON_VERSION="$($pythonBin --version | sed 's#Python ##g')"
+        PYTHON_VERSION="$($PYTHONBIN --version | sed 's#Python ##g')"
         if [ -n "$PYTHON_VIRTUALENV" ]; then
           printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         else
@@ -383,6 +382,7 @@ bashprompt() {
     else
       __python_info() { return; }
     fi
+    export PYTHONBIN="$pythonBin"
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php

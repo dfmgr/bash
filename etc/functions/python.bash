@@ -42,6 +42,9 @@ activate() {
   elif [ -d "$PWD/.venv" ]; then
     venv_dir="$PWD/.venv"
     venv_name="$(basename "$PWD")"
+  elif [ -d "$PWD/venv" ]; then
+    venv_dir="$PWD/venv"
+    venv_name="$(basename "$PWD")"
   elif [ -d "$SETV_VIRTUAL_DIR_PATH/$venv_name" ]; then
     setv_env_dir="$SETV_VIRTUAL_DIR_PATH/$venv_name"
   fi
@@ -56,3 +59,5 @@ activate() {
   fi
   return 0
 } && export -f activate
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
