@@ -16,6 +16,11 @@
 # @@sudo/root        :  no
 # @@Template         :  none
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+setup_poetry() {
+  curl -sSL https://install.python-poetry.org | python3 - --preview
+  [ -n "$(builtin type -P poetry)" ] && poetry completions bash >"$HOME/.local/share/bash-completion/completions/poetry"
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 _activate_completion() {
   _init_completion || return
   local setv_env_dir="" venv_name="" venv_dir="${SETV_VIRTUAL_DIR_PATH:-$PWD}"
