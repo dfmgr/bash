@@ -1,3 +1,13 @@
+#### Changelog: 2023-04-13 at 13:48:11  
+
+etc/plugins/asdf.bash : 🗃️  Committing everything that changed 🗃️ 🚀  
+etc/plugins/basher.bash : 🗃️  Committing everything that changed 🗃️ 🚀  
+etc/plugins/luaver.bash : 🗃️  Committing everything that changed 🗃️ 🚀  
+  
+#### End of changes for 202304111220-git - 2023-04-13 at 13:48:11  
+  
+----  
+  
 #### Changelog: 2023-04-11 at 12:20:55  
 
 etc/functions/python.bash : 🗃️  Committing everything that changed 🗃️ 🚀  
