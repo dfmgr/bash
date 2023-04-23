@@ -148,30 +148,41 @@ run_postinst() {
   history -a &>/dev/null
   history -w &>/dev/null
   history -a &>/dev/null
-  if [ -f "$HOME/.config/bash/bash_history" ]; then mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"; fi
-  if [ -f "$APPDIR/welcome.msg" ]; then WELCOME=true; fi
+  [ -d "$HOME/.local/bin" ] || mkdir -p "$HOME/.local/bin"
+  if [ -f "$HOME/.config/bash/bash_history" ]; then
+    mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"
+  fi
+  if [ -f "$APPDIR/welcome.msg" ]; then export WELCOME="true"; fi
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
     rm_rf "$APPDIR/$file"
   done
   dfmgr_run_post
-  ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
-  ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
-  ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
   [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
-  if [ -n "$WELCOME" ]; then touch "$APPDIR/welcome.msg"; fi
+  if [ -n "$WELCOME" ]; then
+    touch "$APPDIR/welcome.msg"
+  fi
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
     mv -f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
   elif [ -f "$HOME/.bash_history" ] && [ -e "HOME/.config/bash/bash_history" ]; then
     cat "$HOME/.bash_history" >>"$HOME/.config/bash/bash_history"
     rm -Rf "$HOME/.bash_history"
-  elif [[ -f "/tmp/bash_history.tmp" ]]; then
+  elif [ -f "/tmp/bash_history.tmp" ]; then
     mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
-  [[ -f "$HOME/.bashrc" ]] && . "$HOME/.bashrc"
+  if [ ! -x "$HOME/.local/bin/vcprompt" ]; then
+    curl -q -LSsf "https://github.com/djl/vcprompt/raw/master/bin/vcprompt" "$HOME/.local/bin/vcprompt"
+    chmod 755 "$HOME/.local/bin/vcprompt"
+  fi
+  if [ -f "$APPDIR/bashrc" ]; then
+    . "$APPDIR/bashrc"
+  fi
   history -a &>/dev/null
   history -w &>/dev/null
   history -a &>/dev/null
   history -r &>/dev/null
+  ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
+  ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
+  ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
 }
 #
 execute "run_postinst" "Running post install scripts"
