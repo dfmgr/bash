@@ -58,7 +58,7 @@ REPORAW="$REPO/raw/$REPO_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup plugins
-PLUGNAMES=""
+PLUGNAMES="bash-it"
 PLUGDIR="${SHARE:-$HOME/.local/share}/$APPNAME"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the dfmgr function
@@ -132,10 +132,10 @@ fi
 # Plugins
 if am_i_online; then
   if [ "$PLUGNAMES" != "" ]; then
-    if [ -d "$PLUGDIR/" ]; then
-      execute "git_update $PLUGDIR/" "Updating plugin "
+    if [ -d "$PLUGDIR/bash-it" ]; then
+      execute "git_update $PLUGDIR/bash-it" "Updating plugin "
     else
-      execute "git_clone REPO $PLUGDIR/" "Installing plugin "
+      execute "git_clone https://github.com/Bash-it/bash-it $PLUGDIR/bash-it" "Installing plugin "
     fi
   fi
   # exit on fail
