@@ -1,4 +1,3 @@
-set -x
 export BASH_IT="${BASH_IT:-$HOME/.local/share/bash/bash-it}"
 if [ -f "$BASH_IT/bash_it.sh" ]; then
   # Path to the bash it configuration
@@ -75,5 +74,4 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
 
   # Load Bash It
   [ -n "$(type -t bash-it)" ] || source "$BASH_IT/bash_it.sh"
-  set +x
 fi
