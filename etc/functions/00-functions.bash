@@ -217,16 +217,6 @@ cd() {
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# the fuck
-fuck() {
-  TF_CMD=$(
-    TF_ALIAS=fuck \
-      PYTHONIOENCODING=utf-8 \
-      TF_SHELL_ALIASES=$(alias)
-    thefuck "$(fc -ln -1)"
-  ) && eval "$TF_CMD" && history -s "$TF_CMD"
-}
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set OS TYPE
 detectos() {
   OS="$(uname)"

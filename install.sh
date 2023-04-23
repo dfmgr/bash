@@ -81,7 +81,7 @@ dfmgr_run_init
 APP="$APPNAME "
 PERL=""
 PYTH=""
-PIPS=""
+PIPS="thefuck"
 CPAN=""
 GEMS=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
