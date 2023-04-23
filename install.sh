@@ -170,7 +170,7 @@ run_postinst() {
     mv -f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
   if [ ! -x "$HOME/.local/bin/vcprompt" ]; then
-    curl -q -LSsf "https://github.com/djl/vcprompt/raw/master/bin/vcprompt" "$HOME/.local/bin/vcprompt"
+    curl -q -LSsf "https://github.com/djl/vcprompt/raw/master/bin/vcprompt" -o "$HOME/.local/bin/vcprompt"
     chmod 755 "$HOME/.local/bin/vcprompt"
   fi
   if [ -f "$APPDIR/bashrc" ]; then

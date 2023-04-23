@@ -9,15 +9,15 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
 
   # Some themes can show whether `sudo` has a current token or not.
   # Set `$THEME_CHECK_SUDO` to `true` to check every prompt:
-  export THEME_CHECK_SUDO="true"
+  export THEME_CHECK_SUDO="${THEME_CHECK_SUDO:-true}"
 
   # (Advanced): Change this to the name of your remote repo if you
   # cloned bash-it with a remote other than origin such as `bash-it`.
-  export BASH_IT_REMOTE="bash-it"
+  export BASH_IT_REMOTE="${BASH_IT_REMOTE:-bash-it}"
 
   # (Advanced): Change this to the name of the main development branch if
   # you renamed it or if it was changed for some reason
-  export BASH_IT_DEVELOPMENT_BRANCH="main"
+  export BASH_IT_DEVELOPMENT_BRANCH="${BASH_IT_DEVELOPMENT_BRANCH:-main}"
 
   # Your place for hosting Git repos. I use this for private repos.
   export GIT_HOSTING="${GIT_HOSTING:-git@git.domain.com}"
@@ -35,28 +35,28 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
   BASH_IT_PROJECT_PATHS="${BASH_IT_PROJECT_PATHS:-$HOME/Projects}"
 
   # Set this to false to turn off version control status checking within the prompt for all themes
-  export SCM_CHECK=${SCM_CHECK:-true}
+  export SCM_CHECK="${SCM_CHECK:-true}"
   # Set to actual location of gitstatus directory if installed
   #export SCM_GIT_GITSTATUS_DIR="$HOME/gitstatus"
   # per default gitstatus uses 2 times as many threads as CPU cores, you can change this here if you must
-  #export GITSTATUS_NUM_THREADS=${GITSTATUS_NUM_THREADS:-8}
+  #export GITSTATUS_NUM_THREADS="${GITSTATUS_NUM_THREADS:-8}"
 
   # Set Xterm/screen/Tmux title with only a short hostname.
   # Uncomment this (or set SHORT_HOSTNAME to something else),
   # Will otherwise fall back on $HOSTNAME.
-  #export SHORT_HOSTNAME=${SHORT_HOSTNAME:-$(hostname -s)}
+  #export SHORT_HOSTNAME="${SHORT_HOSTNAME:-$(hostname -s)}"
 
   # Set Xterm/screen/Tmux title with only a short username.
   # Uncomment this (or set SHORT_USER to something else),
   # Will otherwise fall back on $USER.
-  export SHORT_USER=${USER:0:12}
+  export SHORT_USER="${USER:0:12}"
 
   # If your theme use command duration, uncomment this to
   # enable display of last command duration.
-  export BASH_IT_COMMAND_DURATION=${BASH_IT_COMMAND_DURATION:-true}
+  export BASH_IT_COMMAND_DURATION="${BASH_IT_COMMAND_DURATION:-true}"
   # You can choose the minimum time in seconds before
   # command duration is displayed.
-  export COMMAND_DURATION_MIN_SECONDS=${COMMAND_DURATION_MIN_SECONDS:-1}
+  export COMMAND_DURATION_MIN_SECONDS="${COMMAND_DURATION_MIN_SECONDS:-1}"
 
   # Set Xterm/screen/Tmux title with shortened command and directory.
   # Uncomment this to set.
@@ -67,10 +67,10 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
 
   # (Advanced): Uncomment this to make Bash-it reload itself automatically
   # after enabling or disabling aliases, plugins, and completions.
-  export BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE=${BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE:-1}
+  export BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE="${BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE:-1}"
 
   # Uncomment this to make Bash-it create alias reload.
-  export BASH_IT_RELOAD_LEGACY=${BASH_IT_RELOAD_LEGACY:-1}
+  export BASH_IT_RELOAD_LEGACY="${BASH_IT_RELOAD_LEGACY:-1}"
 
   # Load Bash It
   source "$BASH_IT/bash_it.sh"
