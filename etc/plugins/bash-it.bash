@@ -1,3 +1,4 @@
+set -x
 export BASH_IT="${BASH_IT:-$HOME/.local/share/bash/bash-it}"
 if [ -f "$BASH_IT/bash_it.sh" ]; then
   # Path to the bash it configuration
@@ -73,5 +74,6 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
   export BASH_IT_RELOAD_LEGACY="${BASH_IT_RELOAD_LEGACY:-1}"
 
   # Load Bash It
-  source "$BASH_IT/bash_it.sh"
+  [ -n "$(type -t bash-it)" ] || source "$BASH_IT/bash_it.sh"
+  set +x
 fi
