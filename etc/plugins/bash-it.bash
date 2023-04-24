@@ -1,4 +1,4 @@
-export BASH_IT="${BASH_IT:-$HOME/.local/share/bash/bash-it}"
+BASH_IT="${BASH_IT:-$HOME/.local/share/bash/bash-it}"
 if [ -f "$BASH_IT/bash_it.sh" ]; then
   # Path to the bash it configuration
 

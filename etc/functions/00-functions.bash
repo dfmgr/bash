@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
+# shellcheck disable=SC2317
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version           :  202207161759-git
 # @@Author           :  Jason Hempstead
@@ -42,10 +44,11 @@ printf_execute_result() {
   if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi
   return "$1"
 }
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_execute_error_stream() {
   while read -r line; do printf_execute_error "↳ ERROR: $line"; done
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_exit() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
   local msg="$*"
@@ -54,7 +57,7 @@ printf_exit() {
   echo ""
   return 0
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_help() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="4"
   local msg="$*"
@@ -64,7 +67,7 @@ printf_help() {
   echo ""
   return 0
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_pause() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="5"
   local msg="${*:-Press any key to continue}"
@@ -72,7 +75,7 @@ printf_pause() {
   read -r -n 1 -s
   printf "\n"
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_custom() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="5"
   local msg="$*"
@@ -80,7 +83,7 @@ printf_custom() {
   printf_color "$msg" "$color"
   echo ""
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_read() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
@@ -90,7 +93,7 @@ printf_read() {
   printf "\n"
   set +o pipefail
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_readline() {
   set -o pipefail
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
@@ -99,26 +102,26 @@ printf_readline() {
   done
   set +o pipefail
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="4"
   local msg="$*"
   shift
   printf_color "$ICON_QUESTION $msg? " "$color"
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_custom_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
   local msg="$*"
   shift
   printf_color "$msg " "$color"
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_answer() {
   read -e -r -n "${2:-120}" -s "${1:-__ANSWER}"
   history -s "${1:-$__ANSWER}"
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #printf_read_question "color" "message" "maxLines" "answerVar"
 printf_read_question() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="1"
@@ -128,21 +131,14 @@ printf_read_question() {
   printf_color "$msg " "$color"
   printf_answer "$reply" "$lines"
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_answer_yes() {
   [[ "${1:-$__ANSWER}" =~ ${2:-^[Yy]$} ]] && return 0 || return 1
 }
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_head() {
   test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
-  local msg1="$1" && shift 1
-  local msg2="$1" && shift 1 || msg2=
-  local msg3="$1" && shift 1 || msg3=
-  local msg4="$1" && shift 1 || msg4=
-  local msg5="$1" && shift 1 || msg5=
-  local msg6="$1" && shift 1 || msg6=
-  local msg7="$1" && shift 1 || msg7=
-  shift
+  local msg1="$1" msg2="$2" msg3="$3" msg4="$4" msg5="$5" msg6="$6" msg7="$7" && shift $#
   [ -z "$msg1" ] || printf_color "##################################################\n" "$color"
   [ -z "$msg1" ] || printf_color "$msg1\n" "$color"
   [ -z "$msg2" ] || printf_color "$msg2\n" "$color"
@@ -155,31 +151,19 @@ printf_head() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use grc if it's installed or execute the command direct
-if [[ -f "$(builtin command -v grc 2>/dev/null)" ]]; then
-  if [[ "$USEGRC" = "yes" ]]; then
-    grc() {
-      if [[ -f "$(builtin command -v grc 2>/dev/null)" ]]; then
-        $(builtin command -v grc 2>/dev/null) --colour=on "$@"
-      else
-        "$@"
-      fi
-    }
-  fi
+if [ -n "$(builtin type -t grc 2>/dev/null)" ] && [ "$USEGRC" = "yes" ]; then
+  grc() {
+    if [ -f "$(builtin command -v grc 2>/dev/null)" ]; then
+      $(builtin command -v grc 2>/dev/null) --colour=on "$@"
+    else "$@"; fi
+  }
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate random strings
-if [[ -z "$(builtin command -v random-string 2>/dev/null)" ]]; then
-  random-string() {
-    cat '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1
-  }
-fi
+[ -n "$(builtin command -v random-string 2>/dev/null)" ] || random-string() { cat '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate a random password
-if [[ -z "$(builtin command -v mkpasswd 2>/dev/null)" ]]; then
-  mkpasswd() {
-    cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1
-  }
-fi
+[ -n "$(builtin type -t mkpasswd 2>/dev/null)" ] || mkpasswd() { cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "${@:-}"; } || \
 cd() {
@@ -203,10 +187,10 @@ cd() {
       dir="$1"
       shift 1
     elif [[ "$dir" =~ '..' ]]; then
-      builtin cd "$dir" || return 1
+      builtin cd "$dir/" || return 1
       return $?
     elif [[ "$dir" = "" ]]; then
-      builtin cd "$HOME" || return 1
+      builtin cd "$HOME/" || return 1
       return $?
     fi
     [[ -n "$dir" ]] || dir="$PWD"

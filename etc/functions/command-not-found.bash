@@ -30,7 +30,6 @@ orig_command_not_found_handle() {
     else
       printf_red "Sorry install of package $cmd failed"
       if [ -n "$possibilities" ]; then
-        printf '\n'
         printf_yellow "However, I did find packages matching $cmd"
         echo "$possibilities" | printf_readline "5"
         if [ -n "$exact" ]; then
@@ -49,12 +48,12 @@ orig_command_not_found_handle() {
 command_not_found_handle() {
   cmd="$1"
   args=("$@")
-  if [[ -f "$cmd" ]]; then
+  if [ -f "$cmd" ]; then
     if echo " ${_suffix_vi[*]} " | grep -q " ${cmd##*.} "; then
       if type vi >&/dev/null; then
         vi "${args[@]}" && return 0 || return 1
       fi
-    elif [[ "${cmd##*.}" = "ps1" ]]; then
+    elif [ "${cmd##*.}" = "ps1" ]; then
       if type powershell >&/dev/null; then
         powershell -F "${args[@]}" && return 0 || return 1
       fi

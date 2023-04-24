@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202304231956-git
+##@Version           :  202304232004-git
 # @@Author           :  Jason Hempstead
 # @@Contact          :  git-admin@casjaysdev.com
-# @@License          :  WTFPL
-# @@ReadME           :  fuck.bash --help
+# @@License          :  LICENSE.md
+# @@ReadME           :  find.bash --help
 # @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
-# @@Created          :  Sunday, Apr 23, 2023 19:56 EDT
-# @@File             :  fuck.bash
-# @@Description      :  corrects errors in previous console commands
+# @@Created          :  Sunday, Apr 23, 2023 21:53 EDT
+# @@File             :  find.bash
+# @@Description      :  Custom find function to exclude .git directories
 # @@Changelog        :  newScript
 # @@TODO             :  Refactor code
 # @@Other            :
-# @@Resource         :  https://github.com/nvbn/thefuck
+# @@Resource         :
 # @@Terminal App     :  no
 # @@sudo/root        :  no
 # @@Template         :  bash/system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -z "$(type -p thefuck)" ] || eval $(thefuck --enable-experimental-instant-mode --alias fuck)
+find() { $(\builtin type -P find) -L "$@" -type ${FIND_DEFAULT_TYPE:-f,d} -not -path '*/\.git/*' -not -path '*/\.svn/*' -not -path '*/\.hg/*' 2>/dev/null || return 1; }

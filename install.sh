@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
+# shellcheck disable=SC2317
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 APPNAME="bash"
 USER="${SUDO_USER:-${USER}}"
@@ -144,23 +146,17 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
-  history -r &>/dev/null
-  history -a &>/dev/null
-  history -w &>/dev/null
-  history -a &>/dev/null
+  dfmgr_run_post
+  history -r &>/dev/null && history -a &>/dev/null && history -w &>/dev/null && history -r &>/dev/null && history -a &>/dev/null
+  [ -f "$APPDIR/welcome.msg" ] && WELCOME="true"
   [ -d "$HOME/.local/bin" ] || mkdir -p "$HOME/.local/bin"
-  if [ -f "$HOME/.config/bash/bash_history" ]; then
-    mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"
-  fi
-  if [ -f "$APPDIR/welcome.msg" ]; then export WELCOME="true"; fi
+  [ -d "$HOME/.config/bash" ] || mkdir -p "$HOME/.config/bash"
+  [ -f "$HOME/.config/bash/bash_history" ] && mv_f "$HOME/.config/bash/bash_history" "/tmp/bash_history.tmp"
   for file in aliases bash_logout bash_profile bashrc completions exports plugins profile prompt; do
     rm_rf "$APPDIR/$file"
   done
-  dfmgr_run_post
   [ ! -f "$COMPDIR/README.md" ] || rm_rf "$COMPDIR/README.md"
-  if [ -n "$WELCOME" ]; then
-    touch "$APPDIR/welcome.msg"
-  fi
+  [ -z "$WELCOME" ] || touch "$APPDIR/welcome.msg"
   if [ -f "$HOME/.bash_history" ] && [ ! -e "HOME/.config/bash/bash_history" ]; then
     mv -f "$HOME/.bash_history" "$HOME/.config/bash/bash_history"
   elif [ -f "$HOME/.bash_history" ] && [ -e "HOME/.config/bash/bash_history" ]; then
@@ -173,16 +169,12 @@ run_postinst() {
     curl -q -LSsf "https://github.com/djl/vcprompt/raw/master/bin/vcprompt" -o "$HOME/.local/bin/vcprompt"
     chmod 755 "$HOME/.local/bin/vcprompt"
   fi
-  if [ -f "$APPDIR/bashrc" ]; then
-    . "$APPDIR/bashrc"
-  fi
-  history -a &>/dev/null
-  history -w &>/dev/null
-  history -a &>/dev/null
-  history -r &>/dev/null
-  ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
-  ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
-  ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
+  touch "$HOME/.config/bash/bash_history"
+  [ -f "$APPDIR/bashrc" ] && . "$APPDIR/bashrc"
+  [ ! -f "$APPDIR/bashrc" ] || ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
+  [ ! -f "$APPDIR/bash_logout" ] || ln_sf "$APPDIR/bash_logout" "$HOME/.bash_logout"
+  [ ! -f "$APPDIR/bash_profile" ] || ln_sf "$APPDIR/bash_profile" "$HOME/.bash_profile"
+  history -r &>/dev/null && history -a &>/dev/null && history -w &>/dev/null && history -r &>/dev/null && history -a &>/dev/null
 }
 #
 execute "run_postinst" "Running post install scripts"

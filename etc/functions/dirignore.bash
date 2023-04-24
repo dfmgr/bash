@@ -15,7 +15,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dirignore() {
   local IGNORE_FILE DATE_FMT
-  if [[ "$1" == "--help" ]]; then
+  if [ "$1" == "--help" ]; then
     printf_help "add dirignore message to .gitignore file"
     return
   fi
