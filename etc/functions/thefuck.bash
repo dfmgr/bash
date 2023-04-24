@@ -16,4 +16,4 @@
 # @@sudo/root        :  no
 # @@Template         :  bash/system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -z "$(type -p thefuck)" ] || eval $(thefuck --alias --enable-experimental-instant-mode)
+[ -z "$(type -p thefuck)" ] || eval $(thefuck --enable-experimental-instant-mode --alias fuck)
