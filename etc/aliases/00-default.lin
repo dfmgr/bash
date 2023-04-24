@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202303022155-git
 # @Author        : Jason Hempstead
@@ -168,7 +169,7 @@ fi
 [ -n "$(builtin type -P xfce4-session-logout 2>/dev/null)" ] && alias logout='xfce4-session-logout '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Open command
-[ "$(uname -s)" = Linux ] && [ -n "$(type -P xdg-open)" ] && alias open='xdg-open '
+[ "$(uname -s)" = Linux ] && [ -n "$(type -P xdg-open 2>/dev/null)" ] && alias open='xdg-open '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # youtube-dl
 [ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias nightcorea='ytda nightcorea '

@@ -1,4 +1,5 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202103251632-git
 # @Author        : Jason Hempstead
@@ -13,6 +14,7 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export MISC_SCRIPTS_LOADED_ALIAS="true"
 if [ -f "$HOME/.config/bash/aliases/00-aliases.sh" ]; then
   . "$HOME/.config/bash/aliases/00-aliases.sh"
 fi

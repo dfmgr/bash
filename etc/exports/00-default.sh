@@ -5,13 +5,15 @@
 # @Author        : Jason Hempstead
 # @Contact       : jason@casjaysdev.com
 # @License       : LICENSE.md
-# @ReadME        : README.md
+# @ReadME        : 00-default.sh --help
 # @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 16:36 EDT
-# @File          : 00-aliases.lin
-# @Description   : Aliases for all OSes
+# @Created       : Thursday, Mar 25, 2021 16:40 EDT
+# @File          : 00-default.sh
+# @Description   :
 # @TODO          :
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Aliases for all OSes
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end

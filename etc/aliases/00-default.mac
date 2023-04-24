@@ -1,4 +1,5 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
 [ -f "$(builtin type -P gdate 2>/dev/null)" ] && alias date='gdate '
