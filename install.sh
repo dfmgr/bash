@@ -227,10 +227,6 @@ __run_prepost_install() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run after primary post install function
 __run_post_install() {
-  if [ ! -x "$HOME/.local/bin/vcprompt" ]; then
-    curl -q -LSsf "https://github.com/djl/vcprompt/raw/master/bin/vcprompt" -o "$HOME/.local/bin/vcprompt"
-    chmod 755 "$HOME/.local/bin/vcprompt"
-  fi
   touch "$HOME/.config/bash/bash_history"
   [ -f "$APPDIR/bashrc" ] && . "$APPDIR/bashrc"
   [ ! -f "$APPDIR/bashrc" ] || ln_sf "$APPDIR/bashrc" "$HOME/.bashrc"
