@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
+# shellcheck disable=SC1087
+# shellcheck disable=SC2317
+# shellcheck disable=SC2120
+# shellcheck disable=SC2155
+# shellcheck disable=SC2199
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202103251632-git
 # @Author        : Jason Hempstead
@@ -97,7 +103,7 @@ __powerline() {
   esac
   ### Git ########################################################
   if [ "$(which git 2>/dev/null)" ]; then
-    __git_version() { printf $(git --version | awk '{print $3}'); }
+    __git_version() { printf '%s' "$(git --version | awk '{print $3}')"; }
   fi
   __git_info() {
     [ -x "$(which git)" ] || return # git not found
@@ -114,7 +120,7 @@ __powerline() {
     local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
     [ -n "$aheadN" ] && marks+=" $GIT_NEED_PUSH_SYMBOL$aheadN"
     [ -n "$behindN" ] && marks+=" $GIT_NEED_PULL_SYMBOL$behindN"
-    printf " $GIT_BRANCH_SYMBOL $branch$marks"
+    printf '%s' " $GIT_BRANCH_SYMBOL $branch$marks"
   }
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}"; }
