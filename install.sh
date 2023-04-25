@@ -5,13 +5,13 @@
 # shellcheck disable=SC2155
 # shellcheck disable=SC2199
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202304232249-git
+##@Version           :  202304250248-git
 # @@Author           :  Jason Hempstead
 # @@Contact          :  jason@casjaysdev.com
-# @@License          :  LICENSE.md
+# @@License          :  WTFPL
 # @@ReadME           :  install.sh --help
 # @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
-# @@Created          :  Sunday, Apr 23, 2023 23:38 EDT
+# @@Created          :  Tuesday, Apr 25, 2023 02:48 EDT
 # @@File             :  install.sh
 # @@Description      :  Install configurations for bash
 # @@Changelog        :  New script
@@ -23,7 +23,7 @@
 # @@Template         :  installers/dfmgr
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 APPNAME="bash"
-VERSION="202304232249-git"
+VERSION="202304250248-git"
 HOME="${USER_HOME:-$HOME}"
 USER="${SUDO_USER:-$USER}"
 RUN_USER="${SUDO_USER:-$USER}"
@@ -105,6 +105,10 @@ show_optvars "$@"
 # Requires root - no point in continuing
 #sudoreq "$0 *" # sudo required
 #sudorun "$0 *" # sudo optional
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Other dependencies
+dotfilesreq misc
+dotfilesreqadmin cron
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Initialize the installer
 dfmgr_run_init
