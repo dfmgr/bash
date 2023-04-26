@@ -1,5 +1,18 @@
-#!/usr/bin/env bash
-# shellcheck shell=bash
+#!/usr/bin/env sh
+# shellcheck shell=sh
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202303022155-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : README.md
+# @Copyright     : Copyright: (c) 2023 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 02, 2023 21:54 EDT
+# @File          : 00-default.win
+# @Description   :
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
 alias ~='builtin cd ~'
@@ -42,7 +55,7 @@ alias setverfile='setver --file '
 alias ssh='ssh -X '
 alias sshq='ssh -qX '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -f "$(command -v vim 2>/dev/null)" ] && alias vim='winpty vim.exe '
+which vim >/dev/null 2>&1 && alias vim='winpty vim.exe '
 [ -f "/c/Progra~1/ActivePython2/python.exe" ] && alias python='winpty /c/Progra~1/ActivePython2/python.exe '
 [ -f "/c/Progra~1/ActivePython2/python.exe" ] && alias pip='winpty /c/Progra~1/ActivePython2/python.exe -m pip '
 [ -f "/c/Progra~1/ActivePython3/python.exe" ] && alias python3='winpty /c/Progra~1/ActivePython3/python.exe '
@@ -73,4 +86,8 @@ alias command-not-found='fuck '
 # other
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Import global aliases
+[ -f "$HOME/.config/misc/shell/aliases/00-aliases.sh" ] && . "$HOME/.config/misc/shell/aliases/00-aliases.sh"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
+true

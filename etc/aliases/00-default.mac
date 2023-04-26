@@ -1,8 +1,21 @@
-#!/usr/bin/env bash
-# shellcheck shell=bash
+#!/usr/bin/env sh
+# shellcheck shell=sh
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version       : 202303022155-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : LICENSE.md
+# @ReadME        : README.md
+# @Copyright     : Copyright: (c) 2023 Jason Hempstead, CasjaysDev
+# @Created       : Thursday, Mar 02, 2023 21:54 EDT
+# @File          : 00-default.mac
+# @Description   :
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # System Aliases
-[ -f "$(builtin type -P gdate 2>/dev/null)" ] && alias date='gdate '
+which gdate >/dev/null 2>&1 && alias date='gdate '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 alias q='exit '
 alias :q='exit '
@@ -56,16 +69,16 @@ alias flushdns='sudo systemd-resolve --flush-caches '
 [ -n "$DISPLAY" ] && alias ssh='ssh -X' || alias ssh='ssh '
 [ -n "$DISPLAY" ] && alias sshq='ssh -qX' || alias ssh='ssh -q '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias ll='gls -l --color=auto '
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias l.='gls -LA --color=auto '
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias ls='gls --color=auto '
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias la='gls -A --color=auto '
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias lla='gls -lA --color=auto  '
-[ -f "$(builtin type -P gls 2>/dev/null)" ] && alias dir='gls -D --color=auto  '
-[ -f "$(builtin type -P greadlink 2>/dev/null)" ] && alias readlink='greadlink  '
-[ -f "$(builtin type -P gbasename 2>/dev/null)" ] && alias basename='gbasename  '
-[ -f "$(builtin type -P grealpath 2>/dev/null)" ] && alias realpath='grealpath  '
-[ -f "$(builtin type -P gdircolors 2>/dev/null)" ] && alias dircolors='gdircolors  '
+which gls >/dev/null 2>&1 && alias ll='gls -l --color=auto '
+which gls >/dev/null 2>&1 && alias l.='gls -LA --color=auto '
+which gls >/dev/null 2>&1 && alias ls='gls --color=auto '
+which gls >/dev/null 2>&1 && alias la='gls -A --color=auto '
+which gls >/dev/null 2>&1 && alias lla='gls -lA --color=auto  '
+which gls >/dev/null 2>&1 && alias dir='gls -D --color=auto  '
+which greadlink >/dev/null 2>&1 && alias readlink='greadlink  '
+which gbasename >/dev/null 2>&1 && alias basename='gbasename  '
+which grealpath >/dev/null 2>&1 && alias realpath='grealpath  '
+which gdircolors >/dev/null 2>&1 && alias dircolors='gdircolors  '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CD Aliases
 alias ~='builtin cd ~'
@@ -104,27 +117,27 @@ alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resource
 alias o='open '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # youtube-dl
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias nightcorea='ytda nightcorea '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias nightcorev='ytda nightcorev '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytv-best='ytda ytv '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-aac='ytda aac '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-best='ytda yta '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-flac='ytda flac '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-m4a='ytda m4a '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-mp3='ytda mp3 '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-opus='ytda opus '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-vorbis='ytda vorbis '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias yta-wav='ytda wav '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytdv='ytda video '
-[ -n "$(builtin type -P youtube-dl 2>/dev/null)" ] && alias ytstream='ytstream '
+which youtube-dl >/dev/null 2>&1 && alias nightcorea='ytda nightcorea '
+which youtube-dl >/dev/null 2>&1 && alias nightcorev='ytda nightcorev '
+which youtube-dl >/dev/null 2>&1 && alias ytv-best='ytda ytv '
+which youtube-dl >/dev/null 2>&1 && alias yta-aac='ytda aac '
+which youtube-dl >/dev/null 2>&1 && alias yta-best='ytda yta '
+which youtube-dl >/dev/null 2>&1 && alias yta-flac='ytda flac '
+which youtube-dl >/dev/null 2>&1 && alias yta-m4a='ytda m4a '
+which youtube-dl >/dev/null 2>&1 && alias yta-mp3='ytda mp3 '
+which youtube-dl >/dev/null 2>&1 && alias yta-opus='ytda opus '
+which youtube-dl >/dev/null 2>&1 && alias yta-vorbis='ytda vorbis '
+which youtube-dl >/dev/null 2>&1 && alias yta-wav='ytda wav '
+which youtube-dl >/dev/null 2>&1 && alias ytdv='ytda video '
+which youtube-dl >/dev/null 2>&1 && alias ytstream='ytstream '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Media
-[ -f "$(builtin type -P castero 2>/dev/null)" ] && alias podcasts='castero '
-[ -f "$(builtin type -P spotifyd 2>/dev/null)" ] && alias spotify='spotifyd '
-[ -f "$(builtin type -P pianobar 2>/dev/null)" ] && alias pandora='pianobar '
-[ -f "$(builtin type -P tizonia 2>/dev/null)" ] && alias cloudplayer='tizonia '
-[ -f "$(builtin type -P youtube-viewer 2>/dev/null)" ] && alias youtube='youtube-viewer '
-[ -f "$(builtin type -P mpc 2>/dev/null)" ] && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
+which castero >/dev/null 2>&1 && alias podcasts='castero '
+which spotifyd >/dev/null 2>&1 && alias spotify='spotifyd '
+which pianobar >/dev/null 2>&1 && alias pandora='pianobar '
+which tizonia >/dev/null 2>&1 && alias cloudplayer='tizonia '
+which youtube-viewer >/dev/null 2>&1 && alias youtube='youtube-viewer '
+which mpc >/dev/null 2>&1 && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # android dev
 alias fastboot='sudo fastboot '
@@ -145,11 +158,10 @@ alias mylatlong='mylocation | grep -E "LAT | LON" '
 alias emj='emojis '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # other
-alias bork='printf "😂 🐕\n\n" '
-alias please='printf "😂 Well shit 😂\n\n" '
-alias shit='echo -n "😠 Well that didnt work: " && sudo '
-alias gcm='git add . && git commit -am "🗃️ Committing everything that changed 🗃️ " '
-alias copy-templates='gen-header --copy;gen-html --copy;gen-readme --copy;gen-script --copy;echo '
-alias update-system='printf_blue "Updating your system. This may take a while......" && pkmgr silent upgrade && sudo systemmgr update &>/dev/null && dfmgr update &>/dev/null && printf_green "Your system has been updated" || printf_red "Failed to update your system" '
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Import global aliases
+[ -f "$HOME/.config/misc/shell/aliases/00-aliases.sh" ] && . "$HOME/.config/misc/shell/aliases/00-aliases.sh"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
+true
