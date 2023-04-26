@@ -18,6 +18,7 @@
 # @@Template         :  bash/profile
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # asdf
+export ASDF_DIR="${ASDF_DIR:-$HOME/.local/share/misc/plugins/asdf}"
 if [ -n "$BASH_VERSION" ] && [ -n "$ASDF_DIR" ]; then
   [ -f "$ASDF_DIR/asdf.sh" ] && . "$ASDF_DIR/asdf.sh"
   [ -f "$ASDF_DIR/completions/asdf.bash" ] && . "$ASDF_DIR/completions/asdf.bash"

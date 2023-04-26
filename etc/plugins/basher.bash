@@ -14,6 +14,7 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # basher
+export BASHER_ROOT="${BASHER_ROOT:-$HOME/.local/share/misc/plugins/basher}"
 if [ -n "$BASH_VERSION" ] && [ -n "$BASHER_ROOT" ]; then
   [ -f "$BASHER_ROOT/bin/basher" ] && eval "$($BASHER_ROOT/bin/basher init - bash)"
 fi

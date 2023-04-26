@@ -1,4 +1,23 @@
-BASH_IT="${BASH_IT:-$HOME/.local/share/bash/bash-it}"
+#!/usr/bin/env bash
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202304251026-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.com
+# @@License          :  LICENSE.md
+# @@ReadME           :  bash-it --help
+# @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
+# @@Created          :  Tuesday, Apr 25, 2023 19:50 EDT
+# @@File             :  bash-it
+# @@Description      :  Collection of community Bash commands and scripts
+# @@Changelog        :  newScript
+# @@TODO             :  Refactor code
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  bash/system
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export BASH_IT="${BASH_IT:-$HOME/.local/share/bash/plugins/bash-it}"
 if [ -f "$BASH_IT/bash_it.sh" ]; then
   # Path to the bash it configuration
 
