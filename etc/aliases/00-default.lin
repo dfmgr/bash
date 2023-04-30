@@ -189,7 +189,7 @@ which youtube-viewer >/dev/null 2>&1 && alias youtube='youtube-viewer '
 which mpc >/dev/null 2>&1 && [ -z "$MPDSERVER" ] && alias mpc='mpc ' || alias mpc='mpc -h "$MPDSERVER" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Python
-which pipx >/dev/null 2>&1 || alias='pip install -U pipx && alias pipx="pipx" '
+which pipx >/dev/null 2>&1 || alias pipx='pip install -U pipx && alias pipx="pipx" '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Other
 which anime-dl >/dev/null 2>&1 && alias anime-cli='anime-dl '
@@ -205,7 +205,8 @@ alias mylatlong='mylocation | grep --color=none "LAT\|LON" '
 alias emj='emojis '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # other
-which thefuck || alias thefuck='rerun_that -- shit'
+which thefuck >/dev/null 2>&1 || alias thefuck='rerun_that -- shit'
+
 alias shit='rerun_that -- shit'
 alias bork='rerun_that -- bork'
 alias balls='rerun_that -- balls'
