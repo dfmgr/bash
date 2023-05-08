@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202304232004-git
+##@Version           :  202305030938-git
 # @@Author           :  Jason Hempstead
 # @@Contact          :  git-admin@casjaysdev.com
 # @@License          :  LICENSE.md
-# @@ReadME           :  find.bash --help
+# @@ReadME           :  zzzz-import.bash --help
 # @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
-# @@Created          :  Sunday, Apr 23, 2023 21:53 EDT
-# @@File             :  find.bash
-# @@Description      :  Custom find function to exclude .git directories
+# @@Created          :  Monday, May 08, 2023 19:52 EDT
+# @@File             :  zzzz-import.bash
+# @@Description      :  newScript
 # @@Changelog        :  newScript
 # @@TODO             :  Refactor code
 # @@Other            :
@@ -17,4 +18,4 @@
 # @@sudo/root        :  no
 # @@Template         :  bash/system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-find_file() { $(\builtin type -P find) -L "$@" -type ${FIND_DEFAULT_TYPE:-f} -not -path '*/\.git/*' -not -path '*/\.svn/*' -not -path '*/\.hg/*' 2>/dev/null || return 1; }
+[ -f "$HOME/.config/misc/shell/functions/global.sh" ] && . "$HOME/.config/misc/shell/functions/global.sh"

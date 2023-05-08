@@ -160,10 +160,10 @@ if [ -n "$(builtin type -t grc 2>/dev/null)" ] && [ "$USEGRC" = "yes" ]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate random strings
-[ -n "$(builtin command -v random-string 2>/dev/null)" ] || random-string() { cat '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n 1; }
+[ -n "$(builtin command -v random-string 2>/dev/null)" ] || random-string() { head -n50 '/dev/urandom' | tr -dc 'a-zA-Z0-9' | fold -w "${1:-64}" | head -n1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # generate a random password
-[ -n "$(builtin type -t mkpasswd 2>/dev/null)" ] || mkpasswd() { cat '/dev/urandom' | tr -dc '[:print:]' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1; }
+[ -n "$(builtin type -t mkpasswd 2>/dev/null)" ] || mkpasswd() { head -n50 '/dev/random' | tr -dc 'a-zA-Z0-9' | tr -d '[:space:]\042\047\134' | fold -w "${1:-64}" | head -n 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[ "$CDD_STATUS" = "running" ] && cd() { cd_cdd "${@:-}"; } || \
 cd() {
@@ -186,7 +186,7 @@ cd() {
     elif [[ $# -eq 1 ]]; then
       dir="$1"
       shift 1
-    elif [[ "$dir" =~ '..' ]]; then
+    elif [ "$dir" = '..' ]; then
       builtin cd "$dir/" || return 1
       return $?
     elif [[ "$dir" = "" ]]; then
