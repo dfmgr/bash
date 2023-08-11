@@ -2,7 +2,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202111051202-git
 # @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.com
+# @Contact       : jason@casjaysdev.pro
 # @License       : WTFPL
 # @ReadME        : dirignore.bash --help
 # @Copyright     : Copyright: (c) 2021 Jason Hempstead, Casjays Developments

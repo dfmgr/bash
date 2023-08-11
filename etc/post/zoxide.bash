@@ -2,7 +2,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202108030344-git
 # @Author        : Jason
-# @Contact       : jason@casjaysdev.com
+# @Contact       : jason@casjaysdev.pro
 # @License       : WTFPL
 # @ReadME        : zoxide --help
 # @Copyright     : Copyright (c) 2021, Casjays Developments
