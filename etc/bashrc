@@ -33,6 +33,11 @@ userbashfunctions() {
       . "$f"
     done
   fi
+  if [ "$(find "$HOME/.config/misc/shell/functions"/*.sh 2>/dev/null | wc -l)" != "0" ]; then
+    for f in "$HOME/.config/misc/shell/functions"/*.sh; do
+      . "$f"
+    done
+  fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
