@@ -16,8 +16,8 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export MISC_SCRIPTS_LOADED_ALIAS="true"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ -f "$HOME/.config/bash/aliases/00-aliases.load" ]; then
-  . "$HOME/.config/bash/aliases/00-aliases.load"
+if [ -f "$HOME/.config/misc/shell/aliases/00-aliases.load" ]; then
+  . "$HOME/.config/misc/shell/aliases/00-aliases.load"
 else
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case "$(uname -s)" in

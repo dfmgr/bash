@@ -16,8 +16,8 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export MISC_SCRIPTS_LOADED_EXPORTS="true"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ -f "$HOME/.config/shell/exports/00-exports.load" ]; then
-  . "$HOME/.config/shell/exports/00-exports.load"
+if [ -f "$HOME/.config/misc/shell/exports/00-exports.load" ]; then
+  . "$HOME/.config/misc/shell/exports/00-exports.load"
 else
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   case "$(uname -s)" in
