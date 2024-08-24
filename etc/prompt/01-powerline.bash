@@ -264,6 +264,7 @@ bashprompt() {
     local version
     rustBin="$(builtin command -v rustc || false)"
     if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$rustBin" ]; then
+      __rust_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.rs'; then
@@ -283,6 +284,7 @@ bashprompt() {
     local version
     goBin="$(builtin command -v go || false)"
     if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$goBin" ]; then
+      __go_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.go'; then
@@ -302,6 +304,7 @@ bashprompt() {
     local version
     rubyBin="$(builtin command -v ruby || false)"
     if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$rubyBin" ]; then
+      __ruby_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.gem' '*.rb' 'Gemfile'; then
@@ -329,6 +332,7 @@ bashprompt() {
     local version
     nodeBin="$(builtin command -v node || false)"
     if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$nodeBin" ]; then
+      __node_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.js' 'package.json' 'yarn.lock'; then
@@ -374,6 +378,7 @@ bashprompt() {
     local PYTHON_VERSION
     pythonBin="$(builtin command -v python3 || builtin command -v python2 || builtin command -v python || false)"
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
+      __python_info() { true; }
       return 0
     fi
     [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
@@ -398,6 +403,7 @@ bashprompt() {
     local version
     phpBin="$(builtin command -v php8 || builtin command -v php7 || builtin command -v php5 || builtin command -v php || false)"
     if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
+      __php_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.php*' 'composer.json'; then
@@ -417,6 +423,7 @@ bashprompt() {
     local version
     perlBin="$(builtin command -v perl || false)"
     if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
+      __perl_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.pl' '*.cgi'; then
@@ -436,6 +443,7 @@ bashprompt() {
     local version
     luaBin="$(builtin command -v lua || false)"
     if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
+      __lua_info() { true; }
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.lua'; then
@@ -455,6 +463,7 @@ bashprompt() {
     local marks git_eng branch stat aheadN behindN
     gitBin="$(builtin command -v git || false)"
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
+      __git_info() { true; }
       return 0
     fi
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
@@ -532,6 +541,7 @@ bashprompt() {
   # Add time
   __ifdate() {
     if [ -f "$HOME/.config/bash/noprompt/date" ]; then
+      ___date_show() { true; }
       return
     fi
     ___date_show() {
