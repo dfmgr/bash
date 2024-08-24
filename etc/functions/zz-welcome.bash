@@ -13,7 +13,7 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-show_welcome() {
+show_welcome_msg() {
   if [ ! -f "$HOME/.config/bash/welcome.msg" ]; then
     printf_green "\n\n\n"
     printf_green "Welcome to your system!"
@@ -40,6 +40,7 @@ show_welcome_tor() {
       printf_cyan "You can install it by running systemmgr install tor"
     else
       if (sudo -vn && sudo -ln) 2>&1 | grep -v 'may not' >/dev/null; then
+        sudo true
         if sudo bash -c '[ -f /var/lib/tor/hidden_service/hostname ]'; then
           printf_green "the tor hostname of this system is:"
           printf_green "$(sudo cat /var/lib/tor/hidden_service/hostname)"

@@ -140,7 +140,7 @@ BASHRCSRC="$HOME/.bashrc"
 PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-show_welcome
+show_welcome_msg
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run neofetch
 if [ "$BASHRC_SHOW_NEFETCH" != "no" ]; then
@@ -159,6 +159,5 @@ fi
 unset -f userbashfunctions userbashexports userbashprofile
 unset -f userbashaliases userbashcompletions userbashplugins
 unset -f userbashprompt userbashos userbashprofilelocal userbashprofilepost
-unset BASHRC_SEND_NOTIFY BASHRC_SHOW_NEFETCH
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
