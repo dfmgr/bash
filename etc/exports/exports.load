@@ -16,33 +16,28 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export MISC_SCRIPTS_LOADED_EXPORTS="true"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ -f "$HOME/.config/shell/exports/00-default.sh" ]; then
-  . "$HOME/.config/shell/exports/00-default.sh"
+if [ -f "$HOME/.config/shell/exports/00-exports.load" ]; then
+  . "$HOME/.config/shell/exports/00-exports.load"
+else
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  case "$(uname -s)" in
+  CYGWIN* | MINGW32* | MSYS* | MINGW*)
+    if [ -f "$HOME/.config/bash/exports/00-default.win" ]; then
+      . "$HOME/.config/bash/exports/00-default.win"
+    fi
+    ;;
+  Darwin)
+    if [ -f "$HOME/.config/bash/exports/00-default.mac" ]; then
+      . "$HOME/.config/bash/exports/00-default.mac"
+    fi
+    ;;
+  Linux)
+    if [ -f "$HOME/.config/bash/exports/00-default.lin" ]; then
+      . "$HOME/.config/bash/exports/00-default.lin"
+    fi
+    ;;
+  *) ;;
+  esac
 fi
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-case "$(uname -s)" in
-CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if [ -f "$HOME/.config/shell/exports/00-default.win" ]; then
-    . "$HOME/.config/shell/exports/00-default.win"
-  elif [ -f "$HOME/.config/bash/exports/00-default.win" ]; then
-    . "$HOME/.config/bash/exports/00-default.win"
-  fi
-  ;;
-Darwin)
-  if [ -f "$HOME/.config/shell/exports/00-default.mac" ]; then
-    . "$HOME/.config/shell/exports/00-default.mac"
-  elif [ -f "$HOME/.config/bash/exports/00-default.mac" ]; then
-    . "$HOME/.config/bash/exports/00-default.mac"
-  fi
-  ;;
-Linux)
-  if [ -f "$HOME/.config/shell/exports/00-default.lin" ]; then
-    . "$HOME/.config/shell/exports/00-default.lin"
-  elif [ -f "$HOME/.config/bash/exports/00-default.lin" ]; then
-    . "$HOME/.config/bash/exports/00-default.lin"
-  fi
-  ;;
-*) ;;
-esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
