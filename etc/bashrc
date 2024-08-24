@@ -143,19 +143,22 @@ export PATH BASHRCSRC
 show_welcome
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run neofetch
-#if echo "$-" | grep i >/dev/null; then
-#  if [ -n "$(builtin command -v neofetch 2>/dev/null)" ]; then
-#    neofetch
-#  fi
-#fi
+if [ "$BASHRC_SHOW_NEFETCH" != "no" ]; then
+  if [ -n "$(builtin command -v neofetch 2>/dev/null)" ]; then
+    neofetch
+  fi
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Send an e-mail every time you login
-#builtin type -P mail &>/dev/null &&
-#  echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" |
-#  mail -r no-reply -s "Alert: Access from $USER" $USER@$HOSTNAME
+if [ "$BASHRC_SEND_NOTIFY" != "no" ]; then
+  if builtin type -P mailx &>/dev/null || builtin type -P mail &>/dev/null; then
+    echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" | mail -r "ALERTS <no-reply@$HOSTNAME>" -s "Alert: Access from $USER" $USER@$HOSTNAME
+  fi
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 unset -f userbashfunctions userbashexports userbashprofile
 unset -f userbashaliases userbashcompletions userbashplugins
 unset -f userbashprompt userbashos userbashprofilelocal userbashprofilepost
+unset BASHRC_SEND_NOTIFY BASHRC_SHOW_NEFETCH
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

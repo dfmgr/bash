@@ -14,6 +14,7 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+BASHRC_SEND_NOTIFY="no"
+BASHRC_SHOW_NEFETCH="no"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

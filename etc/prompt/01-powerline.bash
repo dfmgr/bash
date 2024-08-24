@@ -141,12 +141,12 @@ bashprompt() {
   ___bash_find() {
     local findExitCode="1" dir="" count="" args=("")
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
-    [ $# -eq 0 ] && return 1 || args=("$@")
+    [ $# -eq 0 ] && return || args=("$@")
     for arg in "${args[@]}"; do
       count="$(find -L "$dir" -maxdepth 1 -type f -iname "$arg" -not -path "$dir/.git/*" 2>/dev/null | wc -l | grep '^' || echo '')"
       [ "$count" -ne 0 ] && return 0
     done
-    return 1
+    return
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unicode symbols
@@ -229,25 +229,33 @@ bashprompt() {
   ___time_it_pre() {
     local st es
     local es=${EPOCHSECONDS:-$(date +%s)}
-    [ -f "$HOME/.config/bash/noprompt/timer" ] && return 1
-    st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-$(date +%s)})
-    if [ -z "$STARTTIME" ] || { [ -n "$STARTTIME" ] && [ "$STARTTIME" -ne "$st" ]; }; then
-      TIMER_ENDTIME=${EPOCHSECONDS:-1}
-      TIMER_STARTTIME=${st:-0}
+    if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
+      return 0
     else
-      TIMER_ENDTIME=0
-      TIMER_STARTTIME=0
+      st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-$(date +%s)})
+      if [ -z "$STARTTIME" ] || { [ -n "$STARTTIME" ] && [ "$STARTTIME" -ne "$st" ]; }; then
+        TIMER_ENDTIME=${EPOCHSECONDS:-1}
+        TIMER_STARTTIME=${st:-0}
+      else
+        TIMER_ENDTIME=0
+        TIMER_STARTTIME=0
+      fi
     fi
   }
   ___time_it() {
-    [ -f "$HOME/.config/bash/noprompt/timer" ] && ___time_show() { return; } && return 1
-    ___time_it_pre
-    [ -n "$TIMER_ENDTIME" ] || TIMER_ENDTIME=$EPOCHSECONDS
-    [ -n "$TIMER_STARTTIME" ] || TIMER_STARTTIME=$EPOCHSECONDS
-    if ((TIMER_ENDTIME - TIMER_STARTTIME > 0)); then
-      ___time_show() { printf 'Time:[%ds]|' $((TIMER_ENDTIME - TIMER_STARTTIME)); }
+    if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
+      ___time_show() { return; }
+      ___time_it_pre() { return; }
+      return
     else
-      ___time_show() { printf 0; }
+      ___time_it_pre
+      [ -n "$TIMER_ENDTIME" ] || TIMER_ENDTIME=$EPOCHSECONDS
+      [ -n "$TIMER_STARTTIME" ] || TIMER_STARTTIME=$EPOCHSECONDS
+      if ((TIMER_ENDTIME - TIMER_STARTTIME > 0)); then
+        ___time_show() { printf 'Time:[%ds]|' $((TIMER_ENDTIME - TIMER_STARTTIME)); }
+      else
+        ___time_show() { printf 0; }
+      fi
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -256,7 +264,7 @@ bashprompt() {
     local version
     rustBin="$(builtin command -v rustc || false)"
     if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$rustBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.rs'; then
       __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
@@ -275,7 +283,7 @@ bashprompt() {
     local version
     goBin="$(builtin command -v go || false)"
     if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$goBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.go'; then
       __go_version() { printf "%s" "GO: $($goBin version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
@@ -294,7 +302,7 @@ bashprompt() {
     local version
     rubyBin="$(builtin command -v ruby || false)"
     if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$rubyBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.gem' '*.rb' 'Gemfile'; then
       if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
@@ -321,7 +329,7 @@ bashprompt() {
     local version
     nodeBin="$(builtin command -v node || false)"
     if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$nodeBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.js' 'package.json' 'yarn.lock'; then
       __node_version() { printf "%s" "$($nodeBin --version)"; }
@@ -366,7 +374,7 @@ bashprompt() {
     local PYTHON_VERSION
     pythonBin="$(builtin command -v python3 || builtin command -v python2 || builtin command -v python || false)"
     if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
-      return 1
+      return 0
     fi
     [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
     if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' && [ -n "$pythonBin" ]; then
@@ -390,7 +398,7 @@ bashprompt() {
     local version
     phpBin="$(builtin command -v php8 || builtin command -v php7 || builtin command -v php5 || builtin command -v php || false)"
     if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.php*' 'composer.json'; then
       __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
@@ -409,7 +417,7 @@ bashprompt() {
     local version
     perlBin="$(builtin command -v perl || false)"
     if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.pl' '*.cgi'; then
       __perl_version() { printf "%s" "$($perlBin --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
@@ -428,7 +436,7 @@ bashprompt() {
     local version
     luaBin="$(builtin command -v lua || false)"
     if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
-      return 1
+      return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.lua'; then
       __lua_version() { printf "%s" "$($luaBin -v 2>&1 | head -n1 | awk '{print $2}')"; }
@@ -447,7 +455,7 @@ bashprompt() {
     local marks git_eng branch stat aheadN behindN
     gitBin="$(builtin command -v git || false)"
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
-      return 1
+      return 0
     fi
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
@@ -476,7 +484,7 @@ bashprompt() {
   __git_prompt_message_warn() {
     local grepgitignore
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
-      return 1
+      return 0
     fi
     if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
       grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
@@ -489,9 +497,9 @@ bashprompt() {
   # WakaTime
   __ifwakatime() {
     if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(builtin command -v wakatime 2>/dev/null)" ]; then
-      ___wakatime_show() { return 1; }
-      ___wakatime_prompt() { return 1; }
-      return 1
+      ___wakatime_show() { return; }
+      ___wakatime_prompt() { return; }
+      return
     fi
   }
   ___wakatime_show() {
@@ -524,7 +532,7 @@ bashprompt() {
   # Add time
   __ifdate() {
     if [ -f "$HOME/.config/bash/noprompt/date" ]; then
-      return 1
+      return
     fi
     ___date_show() {
       DATETIME_PROMPT="$(printf '[Time: %s]' "$(date '+%H:%M')")"

@@ -58,7 +58,7 @@ alias npmg='sudo npm -g '
 alias netstat='sudo netstat '
 alias fastboot='sudo fastboot '
 alias ipconfig='sudo ifconfig '
-alias systemctl='sudo systemctl '
+alias systemctl='sudo \systemctl '
 alias ports='sudo netstat -taupln | grep --color=auto LISTEN '
 alias flushdns='sudo systemd-resolve --flush-caches '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
