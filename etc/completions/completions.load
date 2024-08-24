@@ -13,6 +13,9 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if [ -f "$HOME/.config/bash/completions/00-completions.sh" ]; then
+  . "$HOME/.config/bash/completions/00-completions.sh"
+fi
 if [ "$(find "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/* 2>/dev/null | wc -l)" != "0" ]; then
   for f in "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/*; do
     . "$f" &>/dev/null
