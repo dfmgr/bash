@@ -29,7 +29,7 @@ fi
 # shellcheck disable=2124,2217
 # Set the window title
 set_custom_win_title() {
-  local cmd="$0"
+  local cmd="$1"
   if [ "$cmd" = "starship_precmd" ] || [ "$cmd" = "()" ]; then
     cmd=""
   fi
@@ -121,6 +121,7 @@ userbashprompt() {
     export starship_precmd_user_func="set_custom_win_title"
     eval -- "$(starship init bash --print-full-init)"
     export PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
+    trap 'set_custom_win_title ${BASH_COMMAND}'
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
