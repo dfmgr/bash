@@ -87,6 +87,7 @@ userbashplugins() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
+  unset BASH_PROMPT PROMPT_COMMAND PS1 PS2 PS3 PS4
   if [ -f "$HOME/.config/bash/server-prompt.sh" ]; then
     . "$HOME/.config/bash/server-prompt.sh"
   elif [ "$(find "$HOME/.config/bash/prompt"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
