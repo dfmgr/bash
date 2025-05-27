@@ -179,7 +179,7 @@ PYTHON_PIP=""
 PHP_COMPOSER=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Run custom actions
-
+[ -f "$HOME/.config/bash/noprompt/powerline_ps1" ] && export REMOVE_PS1=yes
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Show a custom message after install
 __run_post_message() {
@@ -189,7 +189,7 @@ __run_post_message() {
 # Define pre-install scripts
 __run_pre_install() {
   local getRunStatus=0
-  [ -f "$HOME/.config/bash/noprompt/powerline_ps1" ] && REMOVE_PS1=yes
+
   return $getRunStatus
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
