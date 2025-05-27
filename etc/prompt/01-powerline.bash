@@ -52,6 +52,7 @@ noprompt() {
   local shortopts="e,s,d"
   local longopts="enable,show,disable,help,disable-all,enable-all"
   local array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
+  [ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt"
   setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
   eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
@@ -134,7 +135,7 @@ noprompt() {
         if [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
           unset PROMPT_COMMAND PS1 PS2 PS3 PS4
           mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "HOME/.config/bash/noprompt/powerline_ps1"
-          [ -n "$(type starship)" ] && eval "$(starship init --print-full-init bash)"
+          [ -n "$(type -P starship)" ] && eval "$(starship init --print-full-init bash)"
         fi
       fi
       ;;
