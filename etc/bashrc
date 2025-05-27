@@ -28,7 +28,7 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # shellcheck disable=2124,2217
 # Set the window title
-set_win_title() {
+set_custom_win_title() {
   local cmd=" ($@)"
   if [ "$cmd" == " (starship_precmd)" ] || [ "$cmd" == " ()" ]; then
     cmd=""
@@ -119,7 +119,7 @@ userbashprompt() {
     done
   elif [ -n "$(type -P starship)" ]; then
     eval -- "$(starship init bash --print-full-init)"
-    starship_precmd_user_func="set_win_title"
+    starship_precmd_user_func="set_custom_win_title"
     PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
   fi
 }
