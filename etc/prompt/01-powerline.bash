@@ -51,7 +51,7 @@ noprompt() {
   local message="Disabled"
   local shortopts="e,s,d"
   local longopts="enable,show,disable,help,disable-all,enable-all"
-  local array="date git go lua node path perl php python reminder ruby rust timer wakatime"
+  local array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
   setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
   eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
@@ -123,6 +123,21 @@ noprompt() {
     rust) $action "$HOME/.config/bash/noprompt/rust" ;;
     timer) $action "$HOME/.config/bash/noprompt/timer" ;;
     wakatime) $action "$HOME/.config/bash/noprompt/wakatime" ;;
+    bashprompt)
+      if [ $message = "Enabled" ]; then
+        if [ -f "HOME/.config/bash/noprompt/powerline_ps1" ]; then
+          unset PROMPT_COMMAND PS1
+          mv -f "HOME/.config/bash/noprompt/powerline_ps1" "$HOME/.config/bash/prompt/01-powerline.bash"
+          . "$HOME/.config/bash/prompt/01-powerline.bash"
+        fi
+      else
+        if [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
+          unset PROMPT_COMMAND PS1 PS2 PS3 PS4
+          mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "HOME/.config/bash/noprompt/powerline_ps1"
+          [ -n "$(type starship)" ] && eval "$(starship init --print-full-init bash)"
+        fi
+      fi
+      ;;
     esac
     printf_blue "$message $1"
     shift 1
