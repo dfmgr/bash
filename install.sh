@@ -214,6 +214,9 @@ __run_prepost_install() {
   elif [ -f "/tmp/bash_history.tmp" ]; then
     __mv_f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
+  if [ -f "$HOME/.config/bash/noprompt/powerline_ps1" ] && [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
+    mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "$HOME/.config/bash/noprompt/powerline_ps1"
+  fi
   return $getRunStatus
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
