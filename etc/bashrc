@@ -35,16 +35,16 @@ set_win_title() {
   fi
   if [ "$PWD" = "$HOME" ]; then
     if [ -n "$SSH_TTY" ]; then
-      echo -ne "\033]0; 🏛️ @ $HOSTNAME ~$cmd\a" </dev/null
+      echo -ne "\033]0; 🏛️ $USER@$HOSTNAME:~ $cmd\a" </dev/null
     else
-      echo -ne "\033]0; 🏠 ~$cmd\a" </dev/null
+      echo -ne "\033]0; 🏠 $USER@$HOSTNAME:~ $cmd\a" </dev/null
     fi
   else
     BASEPWD="$(realpath "$PWD")"
     if [[ $SSH_TTY ]]; then
-      echo -ne "\033]0; �️ $BASEPWD @ $HOSTNAME $cmd\a" </dev/null
+      echo -ne "\033]0; �️ $USER@$HOSTNAME:$BASEPWD $cmd\a" </dev/null
     else
-      echo -ne "\033]0; 📁 $BASEPWD $cmd\a" </dev/null
+      echo -ne "\033]0; 📁 $USER@$HOSTNAME:$BASEPWD $cmd\a" </dev/null
     fi
   fi
 }
