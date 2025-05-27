@@ -26,6 +26,29 @@ if [ -f "$HOME/.profile" ]; then
   . "$HOME/.profile"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=2124,2217
+# Set the window title
+set_win_title() {
+  local cmd=" ($@)"
+  if [ "$cmd" == " (starship_precmd)" ] || [ "$cmd" == " ()" ]; then
+    cmd=""
+  fi
+  if [ "$PWD" = "$HOME" ]; then
+    if [ -n "$SSH_TTY" ]; then
+      echo -ne "\033]0; 🏛️ @ $HOSTNAME ~$cmd\a" </dev/null
+    else
+      echo -ne "\033]0; 🏠 ~$cmd\a" </dev/null
+    fi
+  else
+    BASEPWD="$(realpath "$PWD")"
+    if [[ $SSH_TTY ]]; then
+      echo -ne "\033]0; �️ $BASEPWD @ $HOSTNAME $cmd\a" </dev/null
+    else
+      echo -ne "\033]0; 📁 $BASEPWD $cmd\a" </dev/null
+    fi
+  fi
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
 userbashfunctions() {
   if [ "$(find "$HOME/.config/bash/functions"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
@@ -96,6 +119,7 @@ userbashprompt() {
     done
   elif [ -n "$(type -P starship)" ]; then
     eval -- "$(starship init bash --print-full-init)"
+    starship_precmd_user_func="set_win_title"
     PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
   fi
 }
