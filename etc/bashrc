@@ -119,8 +119,8 @@ userbashprompt() {
     done
   elif [ -n "$(type -P starship)" ]; then
     eval -- "$(starship init bash --print-full-init)"
-    starship_precmd_user_func="set_custom_win_title"
-    PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
+    export starship_precmd_user_func="set_custom_win_title"
+    export PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
