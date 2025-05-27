@@ -20,7 +20,7 @@ _noprompt_completion() {
   cur="${COMP_WORDS[COMP_CWORD]}"
   shortopts="-e -s -d"
   longopts="--enable --show --disable --help --disable-all --enable-all"
-  array="date git go lua node path perl php python reminder ruby rust timer wakatime"
+  array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
   _init_completion || return
   if [[ ${cur} == --* ]]; then
     COMPREPLY=($(compgen -W "${longopts}" -- ${cur}))
