@@ -134,7 +134,7 @@ noprompt() {
       else
         if [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
           unset PROMPT_COMMAND PS1 PS2 PS3 PS4
-          mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "HOME/.config/bash/noprompt/powerline_ps1"
+          mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "$HOME/.config/bash/noprompt/powerline_ps1"
           [ -n "$(type -P starship)" ] && eval "$(starship init --print-full-init bash)"
         fi
       fi
