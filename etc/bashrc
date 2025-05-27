@@ -35,7 +35,7 @@ set_custom_win_title() {
   cmd="| $cmd_bin $cmd_args"
   BASEPWD="$(realpath "$PWD")"
   window_format="$USER@$HOSTNAME"
-  if [ -z "$cmd_bin" ] || echo "$cmd_bin $cmd_args" | grep -qi "starship"; then
+  if [ -z "$cmd_bin" ] || echo "$cmd_bin $cmd_args" | grep -Eqi "starship|$SHELL|tmux|screen"; then
     cmd="| $(basename -- "$SHELL")"
   fi
   if [ "$PWD" = "$HOME" ]; then
