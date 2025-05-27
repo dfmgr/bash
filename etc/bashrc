@@ -87,10 +87,14 @@ userbashplugins() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
-  if [ "$(find "$HOME/.config/bash/prompt"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
+  if [ -f "$HOME/.config/bash/server-prompt.sh" ]; then
+    . "$HOME/.config/bash/server-prompt.sh"
+  elif [ "$(find "$HOME/.config/bash/prompt"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
     for f in "$HOME/.config/bash/prompt"/*.bash; do
       . "$f" &>/dev/null
     done
+  elif [ -n "$(type -P starship)" ]; then
+    eval -- "$(starship init bash --print-full-init)"
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
