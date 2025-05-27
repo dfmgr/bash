@@ -214,9 +214,6 @@ __run_prepost_install() {
   elif [ -f "/tmp/bash_history.tmp" ]; then
     __mv_f "/tmp/bash_history.tmp" "$HOME/.config/bash/bash_history"
   fi
-  if [ -f "$HOME/.config/bash/noprompt/powerline_ps1" ] && [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
-    mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "$HOME/.config/bash/noprompt/powerline_ps1"
-  fi
   return $getRunStatus
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -229,6 +226,9 @@ __run_post_install() {
   [ ! -f "$APPDIR/bash_logout" ] || __symlink "$APPDIR/bash_logout" "$HOME/.bash_logout"
   [ ! -f "$APPDIR/bash_profile" ] || __symlink "$APPDIR/bash_profile" "$HOME/.bash_profile"
   history -r &>/dev/null && history -a &>/dev/null && history -w &>/dev/null && history -r &>/dev/null && history -a &>/dev/null
+  if [ -f "$HOME/.config/bash/noprompt/powerline_ps1" ] && [ -f "$HOME/.config/bash/prompt/01-powerline.bash" ]; then
+    mv -f "$HOME/.config/bash/prompt/01-powerline.bash" "$HOME/.config/bash/noprompt/powerline_ps1"
+  fi
   return $getRunStatus
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
