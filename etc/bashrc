@@ -29,27 +29,19 @@ fi
 # shellcheck disable=2124,2217
 # Set the window title
 set_custom_win_title() {
-  local cmd_bin="" cmd_args="" window_format="" cmd=""
-  cmd_bin="$(basename -- "${1:-$SHELL}")" && shift 1
+  local cmd_bin="" cmd_args="" window_format="" cmd="" BASEPWD=""
+  cmd_bin="$(basename -- "$1")" && shift 1
   cmd_args="${@:1:20}" && shift $#
-  window_format="$USER@$HOSTNAME"
   cmd="| $cmd_bin $cmd_args"
-  if [ -z "$cmd_bin" ] || echo "$cmd" | grep -Eqi "starship"; then
-    cmd=""
+  BASEPWD="$(realpath "$PWD")"
+  window_format="$USER@$HOSTNAME"
+  if [ -z "$cmd_bin" ] || echo "$cmd_bin $cmd_args" | grep -qi "starship"; then
+    cmd="| $(basename -- "$SHELL")"
   fi
   if [ "$PWD" = "$HOME" ]; then
-    if [ -n "$SSH_TTY" ]; then
-      echo -ne "\033]0; 🏛️ $window_format:~ $cmd\a" </dev/null
-    else
-      echo -ne "\033]0; 🏠 $window_format:~ $cmd\a" </dev/null
-    fi
+    echo -ne "\033]0; 🏠 $window_format:~ $cmd\a" </dev/null
   else
-    BASEPWD="$(realpath "$PWD")"
-    if [[ $SSH_TTY ]]; then
-      echo -ne "\033]0; �️ $window_format:$BASEPWD $cmd\a" </dev/null
-    else
-      echo -ne "\033]0; 📁 $window_format:$BASEPWD $cmd\a" </dev/null
-    fi
+    echo -ne "\033]0; 🏛️ $window_format:${BASEPWD//$HOME/~} $cmd\a" </dev/null
   fi
   trap 'set_custom_win_title ${BASH_COMMAND}' DEBUG
 }
