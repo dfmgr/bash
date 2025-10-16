@@ -27,7 +27,14 @@ _activate_completion() {
   venv_name="$(basename "$venv_dir")"
   setv_env_dir="$SETV_VIRTUAL_DIR_PATH/$venv_name"
   venv_dir="${setv_env_dir:-$venv_dir}"
-  venv_projects="$([ -n "$SETV_VIRTUAL_DIR_PATH" ] && find "$SETV_VIRTUAL_DIR_PATH/" -maxdepth 1 -type d -printf "%P\n" 2>/dev/null | grep -v '^$' || echo '')"
+  if [ -n "$SETV_VIRTUAL_DIR_PATH" ] && [ -d "$SETV_VIRTUAL_DIR_PATH" ]; then
+    shopt -s nullglob
+    local dirs=("$SETV_VIRTUAL_DIR_PATH"/*)
+    shopt -u nullglob
+    venv_projects="$(printf '%s\n' "${dirs[@]##*/}")"
+  else
+    venv_projects=""
+  fi
   if [ -n "$VIRTUAL_ENV" ]; then
     COMPREPLY=($(compgen -W 'deactivate' -- "$cur"))
   elif [ -n "$venv_projects" ]; then
@@ -43,7 +50,7 @@ activate() {
     printf_red "Usage: activate [name]"
     exit
   elif [ -f "$PWD/.venv_name" ]; then
-    venv_dir="$(grep -s 'VENV_VIRTUAL_DIR=' .venv_name | awk -F'=' '{printf $2}')"
+    venv_dir="$(awk -F'=' '/VENV_VIRTUAL_DIR=/ {print $2; exit}' .venv_name)"
   elif [ -d "$PWD/.venv" ]; then
     venv_dir="$PWD/.venv"
     venv_name="$(basename "$PWD")"

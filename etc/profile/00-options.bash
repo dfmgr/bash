@@ -15,8 +15,6 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # XSet options
 if command -v xset &>/dev/null; then
-  xset s off 2>/dev/null
-  xset -dpms 2>/dev/null
   xset s off -dpms 2>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -53,8 +51,6 @@ shopt -s nocaseglob 2>/dev/null
 shopt -s expand_aliases 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set mouse type - changes to blinking bar
-echo -e -n "\x1b[\x35 q"
-echo -e -n "\x6b[\x35 q"
-echo -e -n "\e]12;cyan\a"
+printf '\x1b[\x35 q\x6b[\x35 q\e]12;cyan\a'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

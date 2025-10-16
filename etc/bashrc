@@ -33,118 +33,128 @@ set_custom_win_title() {
   cmd_bin="$(basename -- "$1")" && shift 1
   cmd_args="${@:1:20}" && shift $#
   cmd="| $cmd_bin $cmd_args"
-  BASEPWD="$(realpath "$PWD")"
+  BASEPWD="${PWD/#$HOME/~}"
   window_format="$USER@$HOSTNAME"
-  if [ -z "$cmd_bin" ] || echo "$cmd_bin $cmd_args" | grep -Eqi "starship|$SHELL|tmux|screen"; then
+  if [ -z "$cmd_bin" ] || [[ "$cmd_bin $cmd_args" =~ starship|$SHELL|tmux|screen ]]; then
     cmd="| $(basename -- "$SHELL")"
   fi
   if [ "$PWD" = "$HOME" ]; then
     echo -ne "\033]0; 🏠 $window_format:~ $cmd\a" </dev/null
   else
-    echo -ne "\033]0; 🏛️ $window_format:${BASEPWD//$HOME/~} $cmd\a" </dev/null
+    echo -ne "\033]0; 🏛️ $window_format:$BASEPWD $cmd\a" </dev/null
   fi
   trap 'set_custom_win_title ${BASH_COMMAND}' DEBUG
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
 userbashfunctions() {
-  if [ "$(find "$HOME/.config/bash/functions"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/functions"/*.bash; do
-      . "$f"
-    done
-  fi
-  if [ "$(find "$HOME/.config/misc/shell/functions"/*.sh 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/misc/shell/functions"/*.sh; do
-      . "$f"
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/functions"/*.bash "$HOME/.config/misc/shell/functions"/*.sh; do
+    [ -f "$f" ] && . "$f"
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
 userbashexports() {
-  if [ "$(find "$HOME/.config/bash/exports"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/exports"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/exports"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional bash scripts
 userbashprofile() {
-  if [ "$(find "$HOME/.config/bash/profile"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/profile"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/profile"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional aliases scripts
 userbashaliases() {
-  if [ "$(find "$HOME/.config/bash/aliases"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/aliases"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/aliases"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
-  if [ "$(find "$HOME/.config/bash/completions"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/completions"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/completions"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source plugins
 userbashplugins() {
-  if [ "$(find "$HOME/.config/bash/plugins"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/plugins"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/plugins"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional PS1 prompt scripts
 userbashprompt() {
+  local f
   unset BASH_PROMPT PROMPT_COMMAND PS1 PS2 PS3 PS4
   if [ -f "$HOME/.config/bash/server-prompt.sh" ]; then
     . "$HOME/.config/bash/server-prompt.sh"
-  elif [ "$(find "$HOME/.config/bash/prompt"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/prompt"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  elif [ -n "$(type -P starship)" ]; then
-    export starship_precmd_user_func="set_custom_win_title"
-    eval -- "$(starship init bash --print-full-init)"
-    export PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
+  else
+    shopt -s nullglob
+    local prompt_files=("$HOME/.config/bash/prompt"/*.bash)
+    shopt -u nullglob
+    if [ ${#prompt_files[@]} -gt 0 ]; then
+      for f in "${prompt_files[@]}"; do
+        [ -f "$f" ] && . "$f" &>/dev/null
+      done
+    elif [ -n "$(type -P starship)" ]; then
+      export starship_precmd_user_func="set_custom_win_title"
+      eval -- "$(starship init bash --print-full-init)"
+      export PROMPT_COMMAND="${STARSHIP_PROMPT_COMMAND:-starship_precmd}"
+    fi
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source OS specific
 userbashos() {
-  if [ "$(find "$HOME/.config/bash"/*/*.load 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash"/*/*.load; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash"/*/*.load; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional user bash scripts
 userbashprofilelocal() {
-  if [ "$(find "$HOME/.config/bash/local"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/local"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/local"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 userbashprofilepost() {
-  if [ "$(find "$HOME/.config/bash/post"/*.bash 2>/dev/null | wc -l)" != "0" ]; then
-    for f in "$HOME/.config/bash/post"/*.bash; do
-      . "$f" &>/dev/null
-    done
-  fi
+  local f
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/post"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
+  shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 for executeuserfunct in userbashfunctions userbashexports userbashprofile userbashaliases \
@@ -169,7 +179,19 @@ if [ -f "$HOME/.config/local/bash.$HOSTNAME.local" ]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 BASHRCSRC="$HOME/.bashrc"
-PATH="$(echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's#::#:.#g')"
+# Deduplicate PATH using pure bash
+if [[ "$PATH" == *:*:* ]] || [[ "$PATH" =~ : ]]; then
+  local -A seen
+  local new_path="" dir
+  IFS=':' read -ra path_array <<< "$PATH"
+  for dir in "${path_array[@]}"; do
+    if [[ -z "${seen[$dir]}" ]]; then
+      seen[$dir]=1
+      new_path="${new_path}${new_path:+:}${dir}"
+    fi
+  done
+  PATH="$new_path"
+fi
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 show_welcome_msg

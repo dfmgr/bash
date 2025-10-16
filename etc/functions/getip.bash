@@ -18,28 +18,19 @@ if [ -f "$(builtin command -v myip 2>/dev/null)" ]; then
   alias __getip='myip'
 else
   __getip() {
-    IFCONFIG="$(sudo bash -c "command -v ifconfig 2>/dev/null")"
+    IFCONFIG="$(command -v ifconfig 2>/dev/null)"
     if [ -n "$IFCONFIG" ]; then
       if [[ "$OSTYPE" =~ ^darwin ]]; then
-        NETDEV="$(route get default | grep interface | awk '{print $2}')"
+        NETDEV="$(route get default | awk '/interface/ {print $2}')"
       else
-        NETDEV="$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")"
+        NETDEV="$(ip route | awk '/default/ {print $5}')"
       fi
-      CURRIP4="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v '127.0.0.' | grep inet | grep -v 'inet6' | awk '{print $2}' | sed 's#addr:##g' | head -n1)"
-      CURRIP6="$(sudo ifconfig $NETDEV | grep -E 'venet|inet' | grep -v 'docker' | grep inet6 | grep -i 'global' | awk '{print $2}' | head -n1)"
-      IFISONLINE="$(
-        is_online
-        echo $?
-      )"
+      CURRIP4="$(sudo ifconfig $NETDEV | awk '/inet / && !/127.0.0./ && !/inet6/ {gsub(/addr:/,""); print $2; exit}')"
+      CURRIP6="$(sudo ifconfig $NETDEV | awk '/inet6.*global/ && !/docker/ {print $2; exit}')"
+      is_online && IFISONLINE=0 || IFISONLINE=1
       if [ "$IFISONLINE" = 0 ]; then
-        CURRIP4WAN="$(
-          curl -I4qs ifconfig.co/ip 2>/dev/null | head -1 | grep 404 >/dev/null
-          if [ "$?" = 0 ]; then curl -4qs ifconfig.co/ip 2>/dev/null; fi
-        )"
-        CURRIP6WAN="$(
-          curl -I6qs ifconfig.co/ip 2>/dev/null | head -1 | grep 404 >/dev/null
-          if [ "$?" = 0 ]; then curl -6qs ifconfig.co/ip 2>/dev/null; fi
-        )"
+        CURRIP4WAN="$(curl -4qs --max-time 2 ifconfig.co/ip 2>/dev/null)"
+        CURRIP6WAN="$(curl -6qs --max-time 2 ifconfig.co/ip 2>/dev/null)"
       fi
       [ -z "$CURRIP4" ] || echo $CURRIP4
       [ -z "$CURRIP6" ] || echo $CURRIP6
