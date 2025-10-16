@@ -25,21 +25,41 @@ ICON_ERROR="${ICON_ERROR:-[ ✖ ]}"
 ICON_QUESTION="${ICON_QUESTION:-[ ❓ ]}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_color() { printf "%b" "$(tput setaf "$2" 2>/dev/null)" "$1" "$(tput sgr0 2>/dev/null)"; }
-printf_normal() { printf_color "$1\n" "0"; }
+# White/Light gray - works on both light and dark backgrounds
+printf_normal() { printf_color "$1\n" "7"; }
 printf_green() { printf_color "$1\n" 2; }
-printf_red() { printf_color "$1\n" 1; }
+# Red - use bright red (9) on dark backgrounds for better visibility
+if [ "$TERMINAL_BG" = "dark" ] || [ -z "$TERMINAL_BG" ]; then
+  printf_red() { printf_color "$1\n" 9; }
+else
+  printf_red() { printf_color "$1\n" 1; }
+fi
 printf_purple() { printf_color "$1\n" 5; }
-printf_yellow() { printf_color "$1\n" 3; }
-printf_blue() { printf_color "$1\n" 4; }
+# Bright yellow - better contrast on both backgrounds
+printf_yellow() { printf_color "$1\n" 11; }
+# Bright blue - readable on dark backgrounds
+printf_blue() { printf_color "$1\n" 12; }
 printf_cyan() { printf_color "$1\n" 6; }
-printf_info() { printf_color "$ICON_INFO $1\n" 3; }
+# Cyan - better visibility than yellow
+printf_info() { printf_color "$ICON_INFO $1\n" 6; }
 printf_success() { printf_color "$ICON_GOOD $1\n" 2; }
-printf_error() { printf_color "$ICON_ERROR $1 $2\n" 1; }
-printf_warning() { printf_color "$ICON_WARN $1\n" 3; }
+# Error - use adaptive red based on background
+if [ "$TERMINAL_BG" = "dark" ] || [ -z "$TERMINAL_BG" ]; then
+  printf_error() { printf_color "$ICON_ERROR $1 $2\n" 9; }
+else
+  printf_error() { printf_color "$ICON_ERROR $1 $2\n" 1; }
+fi
+# Bright yellow for warnings
+printf_warning() { printf_color "$ICON_WARN $1\n" 11; }
 printf_question() { printf_color "$ICON_QUESTION $1 " 6; }
 printf_error_stream() { while read -r line; do printf_error "↳ ERROR: $line"; done; }
 printf_execute_success() { printf_color "$ICON_ERROR $1  \n" 2; }
-printf_execute_error() { printf_color "$ICON_ERROR $1 $2 \n" 1; }
+# Execute error - use adaptive red
+if [ "$TERMINAL_BG" = "dark" ] || [ -z "$TERMINAL_BG" ]; then
+  printf_execute_error() { printf_color "$ICON_ERROR $1 $2 \n" 9; }
+else
+  printf_execute_error() { printf_color "$ICON_ERROR $1 $2 \n" 1; }
+fi
 printf_execute_result() {
   if [ "$1" -eq 0 ]; then printf_execute_success "$2"; else printf_execute_error "$2"; fi
   return "$1"
@@ -58,8 +78,9 @@ printf_exit() {
   return 0
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cyan instead of blue for better visibility
 printf_help() {
-  test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="4"
+  test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
   local msg="$*"
   shift
   echo ""
@@ -103,8 +124,9 @@ printf_readline() {
   set +o pipefail
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cyan instead of blue for better visibility
 printf_question() {
-  test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="4"
+  test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
   local msg="$*"
   shift
   printf_color "$ICON_QUESTION $msg? " "$color"

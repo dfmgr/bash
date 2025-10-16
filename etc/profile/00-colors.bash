@@ -16,6 +16,40 @@
 # colors initialization
 color_prompt=yes
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Detect if terminal has dark or light background
+# Returns: "dark" or "light" (defaults to "dark" if cannot detect)
+# User can override by setting: export TERMINAL_BACKGROUND="light" or "dark"
+detect_terminal_background() {
+  local bg_color=""
+
+  # Check user preference first
+  if [ -n "$TERMINAL_BACKGROUND" ]; then
+    echo "$TERMINAL_BACKGROUND"
+    return
+  fi
+
+  # Try COLORFGBG variable (set by some terminals)
+  # Format is typically "15;0" where second number is background
+  # 0-7 = dark, 8-15 = light
+  if [ -n "$COLORFGBG" ]; then
+    local bg_num="${COLORFGBG##*;}"
+    if [ "$bg_num" -ge 8 ] 2>/dev/null; then
+      echo "light"
+      return
+    elif [ "$bg_num" -ge 0 ] 2>/dev/null; then
+      echo "dark"
+      return
+    fi
+  fi
+
+  # Default to dark (most common for developers)
+  echo "dark"
+}
+
+# Set background type
+TERMINAL_BG="$(detect_terminal_background)"
+export TERMINAL_BG
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Reset
 NC="$(tput sgr0 2>/dev/null)"
 RESET="$(tput sgr0 2>/dev/null)"
@@ -23,27 +57,51 @@ RESET="$(tput sgr0 2>/dev/null)"
 # Bold
 BOLD="$(tput bold 2>/dev/null)"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Regular Colors
-BLACK="\033[0;30m"    # Black
-RED="\033[0;31m"      # Red
-GREEN="\033[0;32m"    # Green
-YELLOW="\033[0;33m"   # Yellow
-BLUE="\033[0;34m"     # Blue
-PURPLE="\033[0;35m"   # Purple
-CYAN="\033[0;36m"     # Cyan
-WHITE="\033[0;37m"    # White
-ORANGE="\033[0;33m"   # Orange
-LIGHTRED='\033[1;31m' # Light Red
+# Regular Colors (adaptive based on terminal background)
+# Bright Black (Gray) - better than pure black
+BLACK="\033[0;90m"
+# Red - adaptive: bright red on dark, normal red on light
+if [ "$TERMINAL_BG" = "dark" ]; then
+  RED="\033[0;91m"
+else
+  RED="\033[0;31m"
+fi
+GREEN="\033[0;32m"
+# Bright Yellow - better visibility
+YELLOW="\033[1;33m"
+# Bright Blue - readable on dark backgrounds
+BLUE="\033[1;34m"
+PURPLE="\033[0;35m"
+CYAN="\033[0;36m"
+# White - adaptive: bright white on dark, gray on light
+if [ "$TERMINAL_BG" = "dark" ]; then
+  WHITE="\033[0;97m"
+else
+  WHITE="\033[0;37m"
+fi
+# Bright Yellow (Orange) - better visibility
+ORANGE="\033[1;33m"
+# Light Red - always bright for visibility
+LIGHTRED='\033[1;91m'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Bold
-BBLACK="\033[1;30m"  # Black
-BRED="\033[1;31m"    # Red
-BGREEN="\033[1;32m"  # Green
-BYELLOW="\033[1;33m" # Yellow
-BBLUE="\033[1;34m"   # Blue
-BPURPLE="\033[1;35m" # Purple
-BCYAN="\033[1;36m"   # Cyan
-BWHITE="\033[1;37m"  # White
+# Bold (adaptive based on terminal background)
+# Bright Black (Gray) - readable on both
+BBLACK="\033[1;90m"
+# Bold Red - always use bright for visibility
+BRED="\033[1;91m"
+BGREEN="\033[1;32m"
+# Bright Bold Yellow - maximum visibility
+BYELLOW="\033[1;93m"
+# Bright Bold Blue - readable on dark
+BBLUE="\033[1;94m"
+BPURPLE="\033[1;35m"
+BCYAN="\033[1;36m"
+# Bold White - adaptive
+if [ "$TERMINAL_BG" = "dark" ]; then
+  BWHITE="\033[1;97m"
+else
+  BWHITE="\033[1;37m"
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Underline
 UBLACK="\033[4;30m"  # Black
