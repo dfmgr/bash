@@ -16,38 +16,31 @@
 # colors initialization
 color_prompt=yes
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Detect if terminal has dark or light background
-# Returns: "dark" or "light" (defaults to "dark" if cannot detect)
+# Set background type (optimized with early exit)
 # User can override by setting: export TERMINAL_BACKGROUND="light" or "dark"
-detect_terminal_background() {
-  local bg_color=""
-
-  # Check user preference first
-  if [ -n "$TERMINAL_BACKGROUND" ]; then
-    echo "$TERMINAL_BACKGROUND"
-    return
-  fi
-
+if [ -n "$TERMINAL_BACKGROUND" ]; then
+  TERMINAL_BG="$TERMINAL_BACKGROUND"
+elif [ -n "$COLORFGBG" ]; then
   # Try COLORFGBG variable (set by some terminals)
   # Format is typically "15;0" where second number is background
   # 0-7 = dark, 8-15 = light
-  if [ -n "$COLORFGBG" ]; then
-    local bg_num="${COLORFGBG##*;}"
-    if [ "$bg_num" -ge 8 ] 2>/dev/null; then
-      echo "light"
-      return
-    elif [ "$bg_num" -ge 0 ] 2>/dev/null; then
-      echo "dark"
-      return
-    fi
-  fi
-
+  bg_num="${COLORFGBG##*;}"
+  # Validate that bg_num is actually a number before comparison
+  case "$bg_num" in
+    ''|*[!0-9]*) TERMINAL_BG="dark" ;;  # Not a number, default to dark
+    *)
+      if [ "$bg_num" -ge 8 ]; then
+        TERMINAL_BG="light"
+      else
+        TERMINAL_BG="dark"
+      fi
+      ;;
+  esac
+  unset bg_num
+else
   # Default to dark (most common for developers)
-  echo "dark"
-}
-
-# Set background type
-TERMINAL_BG="$(detect_terminal_background)"
+  TERMINAL_BG="dark"
+fi
 export TERMINAL_BG
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Reset
