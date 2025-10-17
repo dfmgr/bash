@@ -181,8 +181,8 @@ fi
 BASHRCSRC="$HOME/.bashrc"
 # Deduplicate PATH using pure bash
 if [[ "$PATH" == *:*:* ]] || [[ "$PATH" =~ : ]]; then
-  local -A seen
-  local new_path="" dir
+  declare -A seen
+  new_path=""
   IFS=':' read -ra path_array <<< "$PATH"
   for dir in "${path_array[@]}"; do
     if [[ -z "${seen[$dir]}" ]]; then
@@ -191,6 +191,7 @@ if [[ "$PATH" == *:*:* ]] || [[ "$PATH" =~ : ]]; then
     fi
   done
   PATH="$new_path"
+  unset seen new_path path_array dir
 fi
 export PATH BASHRCSRC
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
