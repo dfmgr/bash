@@ -16,14 +16,14 @@ export HOSTNAME="${HOSTNAME:-$(hostname)}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source System Bash
 if [ -f "/etc/bashrc" ]; then # Fedora/Redhat/CentOS
-  . "/etc/bashrc" 2>/dev/null || true
+  . "/etc/bashrc"
 elif [ -f "/etc/bash.bashrc" ]; then # Debian/Ubuntu/Arch/Mac/Win
-  . "/etc/bash.bashrc" 2>/dev/null || true
+  . "/etc/bash.bashrc"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source .profile
 if [ -f "$HOME/.profile" ]; then
-  . "$HOME/.profile" 2>/dev/null || true
+  . "$HOME/.profile"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # shellcheck disable=2124,2217

@@ -16,8 +16,8 @@
 # Install fonts
 if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]; then
   mkdir -p "$HOME/.local/share/fonts" &>/dev/null
-  curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
-    curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
+  curl -q -LSsf --connect-timeout 5 --max-time 10 --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
+    curl -q -LSsf --connect-timeout 5 --max-time 10 --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
     fc-cache -vf "$HOME/.local/share/fonts" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -396,6 +396,28 @@ bashprompt() {
     }
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Git directory cache - only check on PWD change
+  __git_is_repo_cached() {
+    # Check if PWD changed
+    if [ "$_GIT_CACHE_PWD" != "$PWD" ]; then
+      _GIT_CACHE_PWD="$PWD"
+      # Check if we're in a git repo
+      if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        _GIT_CACHE_IS_REPO="true"
+        _GIT_CACHE_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null)"
+      else
+        _GIT_CACHE_IS_REPO="false"
+        _GIT_CACHE_TOPLEVEL=""
+      fi
+    fi
+    [ "$_GIT_CACHE_IS_REPO" = "true" ]
+  }
+  
+  # Get cached git toplevel
+  __git_toplevel_cached() {
+    __git_is_repo_cached && echo "$_GIT_CACHE_TOPLEVEL"
+  }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git (optimized with single status call)
   __ifgit() {
     local marks git_eng branch stat aheadN behindN
@@ -403,7 +425,7 @@ bashprompt() {
       __git_info() { true; }
       return 0
     fi
-    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+    if __git_is_repo_cached; then
       __git_version() { printf "%s" "| Git: $($_BIN_GIT --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
         git_eng="env LANG=C git"
@@ -436,7 +458,7 @@ bashprompt() {
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$_BIN_GIT" ]; then
       return 0
     fi
-    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+    if __git_is_repo_cached; then
       grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
       if [ "$grepgitignore" -ne 0 ]; then
         printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
@@ -470,8 +492,8 @@ bashprompt() {
     if [ -z "$entity" ]; then
       return 0
     else
-      if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
-        project="$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")"
+      if __git_is_repo_cached; then
+        project="$(basename "$(__git_toplevel_cached)")"
       else
         project="Terminal"
       fi
@@ -552,7 +574,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Change cursor
   ___set_cursor() {
-    printf "\x1b[\x35 q" 2>/dev/null
+    printf "\x1b[5q" 2>/dev/null
     printf "\e]12;cyan\a" 2>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -610,7 +632,8 @@ bashprompt() {
     fi
     [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
-    BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    # Git directory (cached)
+    BASHRC_GITDIR="$(__git_toplevel_cached || echo "${CDD_CWD_DIR:-$PWD}")"
 
     ___add_bin_path
     __ifdate && ___date_show
