@@ -380,11 +380,13 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git caching - check once per directory change
   __check_git_dir() {
-    local current_dir="$PWD"
+    set -x
+    local current_dir="$PWD" git_is_root=""
+    git_is_root="$(git -C "$current_dir" rev-parse --is-inside-work-tree 2>/dev/null || true)"
     # Only check if directory changed
     if [ "$__PROMPT_GIT_LAST_DIR" != "$current_dir" ]; then
       __PROMPT_GIT_LAST_DIR="$current_dir"
-      if git -C "$__PROMPT_GIT_LAST_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
+      if [ "$git_is_root" = "true" ]; then
         __PROMPT_IS_GIT_REPO="true"
         __PROMPT_GIT_ROOT="$(git -C "$__PROMPT_GIT_LAST_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       else
@@ -392,17 +394,18 @@ bashprompt() {
         __PROMPT_GIT_ROOT="$PWD"
       fi
     fi
+    set +x
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
     local marks git_eng branch stat aheadN behindN
-    gitBin="$(builtin command -v git || false)"
+    gitBin="$(builtin command -v git 2>/dev/null || true)"
     if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
       __git_info() { true; }
       return 0
     fi
-    if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
+    if [ "$__PROMPT_IS_GIT_REPO" = "true" ]; then
       __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
         git_eng="env LANG=C git"
