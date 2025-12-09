@@ -380,7 +380,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git caching - check once per directory change
   __check_git_dir() {
-    set -x
+    #set -x
     local current_dir="$PWD" git_is_root=""
     git_is_root="$(git -C "$current_dir" rev-parse --is-inside-work-tree 2>/dev/null || true)"
     # Only check if directory changed
@@ -394,7 +394,7 @@ bashprompt() {
         __PROMPT_GIT_ROOT="$PWD"
       fi
     fi
-    set +x
+    #set +x
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
