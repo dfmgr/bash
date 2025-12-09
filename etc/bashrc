@@ -16,14 +16,14 @@ export HOSTNAME="${HOSTNAME:-$(hostname)}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source System Bash
 if [ -f "/etc/bashrc" ]; then # Fedora/Redhat/CentOS
-  . "/etc/bashrc" 2>/dev/null || true
+  . "/etc/bashrc"
 elif [ -f "/etc/bash.bashrc" ]; then # Debian/Ubuntu/Arch/Mac/Win
-  . "/etc/bash.bashrc" 2>/dev/null || true
+  . "/etc/bash.bashrc"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source .profile
 if [ -f "$HOME/.profile" ]; then
-  . "$HOME/.profile" 2>/dev/null || true
+  . "$HOME/.profile"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # shellcheck disable=2124,2217
@@ -33,14 +33,7 @@ set_custom_win_title() {
   cmd_bin="$(basename -- "$1")" && shift 1
   cmd_args="${@:1:20}" && shift $#
   cmd="| $cmd_bin $cmd_args"
-  # Only replace $HOME with ~ if PWD actually starts with $HOME/
-  if [[ "$PWD" == "$HOME" ]]; then
-    BASEPWD="~"
-  elif [[ "$PWD" == "$HOME/"* ]]; then
-    BASEPWD="~${PWD#$HOME}"
-  else
-    BASEPWD="$PWD"
-  fi
+  BASEPWD="${PWD/#$HOME/~}"
   window_format="$USER@$HOSTNAME"
   if [ -z "$cmd_bin" ] || [[ "$cmd_bin $cmd_args" =~ starship|$SHELL|tmux|screen ]]; then
     cmd="| $(basename -- "$SHELL")"
@@ -53,53 +46,63 @@ set_custom_win_title() {
   trap 'set_custom_win_title ${BASH_COMMAND}' DEBUG
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Optimized file sourcing helper (used by all source functions)
-_source_bash_files() {
-  local f
-  for f in "$@"; do
-    [ -f "$f" ] && [ -s "$f" ] && . "$f" 2>/dev/null
-  done
-}
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
 userbashfunctions() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/functions"/*.bash "$HOME/.config/misc/shell/functions"/*.sh
+  for f in "$HOME/.config/bash/functions"/*.bash "$HOME/.config/misc/shell/functions"/*.sh; do
+    [ -f "$f" ] && . "$f"
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #ensure the exports get loaded
 userbashexports() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/exports"/*.bash
+  for f in "$HOME/.config/bash/exports"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional bash scripts
 userbashprofile() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/profile"/*.bash
+  for f in "$HOME/.config/bash/profile"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional aliases scripts
 userbashaliases() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/aliases"/*.bash
+  for f in "$HOME/.config/bash/aliases"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional completion scripts
 userbashcompletions() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/completions"/*.bash
+  for f in "$HOME/.config/bash/completions"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source plugins
 userbashplugins() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/plugins"/*.bash
+  for f in "$HOME/.config/bash/plugins"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -114,7 +117,9 @@ userbashprompt() {
     local prompt_files=("$HOME/.config/bash/prompt"/*.bash)
     shopt -u nullglob
     if [ ${#prompt_files[@]} -gt 0 ]; then
-      _source_bash_files "${prompt_files[@]}"
+      for f in "${prompt_files[@]}"; do
+        [ -f "$f" ] && . "$f" &>/dev/null
+      done
     elif [ -n "$(type -P starship)" ]; then
       export starship_precmd_user_func="set_custom_win_title"
       eval -- "$(starship init bash --print-full-init)"
@@ -125,21 +130,30 @@ userbashprompt() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source OS specific
 userbashos() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash"/*/*.load
+  for f in "$HOME/.config/bash"/*/*.load; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source additional user bash scripts
 userbashprofilelocal() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/local"/*.bash
+  for f in "$HOME/.config/bash/local"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 userbashprofilepost() {
+  local f
   shopt -s nullglob
-  _source_bash_files "$HOME/.config/bash/post"/*.bash
+  for f in "$HOME/.config/bash/post"/*.bash; do
+    [ -f "$f" ] && . "$f" &>/dev/null
+  done
   shopt -u nullglob
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -193,7 +207,7 @@ fi
 # Send an e-mail every time you login
 if [ "$BASHRC_SEND_NOTIFY" != "no" ]; then
   if builtin type -P mailx &>/dev/null || builtin type -P mail &>/dev/null; then
-    timeout 5 bash -c 'echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +\"%Y-%m-%d at %H:%M\")" | mail -r "ALERTS <no-reply@$HOSTNAME>" -s "Alert: Access from $USER" $USER@$HOSTNAME' &>/dev/null &
+    echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" | mail -r "ALERTS <no-reply@$HOSTNAME>" -s "Alert: Access from $USER" $USER@$HOSTNAME
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

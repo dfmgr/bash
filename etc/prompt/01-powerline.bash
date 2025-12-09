@@ -16,75 +16,46 @@
 # Install fonts
 if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]; then
   mkdir -p "$HOME/.local/share/fonts" &>/dev/null
-  curl -q -LSsf --connect-timeout 5 --max-time 10 --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
-    curl -q -LSsf --connect-timeout 5 --max-time 10 --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
+  curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
+    curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
     fc-cache -vf "$HOME/.local/share/fonts" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Powerline check (cached to avoid repeated checks)
-if [ -z "$_POWERLINE_CHECKED" ]; then
-  _POWERLINE_CHECKED=1
-  if [ -z "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
-    # Debian/Ubuntu/Arch
-    if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
-      . "/usr/share/powerline/bindings/bash/powerline.sh"
-    # Redhat/CentOS
-    elif [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
-      . "/usr/share/powerline/bash/powerline.sh"
-    fi
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Start
-    if [ -f "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
-      export POWERLINE_BASH_CONTINUATION=1
-      export POWERLINE_BASH_SELECT=1
-      powerline-daemon -q
-    fi
+# Powerline check
+if [ -z "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
+  # Debian/Ubuntu/Arch
+  if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
+    . "/usr/share/powerline/bindings/bash/powerline.sh"
+  # Redhat/CentOS
+  elif [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
+    . "/usr/share/powerline/bash/powerline.sh"
+    # Try to find powerline.sh
+    powerline_sh="$(find /usr/*/powerline /usr/lib/python*/dist-packages /usr/local/lib/python*/dist-packages -iname 'powerline.sh' 2>/dev/null | grep bindings/bash | head -n1)"
+  elif [ -f "$powerline_sh" ]; then
+    . "$powerline_sh"
+    unset powerline_sh
+  fi
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Start
+  if [ -f "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
+    export POWERLINE_BASH_CONTINUATION=1
+    export POWERLINE_BASH_SELECT=1
+    powerline-daemon -q
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Initialize prompt
 bashprompt() {
-  # Cache binary locations (only done once)
-  if [ -z "$_BINS_CACHED" ]; then
-    _BINS_CACHED=1
-    _BIN_RUST="$(builtin command -v rustc 2>/dev/null || true)"
-    _BIN_GO="$(builtin command -v go 2>/dev/null || true)"
-    _BIN_RUBY="$(builtin command -v ruby 2>/dev/null || true)"
-    _BIN_RBENV="$(builtin command -v rbenv 2>/dev/null || true)"
-    _BIN_RVM="$(builtin command -v rvm 2>/dev/null || true)"
-    _BIN_NODE="$(builtin command -v node 2>/dev/null || true)"
-    _BIN_NVM="$(builtin command -v nvm_ls_current 2>/dev/null || true)"
-    _BIN_FNM="$(builtin command -v fnm 2>/dev/null || true)"
-    _BIN_PYTHON="$(builtin command -v python3 2>/dev/null || builtin command -v python2 2>/dev/null || builtin command -v python 2>/dev/null || true)"
-    _BIN_PHP="$(builtin command -v php8 2>/dev/null || builtin command -v php7 2>/dev/null || builtin command -v php5 2>/dev/null || builtin command -v php 2>/dev/null || true)"
-    _BIN_PERL="$(builtin command -v perl 2>/dev/null || true)"
-    _BIN_LUA="$(builtin command -v lua 2>/dev/null || true)"
-    _BIN_GIT="$(builtin command -v git 2>/dev/null || true)"
-    _BIN_WAKATIME="$(builtin command -v wakatime 2>/dev/null || true)"
-  fi
-  
   printf_return() { return; }
-  # Optimized file finder with caching
   ___bash_find() {
-    local dir="" args=("")
+    local findExitCode="1" dir="" count="" args=("")
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
-    [ $# -eq 0 ] && return 1 || args=("$@")
-    
-    # NO CACHING for language detection - it's already fast with glob
-    # and caching causes stale results when changing directories
-    
-    # Use faster ls/compgen instead of find for simple cases
+    [ $# -eq 0 ] && return || args=("$@")
     for arg in "${args[@]}"; do
-      # Convert glob pattern to shell expansion
-      shopt -s nullglob dotglob
-      local matches=("$dir"/$arg)
-      shopt -u nullglob dotglob
-      if [ ${#matches[@]} -gt 0 ] && [ -e "${matches[0]}" ]; then
-        return 0
-      fi
+      count="$(find -L "$dir" -maxdepth 1 -type f -iname "$arg" -not -path "$dir/.git/*" 2>/dev/null | wc -l | grep '^' || echo '')"
+      [ "$count" -ne 0 ] && return 0
     done
-    
-    return 1
+    return
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unicode symbols
@@ -200,12 +171,13 @@ bashprompt() {
   # Rust
   __ifrust() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$_BIN_RUST" ]; then
+    rustBin="$(builtin command -v rustc || false)"
+    if [ -f "$HOME/.config/bash/noprompt/rust" ] || [ -z "$rustBin" ]; then
       __rust_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.rs' 'Cargo.toml' 'Cargo.lock'; then
-      __rust_version() { printf "| Rust: %s" "$($_BIN_RUST --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.rs'; then
+      __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       __rust_info() {
         version="$(__rust_version)"
         [ -z "${version}" ] && return
@@ -219,12 +191,13 @@ bashprompt() {
   # GO
   __ifgo() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$_BIN_GO" ]; then
+    goBin="$(builtin command -v go || false)"
+    if [ -f "$HOME/.config/bash/noprompt/go" ] || [ -z "$goBin" ]; then
       __go_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.go' 'go.mod' 'go.sum'; then
-      __go_version() { printf "%s" "GO: $($_BIN_GO version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.go'; then
+      __go_version() { printf "%s" "GO: $($goBin version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       __go_info() {
         version="$(__go_version)"
         [ -z "${version}" ] && return
@@ -238,17 +211,18 @@ bashprompt() {
   # Ruby
   __ifruby() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$_BIN_RUBY" ]; then
+    rubyBin="$(builtin command -v ruby || false)"
+    if [ -f "$HOME/.config/bash/noprompt/ruby" ] || [ -z "$rubyBin" ]; then
       __ruby_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.rb' 'Gemfile' 'Rakefile'; then
-      if [ -n "$_BIN_RBENV" ]; then
+    if ___bash_find "$BASHRC_GITDIR" '*.gem' '*.rb' 'Gemfile'; then
+      if [ -f "$(builtin command -v rbenv 2>/dev/null)" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
-      elif [ -n "$_BIN_RVM" ] && [ "$(rvm version | awk '{print $2}')" ]; then
+      elif [ -f "$(builtin command -v rvm 2>/dev/null)" ] && [ "$(rvm version | awk '{print $2}')" ]; then
         __ruby_version() { printf "%s" "RVM: $(rvm current)"; }
-      elif [ -n "$_BIN_RUBY" ]; then
-        __ruby_version() { printf "%s" "Ruby: $($_BIN_RUBY --version | cut -d' ' -f2)"; }
+      elif [ -f "$(builtin command -v ruby 2>/dev/null)" ]; then
+        __ruby_version() { printf "%s" "Ruby: $($rubyBin --version | cut -d' ' -f2)"; }
       else
         __ruby_version() { return; }
       fi
@@ -265,15 +239,16 @@ bashprompt() {
   # Node.js
   __ifnode() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$_BIN_NODE" ]; then
+    nodeBin="$(builtin command -v node || false)"
+    if [ -f "$HOME/.config/bash/noprompt/node" ] || [ -z "$nodeBin" ]; then
       __node_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.js' '*.ts' '*.jsx' '*.tsx' '*.mjs' '*.cjs' 'package.json'; then
-      __node_version() { printf "%s" "$($_BIN_NODE --version)"; }
-      if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$_BIN_NVM" ] && [ "$(nvm current)" != "system" ]; then
+    if ___bash_find "$BASHRC_GITDIR" '*.js' 'package.json' 'yarn.lock'; then
+      __node_version() { printf "%s" "$($nodeBin --version)"; }
+      if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$(builtin command -v nvm_ls_current 2>/dev/null)" ] && [ "$(nvm current)" != "system" ]; then
         __node_info() { printf "%s" "| NVM: $(__node_version)$NODE_SYMBOL${RESET}"; }
-      elif [ -n "$_BIN_FNM" ]; then
+      elif [ -f "$(builtin command -v fnm)" ]; then
         __node_info() { printf "%s" "| FNM: $(__node_version)$NODE_SYMBOL${RESET}"; }
       else
         __node_info() { printf "%s" "| Node: $(__node_version)$NODE_SYMBOL${RESET}"; }
@@ -310,15 +285,16 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   __ifpython() {
     local PYTHON_VERSION
-    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$_BIN_PYTHON" ]; then
+    pythonBin="$(builtin command -v python3 || builtin command -v python2 || builtin command -v python || false)"
+    if [ -f "$HOME/.config/bash/noprompt/python" ] || [ -z "$pythonBin" ]; then
       __python_info() { true; }
       return 0
     fi
-    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_LANGDIR"
-    if ___bash_find "$BASHRC_LANGDIR" '*.py' '*.pyc' 'requirements.txt' 'pyproject.toml' 'setup.py' 'Pipfile'; then
-      [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_LANGDIR"
+    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
+    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' && [ -n "$pythonBin" ]; then
+      [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
       __python_info() {
-        PYTHON_VERSION="$($_BIN_PYTHON --version | sed 's#Python ##g')"
+        PYTHON_VERSION="$($PYTHONBIN --version | sed 's#Python ##g')"
         if [ -n "$PYTHON_VIRTUALENV" ]; then
           printf "%s" "| $PYTHON_VIRTUALENV: $PYTHON_VERSION$PYTHON_SYMBOL$RESET"
         else
@@ -328,18 +304,19 @@ bashprompt() {
     else
       __python_info() { return; }
     fi
-    export PYTHONBIN="$_BIN_PYTHON"
+    export PYTHONBIN="$pythonBin"
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # php
   __ifphp() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$_BIN_PHP" ]; then
+    phpBin="$(builtin command -v php8 || builtin command -v php7 || builtin command -v php5 || builtin command -v php || false)"
+    if [ -f "$HOME/.config/bash/noprompt/php" ] || [ -z "$phpBin" ]; then
       __php_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.php' 'composer.json'; then
-      __php_version() { printf "%s" "$($_BIN_PHP --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.php*' 'composer.json'; then
+      __php_version() { printf "%s" "$($phpBin --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
     else
       __php_version() { return; }
     fi
@@ -353,12 +330,13 @@ bashprompt() {
   # perl
   __ifperl() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$_BIN_PERL" ]; then
+    perlBin="$(builtin command -v perl || false)"
+    if [ -f "$HOME/.config/bash/noprompt/perl" ] || [ -z "$perlBin" ]; then
       __perl_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.pl' '*.pm' 'cpanfile'; then
-      __perl_version() { printf "%s" "$($_BIN_PERL --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.pl' '*.cgi'; then
+      __perl_version() { printf "%s" "$($perlBin --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
     fi
@@ -372,12 +350,13 @@ bashprompt() {
   # lua
   __iflua() {
     local version
-    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$_BIN_LUA" ]; then
+    luaBin="$(builtin command -v lua || false)"
+    if [ -f "$HOME/.config/bash/noprompt/lua" ] || [ -z "$luaBin" ]; then
       __lua_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_LANGDIR" '*.lua' '*.rockspec'; then
-      __lua_version() { printf "%s" "$($_BIN_LUA -v 2>&1 | head -n1 | awk '{print $2}')"; }
+    if ___bash_find "$BASHRC_GITDIR" '*.lua'; then
+      __lua_version() { printf "%s" "$($luaBin -v 2>&1 | head -n1 | awk '{print $2}')"; }
     else
       __lua_version() { return; }
     fi
@@ -388,47 +367,22 @@ bashprompt() {
     }
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Git directory cache - only check on PWD change
-  __git_is_repo_cached() {
-    # Check if PWD changed
-    if [ "$_GIT_CACHE_PWD" != "$PWD" ]; then
-      _GIT_CACHE_PWD="$PWD"
-      # Check if we're in a git repo
-      if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        _GIT_CACHE_IS_REPO="true"
-        _GIT_CACHE_TOPLEVEL="$(git rev-parse --show-toplevel 2>/dev/null)"
-      else
-        _GIT_CACHE_IS_REPO="false"
-        _GIT_CACHE_TOPLEVEL=""
-      fi
-    fi
-    [ "$_GIT_CACHE_IS_REPO" = "true" ]
-  }
-  
-  # Get cached git toplevel
-  __git_toplevel_cached() {
-    __git_is_repo_cached && echo "$_GIT_CACHE_TOPLEVEL"
-  }
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Git (optimized with single status call)
+  # Git
   __ifgit() {
     local marks git_eng branch stat aheadN behindN
-    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$_BIN_GIT" ]; then
+    gitBin="$(builtin command -v git || false)"
+    if [ -f "$HOME/.config/bash/noprompt/git" ] || [ -z "$gitBin" ]; then
       __git_info() { true; }
       return 0
     fi
-    if __git_is_repo_cached; then
-      __git_version() { printf "%s" "| Git: $($_BIN_GIT --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+      __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
         git_eng="env LANG=C git"
-        # Get all info in one git status call
-        local git_status_output="$($git_eng status --porcelain --branch 2>/dev/null)"
         branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
         [ -n "$branch" ] || return # git branch not found
-        # Check for changes (any non-empty porcelain output besides branch line)
-        [ -n "$(echo "$git_status_output" | grep -v '^##')" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-        # Parse ahead/behind from the branch line
-        stat="$(echo "$git_status_output" | grep '^##' | grep -o '\[.\+\]$' 2>/dev/null)"
+        [ -n "$($git_eng status --porcelain 2>/dev/null)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
+        stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$' 2>/dev/null)"
         aheadN="$(echo -n "$stat" | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         behindN="$(echo -n "$stat" | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
@@ -444,26 +398,23 @@ bashprompt() {
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Git reminder - only show if .gitignore doesn't have "ignoredirmessage"
+  # Git reminder
   __git_prompt_message_warn() {
     local grepgitignore
-    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$_BIN_GIT" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 0
     fi
-    if __git_is_repo_cached; then
-      # Only show reminder if .gitignore exists and doesn't contain "ignoredirmessage"
-      if [ -f "$BASHRC_GITDIR/.gitignore" ]; then
-        grepgitignore="$(grep -q "ignoredirmessage" "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
-        if [ "$grepgitignore" -ne 0 ]; then
-          printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
-        fi
+    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+      grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
+      if [ "$grepgitignore" -ne 0 ]; then
+        printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
       fi
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # WakaTime
   __ifwakatime() {
-    if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$_BIN_WAKATIME" ]; then
+    if [ -f "$HOME/.config/bash/noprompt/wakatime" ] || [ -z "$(builtin command -v wakatime 2>/dev/null)" ]; then
       ___wakatime_show() { return; }
       ___wakatime_prompt() { return; }
       return
@@ -487,8 +438,8 @@ bashprompt() {
     if [ -z "$entity" ]; then
       return 0
     else
-      if __git_is_repo_cached; then
-        project="$(basename "$(__git_toplevel_cached)")"
+      if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
+        project="$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")"
       else
         project="Terminal"
       fi
@@ -509,49 +460,31 @@ bashprompt() {
     }
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Add bash/screen/tmux version (cached)
+  # Add bash/screen/tmux version
   __prompt_version() {
-    # Cache the version check result
-    if [ -n "$_PROMPT_VERSION_CACHED" ]; then
-      printf "%s" "$_PROMPT_VERSION_CACHED"
-      return
-    fi
-    
-    local bash tmux screen byobu shell version
+    local bash tmux screen byobu shell
     bash="${BASH_VERSION%.*}"
-    
-    # Check environment variables to detect multiplexer
-    # ORDER: byobu > tmux > screen > bash > $SHELL
-    # These env vars are only set when actively inside a session (not detached)
-    if [ -n "$BYOBU_TERM" ]; then
-      byobu="$(byobu --version 2>/dev/null | grep byobu | tr ' ' '\n' | sed 's/[^.0-9]*//g' | grep '[0..9]')"
-    fi
-    if [ -n "$TMUX" ]; then
-      tmux="$(tmux -V 2>/dev/null | tr ' ' '\n' | grep '[0-9].' | head -n1 | sed 's/[^.0-9]*//g' | grep -s '^')"
-    fi
-    if [ -n "$STY" ]; then
-      screen="$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | sed 's/[^.0-9]*//g' | head -n1 | grep '^')"
-    fi
-    
+    tmux="$(pidof tmux &>/dev/null && echo -n "$(tmux -V 2>/dev/null | tr ' ' '\n' | grep '[0-9].' | head -n1 | sed 's/[^.0-9]*//g' | grep -s '^')")"
+    screen="$(pidof screen &>/dev/null && echo -n "$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | sed 's/[^.0-9]*//g' | head -n1 | grep '^')")"
+    byobu="$(env | grep -q BYOBU_TERM &>/dev/null && echo -n "$(byobu --version 2>/dev/null | grep byobu | tr ' ' '\n' | sed 's/[^.0-9]*//g' | grep '[0..9]')")"
     if [ -n "$byobu" ]; then
       shell="byobu: "
       version="$byobu"
-    elif [ -n "$tmux" ]; then
-      shell="TMUX: "
-      version="$tmux"
-    elif [ -n "$screen" ]; then
+    elif [ -n "$screen" ] && [ -n "$SCREENEXCHANGE" ]; then
       shell="screen: "
       version="$screen"
+    elif [ -n "$tmux" ] && [ -n "$TMUX" ]; then
+      shell="TMUX: "
+      version="$tmux"
     elif [ -n "$bash" ]; then
       shell="bash: "
       version="$bash"
     else
-      shell="$(basename ${SHELL:-$TERM}) "
+      shell="$(basename ${TERM:-$SHELL}) "
       version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo '1.0')"
     fi
     [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
-    _PROMPT_VERSION_CACHED="${BG_BLUE}${FG_BLACK}${shell}${RESET}"
-    printf "%s" "$_PROMPT_VERSION_CACHED"
+    printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Add bin to path
@@ -569,7 +502,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Change cursor
   ___set_cursor() {
-    printf "\x1b[5q" 2>/dev/null
+    printf "\x1b[\x35 q" 2>/dev/null
     printf "\e]12;cyan\a" 2>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -627,14 +560,7 @@ bashprompt() {
     fi
     [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
-    # Git directory - use PWD for language detection, git root for git operations
-    BASHRC_GITDIR="$(__git_toplevel_cached || echo "${CDD_CWD_DIR:-$PWD}")"
-    # Language detection: if in git repo, use root; otherwise use PWD
-    if __git_is_repo_cached; then
-      BASHRC_LANGDIR="$BASHRC_GITDIR"  # In VCS: use repository root
-    else
-      BASHRC_LANGDIR="$PWD"  # Not in VCS: use current directory
-    fi
+    BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
 
     ___add_bin_path
     __ifdate && ___date_show
