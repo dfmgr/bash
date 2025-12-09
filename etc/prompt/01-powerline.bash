@@ -54,10 +54,10 @@ bashprompt() {
     for arg in "${args[@]}"; do
       count="$(find -L "$dir" -maxdepth 2 \
         \( -path '*/.git' -o -path '*/node_modules' -o -path '*/.venv' -o \
-           -path '*/venv' -o -path '*/env' -o -path '*/target' -o \
-           -path '*/build' -o -path '*/dist' -o -path '*/__pycache__' -o \
-           -path '*/bin' -o -path '*/binaries' -o -path '*/releases' -o \
-           -path '*/release' -o -path '*/out' -o -path '*/vendor' \) -prune -o \
+        -path '*/venv' -o -path '*/env' -o -path '*/target' -o \
+        -path '*/build' -o -path '*/dist' -o -path '*/__pycache__' -o \
+        -path '*/bin' -o -path '*/binaries' -o -path '*/releases' -o \
+        -path '*/release' -o -path '*/out' -o -path '*/vendor' \) -prune -o \
         -type f -iname "$arg" -print 2>/dev/null | wc -l || echo '0')"
       [ "$count" -ne 0 ] && return 0
     done
@@ -432,15 +432,15 @@ bashprompt() {
     # Check if git command exists
     [[ -z "$(command -v git 2>/dev/null)" ]] && return
     # Use cached git status - only show if in git repo
-    [[ "${__GIT_REPO_CACHE:-}" != "true" ]] && return
+    [[ "${__PROMPT_IS_GIT_REPO:-}" != "true" ]] && return
     # Get git root directory
-    local git_root="${__GIT_ROOT_CACHE:-}"
+    local git_root="${__PROMPT_GIT_ROOT:-}"
     [[ -z "$git_root" ]] && return
     # Check if ignoredirmessage exists in repo root
     [[ -f "$git_root/ignoredirmessage" ]] && return
     # Check if disabled in .gitignore
     if [[ -f "$git_root/.gitignore" ]]; then
-      grep -q "^# Disable reminder in prompt" "$git_root/.gitignore" 2>/dev/null && return
+      grep -qE "# Disable reminder in prompt|^ignoredirmessage" "$git_root/.gitignore" 2>/dev/null && return
     fi
     # All checks passed, show the message
     printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
