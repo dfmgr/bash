@@ -13,13 +13,22 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Cache binary locations
+if [ -z "$_CNF_BINS_CACHED" ]; then
+  _CNF_BINS_CACHED=1
+  _BIN_PKMGR="$(type -P pkmgr 2>/dev/null || true)"
+  _BIN_VI="$(type -P vi 2>/dev/null || true)"
+  _BIN_POWERSHELL="$(type -P powershell 2>/dev/null || true)"
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 orig_command_not_found_handle() {
   local cmd=$1
   local possibilities=""
   printf_red "$cmd: command not found"
-  if type -P pkmgr &>/dev/null; then
+  if [ -n "$_BIN_PKMGR" ]; then
     printf_green "Searching the repo for $cmd"
-    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
+    # Add timeout to prevent hanging
+    possibilities="$(timeout 10 pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
     exact="$(echo "$possibilities" | awk -F ' ' '{print $1}' | sed 's| ||g' | grep -x "$cmd")"
     [ -n "$exact" ] && pkmgr silent install "$exact" 2>/dev/null
     if type -P "$exact" &>/dev/null || [[ $? = 0 ]]; then
@@ -50,11 +59,11 @@ command_not_found_handle() {
   args=("$@")
   if [ -f "$cmd" ]; then
     if echo " ${_suffix_vi[*]} " | grep -q " ${cmd##*.} "; then
-      if type vi >&/dev/null; then
+      if [ -n "$_BIN_VI" ]; then
         vi "${args[@]}" && return 0 || return 1
       fi
     elif [ "${cmd##*.}" = "ps1" ]; then
-      if type powershell >&/dev/null; then
+      if [ -n "$_BIN_POWERSHELL" ]; then
         powershell -F "${args[@]}" && return 0 || return 1
       fi
     fi
