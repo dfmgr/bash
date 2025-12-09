@@ -384,9 +384,9 @@ bashprompt() {
     # Only check if directory changed
     if [ "$__PROMPT_GIT_LAST_DIR" != "$current_dir" ]; then
       __PROMPT_GIT_LAST_DIR="$current_dir"
-      if git rev-parse --is-inside-work-tree &>/dev/null; then
+      if git -C "$__PROMPT_GIT_LAST_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
         __PROMPT_IS_GIT_REPO="true"
-        __PROMPT_GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+        __PROMPT_GIT_ROOT="$(git -C "$__PROMPT_GIT_LAST_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
       else
         __PROMPT_IS_GIT_REPO="false"
         __PROMPT_GIT_ROOT="$PWD"
