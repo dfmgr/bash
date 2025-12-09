@@ -427,16 +427,23 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git reminder
   __git_prompt_message_warn() {
-    local grepgitignore
-    if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
-      return 0
+    # Check noprompt config
+    [[ -f "$HOME/.config/bash/noprompt/git_reminder" ]] && return
+    # Check if git command exists
+    [[ -z "$(command -v git 2>/dev/null)" ]] && return
+    # Use cached git status - only show if in git repo
+    [[ "${__GIT_REPO_CACHE:-}" != "true" ]] && return
+    # Get git root directory
+    local git_root="${__GIT_ROOT_CACHE:-}"
+    [[ -z "$git_root" ]] && return
+    # Check if ignoredirmessage exists in repo root
+    [[ -f "$git_root/ignoredirmessage" ]] && return
+    # Check if disabled in .gitignore
+    if [[ -f "$git_root/.gitignore" ]]; then
+      grep -q "^# Disable reminder in prompt" "$git_root/.gitignore" 2>/dev/null && return
     fi
-    if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
-      grepgitignore="$(grep -q ignoredirmessage "$__PROMPT_GIT_ROOT/.gitignore" 2>/dev/null && echo 0 || echo 1)"
-      if [ "$grepgitignore" -ne 0 ]; then
-        printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
-      fi
-    fi
+    # All checks passed, show the message
+    printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # WakaTime
