@@ -16,16 +16,9 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 add2path() {
-  local dir="" args="" path="" SET_PATH="" NEW_PATH="" resolved_path=""
+  local dir="" args="" path="" args="" SET_PATH="" NEW_PATH=""
   local OLD_PATH="$PATH" red="\033[0;31m" green="\033[0;32m" reset="\033[0m"
-  # Optimized path test using case statement (faster than grep)
-  __test_path() {
-    local check_path="${1:-$dir}"
-    case ":$PATH:" in
-      *":$check_path:"*|*":$check_path/:"*) return 0 ;;
-      *) return 1 ;;
-    esac
-  }
+  __test_path() { echo "$PATH" | tr ':' '\n' | grep -qsxE "${1:-$dir}|${1:-$dir}/" &>/dev/null && return 0 || return 1; }
   __help() { printf '%b\n%b\n' "${green}Usage: add2path [options] [directory]${reset}" "${red}Options: add2path [--init] [--add] [--help] [--remove] [--list]${reset}"; }
   if [ "$1" = '--init' ]; then
     shift 1
@@ -53,20 +46,15 @@ add2path() {
     shift 1
     { [ $# -eq 0 ] || [ "$1" = '--help' ]; } && __help && return 1
     for args in "$@"; do
-      # Cache realpath result
-      if [ -e "$args" ]; then
-        resolved_path="$(realpath "$args" 2>/dev/null)" || resolved_path=""
-      else
-        resolved_path=""
-      fi
-      [ "$resolved_path" = '.' ] && resolved_path=""
-      if [ -n "$resolved_path" ]; then
-        if __test_path "$resolved_path"; then
-          path="$(echo "$PATH" | tr ':' '\n' | grep -v '^$' | grep -vsx "$resolved_path" | tr '\n' ':')"
+      [ -e "$args" ] && args="$(realpath "$args")" || args=""
+      [ "$args" = '.' ] && args=""
+      if [ -n "$args" ]; then
+        if [ -n "$args" ] && echo "$PATH" | tr ':' '\n' | grep -qsx "$args" &>/dev/null; then
+          path="$(echo "$PATH" | tr ':' '\n' | grep -v '^$' | grep -vsx "$args" | tr '\n' ':')"
           export PATH="$path"
-          printf "${green}Deleted %s from PATH ${reset}\n" "$resolved_path"
+          printf "${green}Deleted %s from PATH ${reset}\n" "$args"
         else
-          printf "${red}%s was not not found in PATH ${reset}\n" "$resolved_path"
+          printf "${red}%s was not not found in PATH ${reset}\n" "$args"
         fi
       else
         printf "${red}An error has occured %s${reset}\n" "$args"
@@ -75,7 +63,7 @@ add2path() {
   else
     # Add dir to path
     if [ $# = 0 ]; then
-      dir="$(realpath "$PWD/bin" 2>/dev/null)" || dir=""
+      dir="$(realpath "$PWD/bin")"
       if [ -d "$dir" ]; then
         if __test_path "$dir"; then
           printf "${red}%s is already in your PATH ${reset}\n" "$dir"
@@ -91,25 +79,20 @@ add2path() {
       fi
     else
       for args in "$@"; do
-        # Cache realpath result
-        if [ -e "$args" ]; then
-          resolved_path="$(realpath "$args" 2>/dev/null)" || resolved_path=""
-        else
-          resolved_path=""
-        fi
-        if [ -n "$resolved_path" ]; then
-          if [ -d "$resolved_path" ]; then
-            dir="$resolved_path"
-          elif [ -f "$resolved_path" ]; then
-            dir="$(dirname "$resolved_path" 2>/dev/null || echo '')"
+        [ -e "$args" ] && args="$(realpath "$args")" || args=""
+        if [ -n "$args" ]; then
+          if [ -d "$args" ]; then
+            dir="$args"
+          elif [ -f "$args" ]; then
+            dir="$(dirname "$args" 2>/dev/null || echo '')"
           fi
           if [ -d "$dir" ]; then
             if __test_path "$dir"; then
-              printf "${red}%s is already in your PATH ${reset}\n" "$dir"
+              printf "${red}%s is already in your PATH ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
             else
               path="$dir:$PATH"
               export PATH="$path"
-              printf "${green}Added %s to your path ${reset}\n" "$dir"
+              printf "${green}Added %s to your path ${reset}\n" "$(realpath "$dir" 2>/dev/null)"
             fi
           else
             printf "${red}Not adding %s to path due to it not existing ${reset}\n" "$args"

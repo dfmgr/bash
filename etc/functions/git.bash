@@ -13,18 +13,11 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Cache binary locations
-if [ -z "$_GIT_BINS_CACHED" ]; then
-  _GIT_BINS_CACHED=1
-  _BIN_GIT_CMD="$(builtin type -P git 2>/dev/null || true)"
-  _BIN_HUB="$(builtin type -P hub 2>/dev/null || true)"
-fi
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 git_prompt_message() {
   if [ -f "$HOME/.config/bash/noprompt/git_message" ]; then
     return 0
   else
-    if [ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == "true" ]; then
+    if [ "$(git rev-parse --is-inside-git-dir)" == "true" ]; then
       printf_red "This message will only appear once per repo:"
       printf_custom "3" "This can be disabled by adding ignoredirmessage to your gitignore"
       printf_custom "3" "echo ignoredirmessage >> .gitignore or by running"
@@ -37,10 +30,10 @@ get_git_repository_details() {
   local branchName=""
   local tmp=""
   ! git rev-parse &>/dev/null && return
-  [ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == "true" ] && return
-  if ! git diff --quiet --ignore-submodules --cached 2>/dev/null; then tmp="$tmp+"; fi
-  if ! git diff-files --quiet --ignore-submodules -- 2>/dev/null; then tmp="$tmp!"; fi
-  if [ -n "$(git ls-files --others --exclude-standard 2>/dev/null)" ]; then tmp="$tmp?"; fi
+  [ "$(git rev-parse --is-inside-git-dir)" == "true" ] && return
+  if ! git diff --quiet --ignore-submodules --cached; then tmp="$tmp+"; fi
+  if ! git diff-files --quiet --ignore-submodules --; then tmp="$tmp!"; fi
+  if [ -n "$(git ls-files --others --exclude-standard)" ]; then tmp="$tmp?"; fi
   if git rev-parse --verify refs/stash &>/dev/null; then tmp="$tmp$"; fi
   [ -n "$tmp" ] && tmp=" [$tmp]"
   branchName="$(printf "%s" "$(git rev-parse --abbrev-ref HEAD 2>/dev/null ||
@@ -57,7 +50,7 @@ git() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 hub() {
-  [ -z "$_BIN_HUB" ] && return 0
+  builtin type -P hub &>/dev/null || return 0
   if [[ "$1" == "default-branch" && "$*" != *"--help"* ]]; then
     local BRANCH="${2:-main}"
     git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"

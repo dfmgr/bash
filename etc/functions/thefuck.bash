@@ -17,9 +17,4 @@
 # @@sudo/root        :  no
 # @@Template         :  bash/system
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Only initialize thefuck once per session (cached)
-if [ -n "$(type -p thefuck 2>/dev/null)" ] && [ -z "$_THEFUCK_INITIALIZED" ]; then
-  _THEFUCK_INITIALIZED=1
-  eval "$(thefuck --enable-experimental-instant-mode --alias fuck 2>/dev/null)"
-fi
-
+[ -z "$(type -p thefuck)" ] || eval $(thefuck --enable-experimental-instant-mode --alias fuck)
