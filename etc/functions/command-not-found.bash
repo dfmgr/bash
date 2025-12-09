@@ -24,12 +24,27 @@ fi
 orig_command_not_found_handle() {
   local cmd=$1
   local possibilities=""
+  
+  # Cache negative lookups to avoid repeated slow searches
+  local cache_var="_CNF_CACHE_${cmd//[^a-zA-Z0-9]/_}"
+  if [ "${!cache_var}" = "not_found" ]; then
+    printf_red "$cmd: command not found"
+    return 127
+  fi
+  
   printf_red "$cmd: command not found"
   if [ -n "$_BIN_PKMGR" ]; then
     printf_green "Searching the repo for $cmd"
-    # Add timeout to prevent hanging
-    possibilities="$(timeout 10 pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
+    # Reduced timeout from 10s to 3s
+    possibilities="$(timeout 3 pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
     exact="$(echo "$possibilities" | awk -F ' ' '{print $1}' | sed 's| ||g' | grep -x "$cmd")"
+    
+    if [ -z "$exact" ]; then
+      # Cache negative result
+      eval "$cache_var=not_found"
+      export "$cache_var"
+    fi
+    
     [ -n "$exact" ] && pkmgr silent install "$exact" 2>/dev/null
     if type -P "$exact" &>/dev/null || [[ $? = 0 ]]; then
       printf_green "$exact has been Installed"
@@ -46,11 +61,14 @@ orig_command_not_found_handle() {
         fi
         echo
       fi
-      return 1
+      return 127
     fi
   else
     printf_red "Failed to install $cmd with your package manager"
-    return 1
+    # Cache that we don't have a package manager
+    eval "$cache_var=not_found"
+    export "$cache_var"
+    return 127
   fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
