@@ -503,31 +503,33 @@ bashprompt() {
     local bash tmux screen byobu shell version
     bash="${BASH_VERSION%.*}"
     
-    # Check environment variables first (faster than pidof)
+    # Check environment variables to detect multiplexer
+    # ORDER: byobu > tmux > screen > bash > $SHELL
+    # These env vars are only set when actively inside a session (not detached)
     if [ -n "$BYOBU_TERM" ]; then
       byobu="$(byobu --version 2>/dev/null | grep byobu | tr ' ' '\n' | sed 's/[^.0-9]*//g' | grep '[0..9]')"
     fi
     if [ -n "$TMUX" ]; then
       tmux="$(tmux -V 2>/dev/null | tr ' ' '\n' | grep '[0-9].' | head -n1 | sed 's/[^.0-9]*//g' | grep -s '^')"
     fi
-    if [ -n "$SCREENEXCHANGE" ] || [ -n "$STY" ]; then
+    if [ -n "$STY" ]; then
       screen="$(screen --version 2>/dev/null | tr ' ' '\n' | grep -wE '[0-9]' | sed 's/[^.0-9]*//g' | head -n1 | grep '^')"
     fi
     
     if [ -n "$byobu" ]; then
       shell="byobu: "
       version="$byobu"
-    elif [ -n "$screen" ]; then
-      shell="screen: "
-      version="$screen"
     elif [ -n "$tmux" ]; then
       shell="TMUX: "
       version="$tmux"
+    elif [ -n "$screen" ]; then
+      shell="screen: "
+      version="$screen"
     elif [ -n "$bash" ]; then
       shell="bash: "
       version="$bash"
     else
-      shell="$(basename ${TERM:-$SHELL}) "
+      shell="$(basename ${SHELL:-$TERM}) "
       version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo '1.0')"
     fi
     [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
