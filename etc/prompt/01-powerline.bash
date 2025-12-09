@@ -212,7 +212,7 @@ bashprompt() {
       __rust_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.rs' 'Cargo.toml' 'Cargo.lock'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.rs' 'Cargo.toml' 'Cargo.lock'; then
       __rust_version() { printf "| Rust: %s" "$($_BIN_RUST --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       __rust_info() {
         version="$(__rust_version)"
@@ -231,7 +231,7 @@ bashprompt() {
       __go_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.go' 'go.mod' 'go.sum' '.go-version'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.go' 'go.mod' 'go.sum'; then
       __go_version() { printf "%s" "GO: $($_BIN_GO version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       __go_info() {
         version="$(__go_version)"
@@ -250,7 +250,7 @@ bashprompt() {
       __ruby_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.gem' '*.rb' 'Gemfile' 'Gemfile.lock' '.ruby-version' '.rbenv-version'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.rb' 'Gemfile' 'Rakefile'; then
       if [ -n "$_BIN_RBENV" ]; then
         __ruby_version() { printf "%s" "RBENV: $(rbenv version-name)"; }
       elif [ -n "$_BIN_RVM" ] && [ "$(rvm version | awk '{print $2}')" ]; then
@@ -277,7 +277,7 @@ bashprompt() {
       __node_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.js' '*.ts' '*.jsx' '*.tsx' 'package.json' 'package-lock.json' 'yarn.lock' 'pnpm-lock.yaml' 'bun.lockb' '.nvmrc' '.node-version' '.npmrc'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.js' '*.ts' '*.jsx' '*.tsx' '*.mjs' '*.cjs' 'package.json'; then
       __node_version() { printf "%s" "$($_BIN_NODE --version)"; }
       if [ -f "$NVM_DIR/nvm.sh" ] && [ -n "$_BIN_NVM" ] && [ "$(nvm current)" != "system" ]; then
         __node_info() { printf "%s" "| NVM: $(__node_version)$NODE_SYMBOL${RESET}"; }
@@ -322,9 +322,9 @@ bashprompt() {
       __python_info() { true; }
       return 0
     fi
-    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
-    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' 'requirements-dev.txt' 'Pipfile' 'Pipfile.lock' 'pyproject.toml' 'setup.py' 'setup.cfg' 'poetry.lock' '.python-version' 'tox.ini' 'pytest.ini' && [ -n "$_BIN_PYTHON" ]; then
-      [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
+    [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_LANGDIR"
+    if ___bash_find "$BASHRC_LANGDIR" '*.py' '*.pyc' 'requirements.txt' 'pyproject.toml' 'setup.py' 'Pipfile'; then
+      [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_LANGDIR"
       __python_info() {
         PYTHON_VERSION="$($_BIN_PYTHON --version | sed 's#Python ##g')"
         if [ -n "$PYTHON_VIRTUALENV" ]; then
@@ -346,7 +346,7 @@ bashprompt() {
       __php_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.php*' 'composer.json' 'composer.lock' '.php-version'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.php' 'composer.json'; then
       __php_version() { printf "%s" "$($_BIN_PHP --version | awk '{print $2}' | head -n 1 | grep '^' || echo 'unknown')"; }
     else
       __php_version() { return; }
@@ -365,7 +365,7 @@ bashprompt() {
       __perl_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.pl' '*.pm' '*.cgi' 'cpanfile' 'META.json' 'META.yml'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.pl' '*.pm' 'cpanfile'; then
       __perl_version() { printf "%s" "$($_BIN_PERL --version | tr ' ' '\n' | grep '.(*)' | sed 's#(##g;s#)##g' | head -n1)"; }
     else
       __perl_version() { return; }
@@ -384,7 +384,7 @@ bashprompt() {
       __lua_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.lua' '.luacheckrc' 'rockspec'; then
+    if ___bash_find "$BASHRC_LANGDIR" '*.lua' '*.rockspec'; then
       __lua_version() { printf "%s" "$($_BIN_LUA -v 2>&1 | head -n1 | awk '{print $2}')"; }
     else
       __lua_version() { return; }
@@ -452,16 +452,19 @@ bashprompt() {
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Git reminder
+  # Git reminder - only show if .gitignore doesn't have "ignoredirmessage"
   __git_prompt_message_warn() {
     local grepgitignore
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$_BIN_GIT" ]; then
       return 0
     fi
     if __git_is_repo_cached; then
-      grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
-      if [ "$grepgitignore" -ne 0 ]; then
-        printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+      # Only show reminder if .gitignore exists and doesn't contain "ignoredirmessage"
+      if [ -f "$BASHRC_GITDIR/.gitignore" ]; then
+        grepgitignore="$(grep -q "ignoredirmessage" "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
+        if [ "$grepgitignore" -ne 0 ]; then
+          printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
+        fi
       fi
     fi
   }
@@ -632,8 +635,14 @@ bashprompt() {
     fi
     [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
-    # Git directory (cached)
+    # Git directory - use PWD for language detection, git root for git operations
     BASHRC_GITDIR="$(__git_toplevel_cached || echo "${CDD_CWD_DIR:-$PWD}")"
+    # Language detection: if in git repo, use root; otherwise use PWD
+    if __git_is_repo_cached; then
+      BASHRC_LANGDIR="$BASHRC_GITDIR"  # In VCS: use repository root
+    else
+      BASHRC_LANGDIR="$PWD"  # Not in VCS: use current directory
+    fi
 
     ___add_bin_path
     __ifdate && ___date_show
