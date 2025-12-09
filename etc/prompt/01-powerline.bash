@@ -48,11 +48,12 @@ fi
 bashprompt() {
   printf_return() { return; }
   ___bash_find() {
+    local maxdepth=${BASH_PROMPT_MAXDEPTH_SEARCH:-2}
     local findExitCode="1" dir="" count="" args=("")
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
     [ $# -eq 0 ] && return || args=("$@")
     for arg in "${args[@]}"; do
-      count="$(find -L "$dir" -maxdepth 2 \
+      count="$(find -L "$dir" -maxdepth $maxdepth \
         \( -path '*/.git' -o -path '*/node_modules' -o -path '*/.venv' -o \
         -path '*/venv' -o -path '*/env' -o -path '*/target' -o \
         -path '*/build' -o -path '*/dist' -o -path '*/__pycache__' -o \
@@ -298,11 +299,10 @@ bashprompt() {
     fi
     # Skip Python if this is primarily a Go, Rust, Node, Ruby, or PHP project
     if ___bash_find "$BASHRC_GITDIR" 'go.mod' 'Cargo.toml' 'package.json' 'Gemfile' 'composer.json'; then
-      __python_info() { return; }
-      return 0
+      BASH_PROMPT_MAXDEPTH_SEARCH=1
     fi
     [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
-    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' 'pyproject.toml' && [ -n "$pythonBin" ]; then
+    if ___bash_find "$BASHRC_GITDIR" '*.py' '*.pyc' 'requirements.txt' 'pyproject.toml' && [ -n "$pythonBin" ]; then
       [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
       __python_info() {
         PYTHON_VERSION="$($PYTHONBIN --version | sed 's#Python ##g')"
