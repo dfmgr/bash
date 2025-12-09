@@ -52,7 +52,13 @@ bashprompt() {
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
     [ $# -eq 0 ] && return || args=("$@")
     for arg in "${args[@]}"; do
-      count="$(find -L "$dir" -maxdepth 1 -type f -iname "$arg" -not -path "$dir/.git/*" 2>/dev/null | wc -l | grep '^' || echo '')"
+      count="$(find -L "$dir" -maxdepth 2 \
+        \( -path '*/.git' -o -path '*/node_modules' -o -path '*/.venv' -o \
+           -path '*/venv' -o -path '*/env' -o -path '*/target' -o \
+           -path '*/build' -o -path '*/dist' -o -path '*/__pycache__' -o \
+           -path '*/bin' -o -path '*/binaries' -o -path '*/releases' -o \
+           -path '*/release' -o -path '*/out' -o -path '*/vendor' \) -prune -o \
+        -type f -iname "$arg" -print 2>/dev/null | wc -l || echo '0')"
       [ "$count" -ne 0 ] && return 0
     done
     return
@@ -176,7 +182,7 @@ bashprompt() {
       __rust_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.rs'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.rs' 'Cargo.toml' 'Cargo.lock'; then
       __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
       __rust_info() {
         version="$(__rust_version)"
@@ -196,7 +202,7 @@ bashprompt() {
       __go_info() { true; }
       return 0
     fi
-    if ___bash_find "$BASHRC_GITDIR" '*.go'; then
+    if ___bash_find "$BASHRC_GITDIR" '*.go' 'go.mod' 'go.sum'; then
       __go_version() { printf "%s" "GO: $($goBin version | tr ' ' '\n' | grep 'go[0-9.]' | sed 's|go||g')"; }
       __go_info() {
         version="$(__go_version)"
@@ -290,8 +296,13 @@ bashprompt() {
       __python_info() { true; }
       return 0
     fi
+    # Skip Python if this is primarily a Go, Rust, Node, Ruby, or PHP project
+    if ___bash_find "$BASHRC_GITDIR" 'go.mod' 'Cargo.toml' 'package.json' 'Gemfile' 'composer.json'; then
+      __python_info() { return; }
+      return 0
+    fi
     [ -n "$PYTHON_SOURCE_FILE" ] && [ -f "$PYTHON_SOURCE_FILE" ] || ___if_venv "$BASHRC_GITDIR"
-    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' && [ -n "$pythonBin" ]; then
+    if ___bash_find "$BASHRC_GITDIR" '*.py' 'requirements.txt' 'pyproject.toml' && [ -n "$pythonBin" ]; then
       [ -n "$VIRTUAL_ENV_PROMPT" ] || ___if_venv "$BASHRC_GITDIR"
       __python_info() {
         PYTHON_VERSION="$($PYTHONBIN --version | sed 's#Python ##g')"
@@ -367,6 +378,22 @@ bashprompt() {
     }
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Git caching - check once per directory change
+  __check_git_dir() {
+    local current_dir="$PWD"
+    # Only check if directory changed
+    if [ "$__PROMPT_GIT_LAST_DIR" != "$current_dir" ]; then
+      __PROMPT_GIT_LAST_DIR="$current_dir"
+      if git rev-parse --is-inside-work-tree &>/dev/null; then
+        __PROMPT_IS_GIT_REPO="true"
+        __PROMPT_GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+      else
+        __PROMPT_IS_GIT_REPO="false"
+        __PROMPT_GIT_ROOT="$PWD"
+      fi
+    fi
+  }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Git
   __ifgit() {
     local marks git_eng branch stat aheadN behindN
@@ -375,7 +402,7 @@ bashprompt() {
       __git_info() { true; }
       return 0
     fi
-    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
+    if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
       __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
         git_eng="env LANG=C git"
@@ -404,8 +431,8 @@ bashprompt() {
     if [ -f "$HOME/.config/bash/noprompt/git_reminder" ] || [ -z "$(builtin command -v __git_prompt_message_warn 2>/dev/null)" ] || [ -z "$(builtin command -v git 2>/dev/null)" ]; then
       return 0
     fi
-    if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]; then
-      grepgitignore="$(grep -q ignoredirmessage "$BASHRC_GITDIR/.gitignore" 2>/dev/null && echo 0 || echo 1)"
+    if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
+      grepgitignore="$(grep -q ignoredirmessage "$__PROMPT_GIT_ROOT/.gitignore" 2>/dev/null && echo 0 || echo 1)"
       if [ "$grepgitignore" -ne 0 ]; then
         printf "%s" "|${BG_BLACK}${FG_GREEN} Dont forget to do a git pull $RESET"
       fi
@@ -438,8 +465,8 @@ bashprompt() {
     if [ -z "$entity" ]; then
       return 0
     else
-      if git rev-parse --is-inside-work-tree 2>/dev/null | grep -iq 'true'; then
-        project="$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")"
+      if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
+        project="$(basename "$__PROMPT_GIT_ROOT")"
       else
         project="Terminal"
       fi
@@ -481,7 +508,7 @@ bashprompt() {
       version="$bash"
     else
       shell="$(basename ${TERM:-$SHELL}) "
-      version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 | grep '^' || echo '1.0')"
+      version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 || echo '1.0')"
     fi
     [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
     printf "%s" "${BG_BLUE}${FG_BLACK}${shell}${RESET}"
@@ -560,7 +587,8 @@ bashprompt() {
     fi
     [ -n "$NEW_PS_SYMBOL" ] && PS_SYMBOL="$NEW_PS_SYMBOL" && unset NEW_PS_SYMBOL
     [ -n "$NEW_BG_EXIT" ] && BG_EXIT="$NEW_BG_EXIT" && unset NEW_BG_EXIT
-    BASHRC_GITDIR="$(git rev-parse --show-toplevel 2>/dev/null | grep '^' || echo "${CDD_CWD_DIR:-$PWD}")"
+    __check_git_dir
+    BASHRC_GITDIR="$__PROMPT_GIT_ROOT"
 
     ___add_bin_path
     __ifdate && ___date_show
