@@ -70,14 +70,8 @@ bashprompt() {
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
     [ $# -eq 0 ] && return 1 || args=("$@")
     
-    # Cache key based on directory and patterns
-    local cache_key="${dir}:${args[*]}"
-    local cache_var="_BASH_FIND_CACHE_${cache_key//[^a-zA-Z0-9]/_}"
-    
-    # Return cached result if available
-    if [ -n "${!cache_var+x}" ]; then
-      return "${!cache_var}"
-    fi
+    # NO CACHING for language detection - it's already fast with glob
+    # and caching causes stale results when changing directories
     
     # Use faster ls/compgen instead of find for simple cases
     for arg in "${args[@]}"; do
@@ -86,12 +80,10 @@ bashprompt() {
       local matches=("$dir"/$arg)
       shopt -u nullglob dotglob
       if [ ${#matches[@]} -gt 0 ] && [ -e "${matches[0]}" ]; then
-        eval "$cache_var=0"
         return 0
       fi
     done
     
-    eval "$cache_var=1"
     return 1
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
