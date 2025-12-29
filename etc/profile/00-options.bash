@@ -50,7 +50,7 @@ shopt -s nocaseglob 2>/dev/null
 # expand aliases
 shopt -s expand_aliases 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Set cursor type - changes to blinking bar (I-beam) with cyan color
-printf '\e[5 q\e]12;cyan\a'
+# Set cursor type - blinking bar (I-beam) with cyan color
+printf '\033[5 q\033]12;cyan\007'
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

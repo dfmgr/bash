@@ -537,7 +537,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Set cursor type - blinking bar (I-beam) with cyan color
   ___set_cursor() {
-    printf '\e[5 q\e]12;cyan\a' 2>/dev/null
+    printf '\033[5 q\033]12;cyan\007' 2>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Add PROMPT Message

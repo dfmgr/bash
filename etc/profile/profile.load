@@ -15,25 +15,19 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if find "$HOME.config/bash/profile"/*.win >/dev/null 2>&1; then
-    for f in "$HOME.config/bash/profile"/*.win; do
-      . "$f"
-    done
-  fi
+  for f in "$HOME/.config/bash/profile"/*.win; do
+    [ -f "$f" ] && . "$f"
+  done
   ;;
 Darwin)
-  if find "$HOME.config/bash/profile/"*.mac >/dev/null 2>&1; then
-    for f in "$HOME.config/bash/profile"/*.mac; do
-      . "$f"
-    done
-  fi
+  for f in "$HOME/.config/bash/profile"/*.mac; do
+    [ -f "$f" ] && . "$f"
+  done
   ;;
 Linux)
-  if find "$HOME.config/bash/profile"/*.lin >/dev/null 2>&1; then
-    for f in "$HOME.config/bash/profile"/*.lin; do
-      . "$f"
-    done
-  fi
+  for f in "$HOME/.config/bash/profile"/*.lin; do
+    [ -f "$f" ] && . "$f"
+  done
   ;;
 *) ;;
 esac
