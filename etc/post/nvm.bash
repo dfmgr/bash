@@ -13,7 +13,8 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ -z "$NODE_MANAGER" ] && [ "$NODE_MANAGER" = "nvm" ] && [ -n "$NVM_DIR" ]; then
+# Load nvm if NODE_MANAGER is unset/empty or set to "nvm"
+if { [ -z "$NODE_MANAGER" ] || [ "$NODE_MANAGER" = "nvm" ]; } && [ -n "$NVM_DIR" ]; then
   if ! builtin type nvm &>/dev/null; then
     . "$NVM_DIR/nvm.sh"
     . "$NVM_DIR/bash_completion"

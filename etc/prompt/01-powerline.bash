@@ -45,13 +45,20 @@ fi
 # Initialize prompt
 bashprompt() {
   printf_return() { return; }
-  # Fast file check using ls glob instead of slow find -L
+  # Fast file check using bash compgen (builtin) instead of slow find -L
+  # compgen -G expands globs and returns 0 if matches found
   ___bash_find() {
+    local maxdepth=${BASH_PROMPT_MAXDEPTH_SEARCH:-2}
     local dir=""
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
     [ $# -eq 0 ] && return 1
     for arg in "$@"; do
-      ls "$dir"/$arg "$dir"/*/$arg &>/dev/null && return 0
+      # Check current directory
+      compgen -G "$dir/$arg" >/dev/null 2>&1 && return 0
+      # Check one level deep (maxdepth 2 equivalent)
+      if [ "$maxdepth" -ge 2 ]; then
+        compgen -G "$dir/*/$arg" >/dev/null 2>&1 && return 0
+      fi
     done
     return 1
   }
@@ -528,10 +535,9 @@ bashprompt() {
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Change cursor
+  # Set cursor type - blinking bar (I-beam) with cyan color
   ___set_cursor() {
-    printf "\x1b[\x35 q" 2>/dev/null
-    printf "\e]12;cyan\a" 2>/dev/null
+    printf '\e[5 q\e]12;cyan\a' 2>/dev/null
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Add PROMPT Message
@@ -611,7 +617,7 @@ bashprompt() {
     PS1+="${BG_DARK_RED}${FG_BLACK}$(__ifgit && __git_info)${RESET}"
     PS1+="${BG_PURPLE}${FG_BLACK}${PS_TIME}$RESET\n"
     PS1+="${BG_GRAY2}${FG_BLACK}\u@\H: $BG_DARK_GREEN\w:$RESET$(__additional_msg)\n"
-    if [ $USER == root ] || [ $UID == 0 ]; then
+    if [ "$USER" = "root" ] || [ "$UID" = "0" ]; then
       PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET$ "
     else
       PS1+="${BG_EXIT}${FG_BLACK}$(___time_show)Jobs:[\j]$BG_GRAY1${PS1_ADD_PROMPT:-}$PS_SYMBOL$RESET: "

@@ -98,10 +98,10 @@ noprompt() {
     timer) $action "$HOME/.config/bash/noprompt/timer" ;;
     wakatime) $action "$HOME/.config/bash/noprompt/wakatime" ;;
     bashprompt)
-      if [ $message = "Enabled" ]; then
-        if [ -f "HOME/.config/bash/noprompt/powerline_ps1" ]; then
+      if [ "$message" = "Enabled" ]; then
+        if [ -f "$HOME/.config/bash/noprompt/powerline_ps1" ]; then
           unset PROMPT_COMMAND PS1
-          mv -f "HOME/.config/bash/noprompt/powerline_ps1" "$HOME/.config/bash/prompt/01-powerline.bash"
+          mv -f "$HOME/.config/bash/noprompt/powerline_ps1" "$HOME/.config/bash/prompt/01-powerline.bash"
           . "$HOME/.config/bash/prompt/01-powerline.bash"
         fi
       else
