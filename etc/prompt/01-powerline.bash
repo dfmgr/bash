@@ -13,30 +13,28 @@
 # @Other         :
 # @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Install fonts
+# Install fonts in background to avoid blocking shell startup
 if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]; then
-  mkdir -p "$HOME/.local/share/fonts" &>/dev/null
-  curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
-    curl -q -LSsf --create-dirs "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
-    fc-cache -vf "$HOME/.local/share/fonts" &>/dev/null
+  (
+    mkdir -p "$HOME/.local/share/fonts" &>/dev/null
+    curl -q -LSsf --connect-timeout 3 --max-time 10 "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" -o "$HOME/.local/share/fonts/PowerlineSymbols.otf" 2>/dev/null &&
+    curl -q -LSsf --connect-timeout 3 --max-time 10 "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf" -o "$HOME/.local/share/fonts/10-powerline-symbols.conf" 2>/dev/null &&
+    fc-cache -f "$HOME/.local/share/fonts" &>/dev/null
+  ) &
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Powerline check
+# Check common paths directly instead of using slow find command
 if [ -z "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
-  # Debian/Ubuntu/Arch
   if [ -f "/usr/share/powerline/bindings/bash/powerline.sh" ]; then
     . "/usr/share/powerline/bindings/bash/powerline.sh"
-  # Redhat/CentOS
   elif [ -f "/usr/share/powerline/bash/powerline.sh" ]; then
     . "/usr/share/powerline/bash/powerline.sh"
-    # Try to find powerline.sh
-    powerline_sh="$(find /usr/*/powerline /usr/lib/python*/dist-packages /usr/local/lib/python*/dist-packages -iname 'powerline.sh' 2>/dev/null | grep bindings/bash | head -n1)"
-  elif [ -f "$powerline_sh" ]; then
-    . "$powerline_sh"
-    unset powerline_sh
+  elif [ -f "/usr/lib/python3/dist-packages/powerline/bindings/bash/powerline.sh" ]; then
+    . "/usr/lib/python3/dist-packages/powerline/bindings/bash/powerline.sh"
+  elif [ -f "/usr/local/lib/python3/dist-packages/powerline/bindings/bash/powerline.sh" ]; then
+    . "/usr/local/lib/python3/dist-packages/powerline/bindings/bash/powerline.sh"
   fi
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Start
   if [ -f "$(builtin command -v powerline-daemon 2>/dev/null)" ]; then
     export POWERLINE_BASH_CONTINUATION=1
     export POWERLINE_BASH_SELECT=1
@@ -47,22 +45,15 @@ fi
 # Initialize prompt
 bashprompt() {
   printf_return() { return; }
+  # Fast file check using ls glob instead of slow find -L
   ___bash_find() {
-    local maxdepth=${BASH_PROMPT_MAXDEPTH_SEARCH:-2}
-    local findExitCode="1" dir="" count="" args=("")
+    local dir=""
     [ -d "$1" ] && dir="$1" && shift 1 || dir="$PWD"
-    [ $# -eq 0 ] && return || args=("$@")
-    for arg in "${args[@]}"; do
-      count="$(find -L "$dir" -maxdepth $maxdepth \
-        \( -path '*/.git' -o -path '*/node_modules' -o -path '*/.venv' -o \
-        -path '*/venv' -o -path '*/env' -o -path '*/target' -o \
-        -path '*/build' -o -path '*/dist' -o -path '*/__pycache__' -o \
-        -path '*/bin' -o -path '*/binaries' -o -path '*/releases' -o \
-        -path '*/release' -o -path '*/out' -o -path '*/vendor' \) -prune -o \
-        -type f -iname "$arg" -print 2>/dev/null | wc -l || echo '0')"
-      [ "$count" -ne 0 ] && return 0
+    [ $# -eq 0 ] && return 1
+    for arg in "$@"; do
+      ls "$dir"/$arg "$dir"/*/$arg &>/dev/null && return 0
     done
-    return
+    return 1
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unicode symbols
