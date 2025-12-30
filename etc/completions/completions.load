@@ -16,36 +16,37 @@
 if [ -f "$HOME/.config/bash/completions/00-completions.sh" ]; then
   . "$HOME/.config/bash/completions/00-completions.sh"
 fi
-if [ "$(find "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/* 2>/dev/null | wc -l)" != "0" ]; then
-  for f in "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/*; do
-    . "$f" &>/dev/null
-  done
-fi
+# Use bash glob instead of slow find command
+shopt -s nullglob
+for f in "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/*; do
+  [ -f "$f" ] && . "$f" &>/dev/null
+done
+shopt -u nullglob
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Use bash glob instead of slow find for OS-specific completions
 case "$(uname -s)" in
 CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  if find "$HOME/.config/bash/completions"/*.win &>/dev/null; then
-    for f in "$HOME/.config/bash/completions"/*.win; do
-      . "$f"
-    done
-  fi
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/completions"/*.win; do
+    [ -f "$f" ] && . "$f"
+  done
+  shopt -u nullglob
   ;;
 Darwin)
-  if find "$HOME/.config/bash/completions"/*.mac &>/dev/null; then
-    for f in "$HOME/.config/bash/completions"/*.mac; do
-      . "$f"
-    done
-  fi
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/completions"/*.mac; do
+    [ -f "$f" ] && . "$f"
+  done
+  shopt -u nullglob
   ;;
 Linux)
-  if find "$HOME/.config/bash/completions"/*.lin &>/dev/null; then
-    for f in "$HOME/.config/bash/completions"/*.lin; do
-      . "$f"
-    done
-  fi
+  shopt -s nullglob
+  for f in "$HOME/.config/bash/completions"/*.lin; do
+    [ -f "$f" ] && . "$f"
+  done
+  shopt -u nullglob
   ;;
 *) ;;
-
 esac
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
