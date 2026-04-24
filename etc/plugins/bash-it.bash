@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202304251026-git
-# @@Author           :  Jason Hempstead
-# @@Contact          :  git-admin@casjaysdev.pro
-# @@License          :  LICENSE.md
-# @@ReadME           :  bash-it --help
-# @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
-# @@Created          :  Tuesday, Apr 25, 2023 19:50 EDT
-# @@File             :  bash-it
-# @@Description      :  Collection of community Bash commands and scripts
-# @@Changelog        :  newScript
-# @@TODO             :  Refactor code
-# @@Other            :
-# @@Resource         :
-# @@Terminal App     :  no
-# @@sudo/root        :  no
-# @@Template         :  bash/system
+##@Version       : 202304251026-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.pro
+# @License       : LICENSE.md
+# @ReadME        : bash-it.bash --help
+# @Copyright     : Copyright: (c) 2023 Jason Hempstead, CasjaysDev
+# @Created       : Tuesday, Apr 25, 2023 19:50 EDT
+# @File          : bash-it.bash
+# @Description   : Collection of community Bash commands and scripts
+# @TODO          : Refactor code
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 export BASH_IT="${BASH_IT:-$HOME/.local/share/bash/plugins/bash-it}"
 if [ -f "$BASH_IT/bash_it.sh" ]; then
@@ -92,5 +89,6 @@ if [ -f "$BASH_IT/bash_it.sh" ]; then
   export BASH_IT_RELOAD_LEGACY="${BASH_IT_RELOAD_LEGACY:-1}"
 
   # Load Bash It
+  # shellcheck source=/dev/null
   [ -n "$(type -t bash-it)" ] || source "$BASH_IT/bash_it.sh"
 fi

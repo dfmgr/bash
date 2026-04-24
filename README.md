@@ -87,6 +87,9 @@ For detailed optimization information, see:
 - Inline code comments
 - Git commit history
 - Shell startup time: `time bash -i -c exit`
+
+For contributors and AI assistants: see [`AI.md`](AI.md) — the authoritative
+project specification (coding rules, conventions, and full layout).
   
 <p align=center>
   <a href="https://wiki.archlinux.org/index.php/bash" target="_blank">bash wiki</a>  |  

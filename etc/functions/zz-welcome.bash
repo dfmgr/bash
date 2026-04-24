@@ -45,7 +45,7 @@ show_welcome_tor() {
           printf_green "the tor hostname of this system is:"
           printf_green "$(sudo cat /var/lib/tor/hidden_service/hostname)"
           printf_info "The hostname has been saved to $HOME/tor_hostname"
-          cat /var/lib/tor/hidden_service/hostname | sudo tee "$HOME/tor_hostname" &>/dev/null
+          sudo cat /var/lib/tor/hidden_service/hostname | tee "$HOME/tor_hostname" &>/dev/null
           printf_read_question "3" "$ICON_QUESTION Show this message again?" "1"
           printf "\n"
           if ! printf_answer_yes; then

@@ -30,13 +30,13 @@ fi
 # Set the window title
 set_custom_win_title() {
   local cmd_bin="" cmd_args="" window_format="" cmd="" BASEPWD=""
-  cmd_bin="$(basename -- "$1")" && shift 1
+  cmd_bin="${1##*/}" && shift 1
   cmd_args="${@:1:20}" && shift $#
   cmd="| $cmd_bin $cmd_args"
   BASEPWD="${PWD/#$HOME/~}"
   window_format="$USER@$HOSTNAME"
   if [ -z "$cmd_bin" ] || [[ "$cmd_bin $cmd_args" =~ starship|$SHELL|tmux|screen ]]; then
-    cmd="| $(basename -- "$SHELL")"
+    cmd="| ${SHELL##*/}"
   fi
   if [ "$PWD" = "$HOME" ]; then
     echo -ne "\033]0; 🏠 $window_format:~ $cmd\a" </dev/null

@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202304231956-git
-# @@Author           :  Jason Hempstead
-# @@Contact          :  git-admin@casjaysdev.pro
-# @@License          :  WTFPL
-# @@ReadME           :  fuck.bash --help
-# @@Copyright        :  Copyright: (c) 2023 Jason Hempstead, Casjays Developments
-# @@Created          :  Sunday, Apr 23, 2023 19:56 EDT
-# @@File             :  fuck.bash
-# @@Description      :  corrects errors in previous console commands (lazy loaded)
-# @@Changelog        :  newScript
-# @@TODO             :  Refactor code
-# @@Other            :
-# @@Resource         :  https://github.com/nvbn/thefuck
-# @@Terminal App     :  no
-# @@sudo/root        :  no
-# @@Template         :  bash/system
+##@Version       : 202304231956-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.pro
+# @License       : LICENSE.md
+# @ReadME        : thefuck.bash --help
+# @Copyright     : Copyright: (c) 2023 Jason Hempstead, CasjaysDev
+# @Created       : Sunday, Apr 23, 2023 19:56 EDT
+# @File          : thefuck.bash
+# @Description   : corrects errors in previous console commands (lazy loaded)
+# @TODO          : Refactor code
+# @Other         :
+# @Resource      : https://github.com/nvbn/thefuck
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Lazy load thefuck - only load when fuck command is actually used
 # This improves shell startup time significantly (thefuck is slow to init)

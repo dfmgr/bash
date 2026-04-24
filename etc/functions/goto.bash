@@ -63,7 +63,7 @@ goto() {
 _goto_resolve_db() {
   local CONFIG_DEFAULT="${XDG_CONFIG_HOME:-$HOME/.config}/goto"
   GOTO_DB="${GOTO_DB:-$CONFIG_DEFAULT}"
-  GOTO_DB_CONFIG_DIRNAME=$(dirname "$GOTO_DB")
+  GOTO_DB_CONFIG_DIRNAME="${GOTO_DB%/*}"
   if [[ ! -d "$GOTO_DB_CONFIG_DIRNAME" ]]; then
     mkdir "$GOTO_DB_CONFIG_DIRNAME"
   fi
@@ -332,11 +332,11 @@ _complete_goto_aliases() {
       compopt +o filenames 2>/dev/null
 
       if ! [[ $(uname -s) =~ Darwin* ]]; then
-        matches[$i]=$(printf '%*s' "-$COLUMNS" "${matches[$i]}")
+        matches[i]=$(printf '%*s' "-$COLUMNS" "${matches[i]}")
 
-        COMPREPLY+=("$(compgen -W "${matches[$i]}")")
+        COMPREPLY+=("$(compgen -W "${matches[i]}")")
       else
-        COMPREPLY+=("${matches[$i]// */}")
+        COMPREPLY+=("${matches[i]// */}")
       fi
     done
   fi
@@ -389,7 +389,7 @@ _complete_goto_zsh() {
   _goto_resolve_db
   while IFS= read -r line; do
     all_aliases+=("$line")
-  done <<<"$(sed -e 's/ /:/g' $GOTO_DB 2>/dev/null)"
+  done <<<"$(sed -e 's/ /:/g' "$GOTO_DB" 2>/dev/null)"
 
   local state
   local -a options=(
@@ -418,22 +418,22 @@ _complete_goto_zsh() {
     _describe -t aliases 'unregister alias:' all_aliases && ret=0
     ;;
   esac
-  return $ret
+  return "$ret"
 }
 
-goto_aliases=($(alias | sed -n "s/.*\s\(.*\)='goto'/\1/p"))
+mapfile -t goto_aliases < <(alias | sed -n "s/.*\s\(.*\)='goto'/\1/p")
 goto_aliases+=("goto")
 
 for i in "${goto_aliases[@]}"; do
   # Register the goto completions.
   if [ -n "${BASH_VERSION}" ]; then
     if ! [[ $(uname -s) =~ Darwin* ]]; then
-      complete -o filenames -F _complete_goto_bash $i
+      complete -o filenames -F _complete_goto_bash "$i"
     else
-      complete -F _complete_goto_bash $i
+      complete -F _complete_goto_bash "$i"
     fi
   elif [ -n "${ZSH_VERSION}" ]; then
-    compdef _complete_goto_zsh $i
+    compdef _complete_goto_zsh "$i"
   else
     echo "Unsupported shell."
     exit 1

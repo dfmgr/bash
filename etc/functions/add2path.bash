@@ -84,7 +84,7 @@ add2path() {
           if [ -d "$args" ]; then
             dir="$args"
           elif [ -f "$args" ]; then
-            dir="$(dirname "$args" 2>/dev/null || echo '')"
+            dir="${args%/*}"
           fi
           if [ -d "$dir" ]; then
             if __test_path "$dir"; then
@@ -103,5 +103,5 @@ add2path() {
       done
     fi
   fi
-  return ${exitCode:-$?}
+  return "${exitCode:-$?}"
 } && export -f add2path

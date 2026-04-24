@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
+# shellcheck disable=SC1090,SC1091 # dynamic sourcing of powerline/python activate is intentional
+# shellcheck disable=SC2034        # palette vars (FG_*, BG_*, DIM, REVERSE, BOLD) are used across prompt functions via PS1 interpolation
+# shellcheck disable=SC2329        # prompt helpers are conditionally redefined and invoked via PROMPT_COMMAND
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202103251632-git
 # @Author        : Jason Hempstead
@@ -146,7 +150,7 @@ bashprompt() {
     if [ -f "$HOME/.config/bash/noprompt/timer" ]; then
       return 0
     else
-      st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo ${es:-$(date +%s)})
+      st=$(HISTTIMEFORMAT='%s ' history 1 | awk '{print $2}' | grep '^' || echo "${es:-$(date +%s)}")
       if [ -z "$STARTTIME" ] || { [ -n "$STARTTIME" ] && [ "$STARTTIME" -ne "$st" ]; }; then
         TIMER_ENDTIME=${EPOCHSECONDS:-1}
         TIMER_STARTTIME=${st:-0}
@@ -182,7 +186,7 @@ bashprompt() {
       return 0
     fi
     if ___bash_find "$BASHRC_GITDIR" '*.rs' 'Cargo.toml' 'Cargo.lock'; then
-      __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep ^[0-9.] | head -n1)"; }
+      __rust_version() { printf "| Rust: %s" "$($rustBin --version | tr ' ' '\n' | grep -E '^[0-9.]' | head -n1)"; }
       __rust_info() {
         version="$(__rust_version)"
         [ -z "${version}" ] && return
@@ -272,18 +276,23 @@ bashprompt() {
       unset PYTHON_VIRTUALENV PYTHON_SOURCE_FILE
       return
     fi
+    local _venv_real=""
     if [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/bin/activate" ]; then
       PYTHON_SOURCE_FILE="$(realpath "$venv_dir/bin/activate")"
-      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
+      _venv_real="$(realpath "$venv_dir")"
+      PYTHON_VIRTUALENV="${_venv_real##*/}"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/venv/bin/activate" ]; then
       PYTHON_SOURCE_FILE="$(realpath "$venv_dir/venv/bin/activate")"
-      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
+      _venv_real="$(realpath "$venv_dir")"
+      PYTHON_VIRTUALENV="${_venv_real##*/}"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$venv_dir/.venv/bin/activate" ]; then
       PYTHON_SOURCE_FILE="$(realpath "$venv_dir/.venv/bin/activate")"
-      PYTHON_VIRTUALENV="$(basename "$(realpath "$venv_dir")")"
+      _venv_real="$(realpath "$venv_dir")"
+      PYTHON_VIRTUALENV="${_venv_real##*/}"
     elif [ -z "$VIRTUAL_ENV" ] && [ -f "$SETV_VIRTUAL_DIR_PATH/bin/activate" ]; then
       PYTHON_SOURCE_FILE="$(realpath "$SETV_VIRTUAL_DIR_PATH/bin/activate")"
-      PYTHON_VIRTUALENV="$(basename "$(realpath "$SETV_VIRTUAL_DIR_PATH")")"
+      _venv_real="$(realpath "$SETV_VIRTUAL_DIR_PATH")"
+      PYTHON_VIRTUALENV="${_venv_real##*/}"
     fi
     [ -f "$PYTHON_SOURCE_FILE" ] && . "$PYTHON_SOURCE_FILE" && export PYTHON_VIRTUALENV PYTHON_SOURCE_FILE || true
   }
@@ -469,16 +478,16 @@ bashprompt() {
   ___wakatime_prompt() {
     local version entity project
     version="1.0.0"
-    entity="$(echo "$(fc -ln -0)" | cut -d ' ' -f1 || false)"
+    entity="$(fc -ln -0 | cut -d ' ' -f1 || false)"
     if [ -z "$entity" ]; then
       return 0
     else
       if [ "$__PROMPT_IS_GIT_REPO" == "true" ]; then
-        project="$(basename "$__PROMPT_GIT_ROOT")"
+        project="${__PROMPT_GIT_ROOT##*/}"
       else
         project="Terminal"
       fi
-      (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project $project --entity $entity &>/dev/null &)
+      (wakatime --write --plugin "bash-wakatime/$version" --entity-type app --project "$project" --entity "$entity" &>/dev/null &)
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -515,7 +524,8 @@ bashprompt() {
       shell="bash: "
       version="$bash"
     else
-      shell="$(basename ${TERM:-$SHELL}) "
+      shell="${TERM:-$SHELL}"
+      shell="${shell##*/} "
       version="$(eval "$shell" --version 2>/dev/null | tr ' ' '\n' | grep -E '[0-9.]' | head -n1 || echo '1.0')"
     fi
     [ -n "$SSH_CONNECTION" ] && shell="${shell}${version}: $(printf '%s' "via SSH ")" || shell="${shell}${version}"
