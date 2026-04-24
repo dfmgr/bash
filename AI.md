@@ -4,10 +4,11 @@ This file is the authoritative project SPEC for any AI assistant working in this
 repository. Rules below are binding. Where a rule conflicts with a generic
 default, this file wins.
 
-**Portability.** Section 1 (Hard Rules) is written to be portable — it can be
-dropped verbatim into any project and remain valid. Sections 2 (Inferred Rules)
-and 3 (Project Specification) are the per-project content; replace them when
-adapting this file to a different repository.
+**Portability.** Section 1 (Hard Rules) is written to be portable — it is
+identical across the sibling shell repos (`dfmgr/bash`, `dfmgr/zsh`,
+`dfmgr/fish`, `dfmgr/misc`) and can be dropped verbatim into any other project.
+Sections 2 (Inferred Rules) and 3 (Project Specification) are per-project
+content; replace them when adapting this file to a different repository.
 
 ---
 
@@ -20,36 +21,42 @@ These are non-negotiable. Violations must be reverted on sight.
      file directly. Use input redirection or pass the path as an argument.
    - Wrong: `cat foo.txt | grep bar`
    - Right: `grep bar foo.txt` or `grep bar < foo.txt`
-   - The same principle applies to `echo | cmd` when a here-string (`<<<`) or
-     here-doc (`<<`) is available in a bash context.
+   - When the shell supports them, prefer here-strings (`<<<`) or here-docs
+     (`<<`) over `echo | cmd`.
 
 2. **Only use forked/external commands when absolutely necessary.**
-   - Prefer shell builtins and bash-native constructs over spawning external
-     processes. Every fork is a measurable cost; this repo's entire value
-     proposition is fast shell startup.
-   - Prefer `[[ ... ]]` over `test` / `[ ... ]` in bash files.
-   - Prefer parameter expansion (`${var%.ext}`, `${var//a/b}`, `${var##*/}`)
-     over calling `basename`, `dirname`, `sed`, `awk`, `cut`, `tr`.
-   - Prefer `command -v foo` or `type -P foo` over `which foo`.
-   - Prefer `read -ra arr <<< "$str"` over `echo "$str" | tr ...`.
-   - Prefer bash arithmetic `$(( ... ))` over `expr`.
-   - Prefer globbing (`shopt -s nullglob; for f in dir/*.bash`) over `ls | ...`
-     or `find` when a plain glob suffices.
+   - Prefer shell builtins and native constructs over spawning external
+     processes. Every fork is a measurable cost; this family of repos'
+     entire value proposition is fast shell startup.
+   - Prefer the shell's test construct (`[[ ... ]]` in bash/zsh, `[ ... ]`
+     in POSIX sh, `test` in fish) over forking a separate `test` binary.
+   - Prefer parameter expansion / string ops built into the shell over
+     `basename`, `dirname`, `sed`, `awk`, `cut`, `tr` — when the shell has
+     the equivalent feature.
+   - Prefer `command -v foo` / `type -P foo` over `which foo`.
+   - Prefer the shell's arithmetic (`$(( ... ))`, `math` in fish) over `expr`.
+   - Prefer globbing (`shopt -s nullglob` in bash, `setopt null_glob` in zsh,
+     plain `*.ext` in fish) over `ls | ...` or `find` when a plain glob
+     suffices.
    - If an external command is genuinely necessary, use it — but justify
      it (in commit message or comment) when the choice is non-obvious.
 
-3. **Bashisms policy (based on shebang):**
-   - If the file has `#!/bin/bash`, `#!/usr/bin/env bash`, `# shellcheck shell=bash`,
-     or a `.bash` extension → bashisms are REQUIRED where they improve clarity
-     or performance. Do not hand-write POSIX-only code just to "be portable."
-   - If the file has `#!/bin/sh`, no shebang, or a `.sh` extension → the file
-     MUST be POSIX `sh`-compliant. No bashisms (no `[[ ]]`, no arrays, no
-     `<<<`, no `${var,,}`, no `function` keyword, no `local` without caveat,
-     no process substitution, no `read -a`, etc.). Verify with `sh -n` and,
-     where possible, `checkbashisms`.
-   - This matches the repo's existing split (`etc/functions/*.bash` = bash;
-     any `.sh` = POSIX) and the README claim of "100% POSIX compliant for all
-     `.sh` scripts."
+3. **Dialect policy (based on shebang / extension):**
+   - `#!/usr/bin/env bash`, `# shellcheck shell=bash`, or a `.bash` extension
+     → BASH. Bashisms are REQUIRED where they improve clarity or performance.
+     Do not hand-write POSIX-only code just to "be portable."
+   - `#!/bin/sh`, `#!/usr/bin/env sh`, no shebang, or a `.sh` extension
+     → POSIX `sh`. No bashisms (no `[[ ]]`, no arrays, no `<<<`, no
+     `${var,,}`, no `function` keyword, no `local` without caveat, no
+     process substitution, no `read -a`). Verify with `sh -n` and, where
+     available, `checkbashisms`.
+   - `#!/usr/bin/env zsh` or a `.zsh` extension → ZSH. Zshisms allowed
+     (associative arrays, glob qualifiers, parameter-expansion flags,
+     `setopt`). Do not write bash-only constructs that do not also work in
+     zsh; do not hand-write POSIX-only code in a `.zsh` file.
+   - `#!/usr/bin/env fish` or a `.fish` extension → FISH. Use fish syntax
+     (`function ... end`, `set` for assignment, `if test ...`, `command -q`
+     for existence). Do not attempt bash/POSIX idioms inside a `.fish` file.
 
 4. **Always maintain `{project_dir}/.git/COMMIT_MESS` (GLOBAL RULE).**
    - This rule applies unconditionally, in every git repository, in every
@@ -88,26 +95,27 @@ These are non-negotiable. Violations must be reverted on sight.
    - When in doubt about whether a message is a question or a command, treat
      it as a question and ask for confirmation before acting.
 
-7. **Always syntax-check shell scripts after editing.**
-   - After editing a bash script (shebang `bash`, `.bash` extension, or
-     `shellcheck shell=bash` directive), run `bash -n <file>`.
-   - After editing a POSIX shell script (shebang `sh`, `.sh` extension, or no
-     shebang), run `sh -n <file>`.
+7. **Always syntax-check scripts after editing.**
+   - Bash file: `bash -n <file>`.
+   - POSIX sh file: `sh -n <file>`.
+   - Zsh file: `zsh -n <file>`.
+   - Fish file: `fish --no-execute <file>` (or `fish -n <file>`).
    - If the check fails, fix the script before moving on. Do not report the
      task complete with a failing syntax check.
 
-8. **Run `shellcheck` if available; fix what it reports.**
-   - After editing any shell script, check whether `shellcheck` is installed
-     (`command -v shellcheck`). If yes, run it against the edited file(s).
-   - Use the right dialect: `shellcheck --shell=bash <file>` for bash scripts,
-     `shellcheck --shell=sh <file>` for POSIX scripts.
-   - Fix findings caused by the edit (any finding that points at lines you
-     changed, or that your changes introduced).
-   - For pre-existing findings in lines you did NOT edit: report them to the
-     user and offer to fix — but do NOT silently rewrite unrelated code
+8. **Run the appropriate linter if available; fix what it reports.**
+   - Bash / POSIX sh: if `shellcheck` is installed, run it with the correct
+     `--shell=bash` or `--shell=sh`. Skip silently if absent — do not
+     install it.
+   - Zsh: `shellcheck` does NOT support zsh. Rely on `zsh -n` plus manual
+     review. Do not force `--shell=bash` on zsh files — the false-positive
+     rate is too high.
+   - Fish: `shellcheck` does NOT parse fish. Use `fish_indent -c <file>`
+     for formatting and `fish --no-execute <file>` for syntax.
+   - Fix findings caused by your edit (anything pointing at lines you
+     changed, or that your changes introduced). Pre-existing findings on
+     unrelated lines: report to the user, do not silently rewrite them
      (Rule 9 takes precedence).
-   - If `shellcheck` is not installed, skip silently — do not attempt to
-     install it, and do not treat its absence as an error.
 
 9. **Preserve the user's existing formatting.**
    - Match the surrounding style of the file being edited: indentation width
@@ -117,9 +125,9 @@ These are non-negotiable. Violations must be reverted on sight.
    - Do NOT reformat lines you were not asked to change. Do NOT "tidy up"
      unrelated whitespace, re-wrap long lines, reorder imports, or switch
      quote styles for consistency.
-   - If a linter/formatter (e.g. `shfmt`, `prettier`, `black`) disagrees with
-     the file's existing style, the file wins — do not run the formatter
-     unless the user asks for it.
+   - If a linter/formatter (e.g. `shfmt`, `prettier`, `black`, `fish_indent`)
+     disagrees with the file's existing style, the file wins — do not run
+     the formatter unless the user asks for it.
 
 10. **Never add Co-Authored-By or AI-attribution footers (GLOBAL RULE).**
     - This rule applies unconditionally, in every repository, in every

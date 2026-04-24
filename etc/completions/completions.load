@@ -16,11 +16,22 @@
 if [ -f "$HOME/.config/bash/completions/00-completions.sh" ]; then
   . "$HOME/.config/bash/completions/00-completions.sh"
 fi
-# Use bash glob instead of slow find command
+# Use bash glob instead of slow find command.
+# Skip non-bash completions: filenames ending in _zsh/.zsh/.fish, and files
+# whose first line is a #compdef directive (zsh). Sourcing those in bash
+# fires command_not_found_handle on zsh builtins (_arguments, autoload),
+# which can hang the shell via the package-manager fallback.
 shopt -s nullglob
 for f in "${BASH_COMPLETION_USER_DIR:-$HOME/.local/share/bash-completion/completions}"/*; do
-  [ -f "$f" ] && . "$f" &>/dev/null
+  [ -f "$f" ] || continue
+  case "$f" in
+    *_zsh|*.zsh|*.fish) continue ;;
+  esac
+  IFS= read -r _compl_first_line <"$f" 2>/dev/null
+  [ "${_compl_first_line:0:9}" = "#compdef " ] && continue
+  . "$f" &>/dev/null
 done
+unset _compl_first_line
 shopt -u nullglob
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Use bash glob instead of slow find for OS-specific completions
