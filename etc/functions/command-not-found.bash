@@ -19,9 +19,17 @@ orig_command_not_found_handle() {
   printf_red "$cmd: command not found"
   if type -P pkmgr &>/dev/null; then
     printf_green "Searching the repo for $cmd"
-    possibilities="$(pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
+    # Bound pkmgr calls with `timeout` so a hung search/install (e.g. when
+    # the missing token is a zsh builtin like `_arguments` and pkmgr ends up
+    # spawning itself) cannot stall the interactive shell indefinitely.
+    # Skip the search entirely on tokens that look like internal shell
+    # symbols — these are never installable packages.
+    case "$cmd" in
+      _*|*[\(\){}\$\!\<\>\|]*) return 127 ;;
+    esac
+    possibilities="$(timeout 5 pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
     exact="$(echo "$possibilities" | awk -F ' ' '{print $1}' | sed 's| ||g' | grep -x "$cmd")"
-    [ -n "$exact" ] && pkmgr silent install "$exact" 2>/dev/null
+    [ -n "$exact" ] && timeout 30 pkmgr silent install "$exact" 2>/dev/null
     if type -P "$exact" &>/dev/null || [[ $? = 0 ]]; then
       printf_green "$exact has been Installed"
       sleep 2
