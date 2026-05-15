@@ -655,4 +655,14 @@ bashprompt() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bashprompt 2>/dev/null
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Redraw prompt on terminal resize so it does not split across lines.
+# Bash updates COLUMNS/LINES automatically on SIGWINCH; we just need to
+# recompute the width-dependent globals before readline redraws.
+_prompt_winch() {
+  PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
+  # Clear the current input line so readline redraws at the new width.
+  printf '\033[2K\r'
+}
+trap '_prompt_winch' WINCH
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
