@@ -660,8 +660,6 @@ bashprompt 2>/dev/null
 # recompute the width-dependent globals before readline redraws.
 _prompt_winch() {
   PS_FILL="${PS_LINE:0:$((COLUMNS - 1))}"
-  # Clear the current input line so readline redraws at the new width.
-  printf '\033[2K\r'
 }
 trap '_prompt_winch' WINCH
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
