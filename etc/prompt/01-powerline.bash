@@ -634,7 +634,7 @@ bashprompt() {
     fi
   }
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command;history -a && history -r; "
+  PROMPT_COMMAND="__pre_prompt_command;ps1;title;__post_prompt_command;history -a && history -r"
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # ------------------------------------------------------------------
   # | PS2 - Continuation interactive prompt                          |
