@@ -29,9 +29,11 @@ fi
 # shellcheck disable=2124,2217
 # Set the window title
 set_custom_win_title() {
-  local cmd_bin="" cmd_args="" window_format="" cmd="" BASEPWD=""
-  cmd_bin="${1##*/}" && shift 1
-  cmd_args="${@:1:20}" && shift $#
+  local full_cmd="${1:-}" cmd_bin="" cmd_args="" window_format="" cmd="" BASEPWD=""
+  local -a cmd_words=()
+  read -ra cmd_words <<<"$full_cmd"
+  cmd_bin="${cmd_words[0]##*/}"
+  cmd_args="${cmd_words[*]:1:20}"
   cmd="| $cmd_bin $cmd_args"
   BASEPWD="${PWD/#$HOME/~}"
   window_format="$USER@$HOSTNAME"
@@ -43,7 +45,7 @@ set_custom_win_title() {
   else
     echo -ne "\033]0; 🏛️ $window_format:$BASEPWD $cmd\a" </dev/null
   fi
-  trap 'set_custom_win_title ${BASH_COMMAND}' DEBUG
+  trap 'set_custom_win_title "$BASH_COMMAND"' DEBUG
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source users functions
