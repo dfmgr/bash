@@ -35,7 +35,7 @@ showsysteminfo() {
   echo -ne "${LIGHTRED} USERS:$NC\t"
   w -h | awk '{print $1}' | uniq | awk '{users=users$1" "}END{print users}'
   echo -ne "${LIGHTRED}  DISK:$NC"
-  df -h | grep -e"/dev/sd" -e"/mnt/" | awk '{print "\t"$0}'
+  df -h | grep -E -e "/dev/(sd|nvme|vd|xvd)" -e "/mnt/" | awk '{print "\t"$0}'
   echo ""
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
