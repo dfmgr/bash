@@ -235,11 +235,17 @@ _goto_cleanup() {
     return
   fi
 
+  local line al dir
   while IFS= read -r i && [ -n "$i" ]; do
     echo "Cleaning up: $i"
     _goto_unregister_alias "$i"
-  done <<<"$(awk '{al=$1; $1=""; dir=substr($0,2);
-                    system("[ ! -d \"" dir "\" ] && echo " al)}' "$GOTO_DB")"
+  done <<<"$(
+    while IFS= read -r line; do
+      al="${line%% *}"
+      dir="${line#* }"
+      [ -d "$dir" ] || echo "$al"
+    done <"$GOTO_DB"
+  )"
 }
 
 # Changes to the given alias' directory
