@@ -15,23 +15,23 @@
 # @sudo/root         :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 _add2path_completion() {
-  local i cur prev opts paths
+  local cur prev opts paths
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
   opts="--init --help --remove --add --list"
   paths="$(echo "$PATH" | tr ':' '\n' | sort -u | grep -v '^$' | grep '^')"
   if [[ ${prev} == '--help' ]]; then
-    COMPREPLY=($(compgen -W '' -- ${cur}))
+    COMPREPLY=()
     return 0
   elif [[ ${prev} == 'remove' ]] || [[ ${prev} = '--remove' ]] || [[ ${prev} = 'delete' ]] || [[ ${prev} = '--delete' ]]; then
-    COMPREPLY=($(compgen -W '${paths}' -- ${cur}))
+    mapfile -t COMPREPLY < <(compgen -W "${paths}" -- "${cur}")
     return
   elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W '${opts}' -- "${cur}"))
+    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}")
     return 0
   else
-    _filedir -d
+    declare -F _filedir >/dev/null && _filedir -d
   fi
 }
 complete -F _add2path_completion add2path
