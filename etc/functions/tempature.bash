@@ -14,6 +14,7 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 celcius2f() {
+  local math tf
   if [ -z "$1" ] || [ $# -ne 1 ]; then
     printf "Usage: celcius2f 40\n"
     return 1
@@ -24,13 +25,14 @@ celcius2f() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 f2celcius() {
+  local math tc
   if [ -z "$1" ] || [ $# -ne 1 ]; then
     printf "Usage: f2celcius 75\n"
     return 1
   fi
   math="$1"
   tc=$(echo "scale=2;(5/9)*($math-32)" | bc)
-  printf '%s\n' "$tf"
+  printf '%s\n' "$tc"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
