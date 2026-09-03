@@ -153,37 +153,59 @@ indistinguishable from existing code.
 ### 2.1 File headers
 
 Every `.bash` / `.sh` script in this repo starts with a standardized header.
-New scripts MUST follow the same template:
+All scripts (new and existing) MUST follow this template:
 
 ```bash
 #!/usr/bin/env bash
 # shellcheck shell=bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : YYYYMMDDHHMM-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : <filename> --help
-# @Copyright     : Copyright: (c) <year> Jason Hempstead, CasjaysDev
-# @Created       : <Day, Mon DD, YYYY HH:MM TZ>
-# @File          : <filename>
-# @Description   : <one-line description>
-# @TODO          :
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  %Y%m%d%H%M-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  {scriptname --help | README.md}
+# @@Copyright        :  Copyright: (c) {year} Jason Hempstead, Casjays Developments
+# @@Created          :  {Weekday, Month DD, YYYY HH:MM TZ}
+# @@File             :  {file_name}
+# @@Description      :  {short one-sentence description}
+# @@Changelog        :  {short one-sentence changelog message}
+# @@TODO             :  {short list of TODOs}
+# @@Other            :  {anything that doesn't fit another field}
+# @@Resource         :  {short list of resources, e.g. Stack Overflow links}
+# @@Terminal App     :  {yes|no}
+# @@sudo/root        :  {yes|no}
+# @@Template         :  {template name, or shell/bash if no template}
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="YYYYMMDDHHMM-git"
 ```
 
-The top-level `install.sh` uses the extended `@@`-prefixed variant (see
-`install.sh` for the exact template) — match that template for installers.
+- **All scripts in this repo are licensed under WTFPL** — always
+  `# @@License          :  WTFPL`; never MIT, Apache, or another license,
+  except for already-flagged vendored/third-party files (see
+  `TODO.AI.md`), which keep their original license header untouched.
+- `##@Version` uses double `#`; every other field uses single `#` with a
+  double `@@` prefix.
+- `VERSION="YYYYMMDDHHMM-git"` is the literal placeholder for new scripts.
+  Never revert an already-stamped real timestamp back to the placeholder.
+  When editing an existing script, update both the `##@Version` header line
+  and the first `VERSION=` assignment after the header to the current
+  timestamp (`date +'%Y%m%d%H%M-git'`); leave any other `VERSION=`
+  occurrence elsewhere in the file untouched.
+- `install.sh` already used this extended template before it became the
+  repo-wide standard — treat it as the reference example.
 
 ### 2.2 Shebangs & shellcheck
 
 - Bash scripts: `#!/usr/bin/env bash` (never `#!/bin/bash` — env-based for
   portability across distros where bash lives outside `/bin`).
 - Always include `# shellcheck shell=bash` for bash files.
-- Add `# shellcheck disable=SCxxxx` directives only when justified, placed
-  immediately below the shebang block.
+- After the header block, always include the standard disable line:
+  `# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329`,
+  wrapped above and below by the separator line (see §2.1 template). Add
+  further `# shellcheck disable=SCxxxx` directives only when separately
+  justified.
 
 ### 2.3 Section separators
 
