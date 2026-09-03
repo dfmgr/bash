@@ -44,16 +44,14 @@ fi
 __powerline() {
   # Unicode symbols
   readonly PS_SYMBOL_DARWIN='' 2>/dev/null
-  readonly PS_SYMBOL_LINUX='🐧 ' >/dev/null
+  readonly PS_SYMBOL_LINUX='🐧 ' 2>/dev/null
   readonly PS_SYMBOL_OTHER='%' 2>/dev/null
   readonly GIT_BRANCH_SYMBOL='⑂' 2>/dev/null
   readonly GIT_BRANCH_CHANGED_SYMBOL='+' 2>/dev/null
   readonly GIT_NEED_PUSH_SYMBOL='⇡' 2>/dev/null
   readonly GIT_NEED_PULL_SYMBOL='⇣' 2>/dev/null
-  readonly RUBY_SYMBOL='⬙' 2>/dev/null
-  readonly NODE_SYMBOL='⬢' 2>/dev/null
-  readonly PYTHON_SYMBOL='🐍' 2>/dev/null
-  readonly PHP_SYMBOL='🕸️' 2>/dev/null
+  # Precompute the fill line once (used to right-align PS_TIME each prompt)
+  readonly PS_LINE=$(printf -- '- %.0s' {1..2000}) 2>/dev/null
   # Foreground/Background colors (shared with 01-powerline.bash)
   __powerline_colors
   # what OS?
@@ -95,29 +93,21 @@ __powerline() {
   ### PROMPT #####################################################
   __title_info() { echo -ne "${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}"; }
   case $TERM in
-  xterm* | rxvt | Eterm | eterm)
+  xterm* | rxvt* | Eterm | eterm)
     title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
-  screen)
+  screen*)
     title() { echo -ne "\033_$(__title_info)\033\\"; }
+    ;;
+  *)
+    title() { echo -ne "\033]0;$(__title_info)\007"; }
     ;;
   esac
   ps1() {
     local exit_code=$?
-    local bold=$(tput bold 2>/dev/null)
-    local reset=$(tput sgr0 2>/dev/null)
-    local cyan=""
-    local green=""
-    local orange=""
-    local white=""
-    local yellow=""
+    local red="" purple=""
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if [ "$(tput colors 2>/dev/null || printf "0")" -ge 256 ]; then
-      cyan=$(tput setaf 37)
-      green=$(tput setaf 64)
-      orange=$(tput setaf 166)
-      white=$(tput setaf 15)
-      yellow=$(tput setaf 136)
       red=$(tput setaf 1)
       purple=$(tput setaf 5)
     fi
@@ -128,7 +118,6 @@ __powerline() {
     else
       local BG_EXIT="$BG_RED"
     fi
-    PS_LINE=$(printf -- '- %.0s' {1..2000})
     PS_FILL=${PS_LINE:0:$COLUMNS}
     PS_TIME="\[\033[\$((COLUMNS-10))G\]$red[\t]$RESET"
     PS1="\${PS_FILL}\[\033[0G\]"
