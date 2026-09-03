@@ -17,6 +17,13 @@
 # @Other         :
 # @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Windows terminals get the dedicated 01-powerline.win prompt (sourced by
+# prompt.load, which runs after this file); skip the heavier setup here so
+# it isn't wasted work immediately overwritten by that prompt's PROMPT_COMMAND
+case "$(uname -s)" in
+CYGWIN* | MINGW32* | MSYS* | MINGW*) return 0 ;;
+esac
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Install fonts in background to avoid blocking shell startup
 if [ ! -f "$HOME/.local/share/fonts/PowerlineSymbols.otf" ] || [ ! -f "$HOME/.local/share/fonts/10-powerline-symbols.conf" ]; then
   (
@@ -85,47 +92,8 @@ bashprompt() {
   GO_SYMBOL=' 👺 '
   RUST_SYMBOL=' 🏗 '
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Foreground Colors
-  __tput() { tput "$@" 2>/dev/null; }
-  FG_BLACK="\[$(__tput setaf 0 2>/dev/null)\]"
-  FG_GRAY1="\[$(__tput setaf 15 2>/dev/null)\]"
-  FG_GRAY2="\[$(__tput setaf 7 2>/dev/null)\]"
-  FG_GRAY3="\[$(__tput setaf 8 2>/dev/null)\]"
-  FG_RED="\[$(__tput setaf 9 2>/dev/null)\]"
-  FG_GREEN="\[$(__tput setaf 10 2>/dev/null)\]"
-  FG_YELLOW="\[$(__tput setaf 11 2>/dev/null)\]"
-  FG_BLUE="\[$(__tput setaf 12 2>/dev/null)\]"
-  FG_MAGENTA="\[$(__tput setaf 13 2>/dev/null)\]"
-  FG_CYAN="\[$(__tput setaf 14 2>/dev/null)\]"
-  FG_DARK_RED="\[$(__tput setaf 1 2>/dev/null)\]"
-  FG_DARK_GREEN="\[$(__tput setaf 2 2>/dev/null)\]"
-  FG_MUSTARD="\[$(__tput setaf 3 2>/dev/null)\]"
-  FG_NAVY="\[$(__tput setaf 4 2>/dev/null)\]"
-  FG_PURPLE="\[$(__tput setaf 5 2>/dev/null)\]"
-  FG_TURQUOISE="\[$(__tput setaf 6 2>/dev/null)\]"
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Background Colors
-  BG_BLACK="\[$(__tput setab 0 2>/dev/null)\]"
-  BG_GRAY1="\[$(__tput setab 15 2>/dev/null)\]"
-  BG_GRAY2="\[$(__tput setab 7 2>/dev/null)\]"
-  BG_GRAY3="\[$(__tput setab 8 2>/dev/null)\]"
-  BG_RED="\[$(__tput setab 9 2>/dev/null)\]"
-  BG_GREEN="\[$(__tput setab 10 2>/dev/null)\]"
-  BG_YELLOW="\[$(__tput setab 11 2>/dev/null)\]"
-  BG_BLUE="\[$(__tput setab 12 2>/dev/null)\]"
-  BG_MAGENTA="\[$(__tput setab 13 2>/dev/null)\]"
-  BG_CYAN="\[$(__tput setab 14 2>/dev/null)\]"
-  BG_DARK_RED="\[$(__tput setab 1 2>/dev/null)\]"
-  BG_DARK_GREEN="\[$(__tput setab 2 2>/dev/null)\]"
-  BG_MUSTARD="\[$(__tput setab 3 2>/dev/null)\]"
-  BG_NAVY="\[$(__tput setab 4 2>/dev/null)\]"
-  BG_PURPLE="\[$(__tput setab 5 2>/dev/null)\]"
-  BG_TURQUOISE="\[$(__tput setab 6 2>/dev/null)\]"
-  BG_DEEP_GREEN="\[$(__tput setab 22 2>/dev/null)\]"
-  DIM="\[$(__tput dim 2>/dev/null)\]"
-  REVERSE="\[$(__tput rev 2>/dev/null)\]"
-  RESET="\[$(__tput sgr0 2>/dev/null)\]"
-  BOLD="\[$(__tput bold 2>/dev/null)\]"
+  # Foreground/Background colors (shared with 01-powerline.win)
+  __powerline_colors
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get OS
   case "$(uname)" in
@@ -415,11 +383,15 @@ bashprompt() {
     if [ "$__PROMPT_IS_GIT_REPO" = "true" ]; then
       __git_version() { printf "%s" "| Git: $($gitBin --version 2>/dev/null | awk '{print $3}' | head -n 1)"; }
       __git_status() {
+        local raw
         git_eng="env LANG=C git"
         branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-        [ -n "$branch" ] || return # git branch not found
-        [ -n "$($git_eng status --porcelain 2>/dev/null)" ] && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
-        stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$' 2>/dev/null)"
+        # git branch not found
+        [ -n "$branch" ] || return
+        # one status call covers both the dirty check and the branch/ahead/behind marker
+        raw="$($git_eng status --porcelain --branch 2>/dev/null)"
+        grep -qv '^##' <<<"$raw" && marks+="$GIT_BRANCH_CHANGED_SYMBOL"
+        stat="$(grep '^##' <<<"$raw" | grep -o '\[.\+\]$')"
         aheadN="$(echo -n "$stat" | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         behindN="$(echo -n "$stat" | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
         [ -n "$aheadN" ] && marks+="$GIT_NEED_PUSH_SYMBOL$aheadN"
@@ -563,7 +535,7 @@ bashprompt() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # PROMPT
   __title_info() {
-    echo -ne "${USER}@${HOSTNAME}:${PWD//$HOME/\~}"
+    echo -ne "${USER}@${HOSTNAME}:${PWD/#$HOME/~}"
   }
   # Add all additional pre commands here command
   __pre_prompt_command() {
@@ -648,7 +620,7 @@ bashprompt() {
   PS4="$(
     tput cr 2>/dev/null
     tput cuf 6 2>/dev/null
-    printf "${GREEN}+%s ($LINENO) +" " $RESET"
+    printf "${GREEN:-}+%s (\$LINENO) +" " ${RESET:-}"
   )"
   export PS4
 }

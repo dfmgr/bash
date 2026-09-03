@@ -378,9 +378,10 @@ Plugin dir: `$HOME/.local/share/bash/plugins` (the `PLUGIN_DIR`).
     │   ├── 00-profile.bash   # Unix profile setup
     │   └── 00-profile.win    # Windows profile setup
     ├── prompt/
-    │   ├── prompt.load       # prompt loader
-    │   ├── 01-powerline.bash # powerline prompt
-    │   └── 01-powerline.win  # powerline prompt (Windows)
+    │   ├── prompt.load             # prompt loader
+    │   ├── 00-powerline-colors.bash # shared FG_*/BG_* tput palette
+    │   ├── 01-powerline.bash       # powerline prompt
+    │   └── 01-powerline.win        # powerline prompt (Windows)
     ├── functions/            # individual function modules, glob-sourced
     │   ├── 00-functions.bash
     │   ├── add2path.bash
