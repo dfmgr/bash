@@ -14,7 +14,7 @@
 # @Resource          :
 # @sudo/root         :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-_add2path_completion() {
+__add2path_completion() {
   local cur prev opts paths
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -34,4 +34,4 @@ _add2path_completion() {
     declare -F _filedir >/dev/null && _filedir -d
   fi
 }
-complete -F _add2path_completion add2path
+complete -F __add2path_completion add2path
