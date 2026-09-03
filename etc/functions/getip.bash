@@ -25,17 +25,17 @@ else
       else
         NETDEV="$(ip route | awk '/default/ {print $5}')"
       fi
-      CURRIP4="$(sudo ifconfig $NETDEV | awk '/inet / && !/127.0.0./ && !/inet6/ {gsub(/addr:/,""); print $2; exit}')"
-      CURRIP6="$(sudo ifconfig $NETDEV | awk '/inet6.*global/ && !/docker/ {print $2; exit}')"
+      CURRIP4="$(ifconfig "$NETDEV" | awk '/inet / && !/127.0.0./ && !/inet6/ {gsub(/addr:/,""); print $2; exit}')"
+      CURRIP6="$(ifconfig "$NETDEV" | awk '/inet6.*global/ && !/docker/ {print $2; exit}')"
       is_online && IFISONLINE=0 || IFISONLINE=1
       if [ "$IFISONLINE" = 0 ]; then
         CURRIP4WAN="$(curl -4qs --max-time 2 ifconfig.co/ip 2>/dev/null)"
         CURRIP6WAN="$(curl -6qs --max-time 2 ifconfig.co/ip 2>/dev/null)"
       fi
-      [ -z "$CURRIP4" ] || echo $CURRIP4
-      [ -z "$CURRIP6" ] || echo $CURRIP6
-      [ -z "$CURRIP4WAN" ] || echo $CURRIP4WAN
-      [ -z "$CURRIP6WAN" ] || echo $CURRIP6WAN
+      [ -z "$CURRIP4" ] || echo "$CURRIP4"
+      [ -z "$CURRIP6" ] || echo "$CURRIP6"
+      [ -z "$CURRIP4WAN" ] || echo "$CURRIP4WAN"
+      [ -z "$CURRIP6WAN" ] || echo "$CURRIP6WAN"
       unset IFCONFIG NETDEV IFISONLINE CURRIP4 CURRIP6 CURRIP4WAN CURRIP6WAN
     fi
   }
