@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031517-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  01-powerline.win --help
+# @@Copyright        :  Copyright: (c) 2021 Jason Hempstead, Casjays Developments
+# @@Created          :  Thursday, Mar 25, 2021 18:01 EDT
+# @@File             :  01-powerline.win
+# @@Description      :  Powerline-style bash prompt with git status
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :  https://github.com/riobard/bash-powerline
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
 # shellcheck disable=SC1087
-# shellcheck disable=SC2317
-# shellcheck disable=SC2120
-# shellcheck disable=SC2155
-# shellcheck disable=SC2199
 # shellcheck disable=SC2034 # palette vars (FG_*, BG_*, DIM, REVERSE, BOLD) come from 00-powerline-colors.bash and are used via PS1 interpolation
 # shellcheck disable=SC2153 # RESET is set by __powerline_colors (00-powerline-colors.bash), not a typo of "reset"
 # shellcheck disable=SC1091 # powerline.sh paths are external, guarded by -f checks, not part of this repo
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202103251632-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : 01-powerline.win --help
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 18:01 EDT
-# @File          : 01-powerline.win
-# @Description   :
-# @TODO          :
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031517-git"
 #Powerline check
 if [ "$POWERLINE" ]; then
   #Debian/Ubuntu/Arch
