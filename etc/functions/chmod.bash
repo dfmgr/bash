@@ -13,8 +13,8 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-755d() { find ${1:-.} -type d -exec chmod -Rfv 755 {} \;; }
-755f() { find ${1:-.} -type f -exec chmod -Rfv 755 {} \;; }
-644f() { find ${1:-.} -type f -exec chmod -Rfv 644 {} \;; }
+755d() { find "${1:-.}" -type d -exec chmod -fv 755 {} +; }
+755f() { find "${1:-.}" -type f -exec chmod -fv 755 {} +; }
+644f() { find "${1:-.}" -type f -exec chmod -fv 644 {} +; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
