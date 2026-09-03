@@ -14,24 +14,24 @@
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if ! type tree >&/dev/null; then
-  tree() { # {{{
-    opt=""
-    directory="."
+  # {{{
+  tree() {
+    local opt="" directory="."
     while [ $# -gt 0 ]; do
       case $1 in
-      "-L")
+      -L)
         opt="$opt -d $2"
         shift
         ;;
-      "-d")
+      -d)
         opt="$opt -type d"
         shift
         ;;
-      "-*")
+      -*)
         echo "$1 is invalid option"
-        exit 1
+        return 1
         ;;
-      "*")
+      *)
         directory="$*"
         break
         ;;
