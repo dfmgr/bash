@@ -92,7 +92,7 @@ function _setv_help_() {
 
 function _setv_custom_python_path() {
   if [ -f "${1}" ]; then
-    if [ "$(expr "$1" : '.*python\([2,3]\)')" = "3" ]; then
+    if [ "$(expr "$1" : '.*python\([23]\)')" = "3" ]; then
       SETV_PYTHON_VERSION=3
     else
       SETV_PYTHON_VERSION=2
@@ -110,6 +110,11 @@ function _setv_create() {
     echo "You need to pass virtual environment name"
     _setv_help_
   else
+    [ -n "${SETV_PY_PATH}" ] || SETV_PY_PATH=$(command -v "python${SETV_PYTHON_VERSION}" 2>/dev/null)
+    if [ -z "${SETV_PY_PATH}" ]; then
+      echo "Error: python${SETV_PYTHON_VERSION} not found in PATH"
+      return 1
+    fi
     echo "Creating new virtual environment with the name: $1"
 
     if [ "${SETV_PYTHON_VERSION}" -eq 3 ]; then
@@ -124,7 +129,6 @@ function _setv_create() {
 
 function _setv_delete() {
   # Deletes virtual environment if ran with -d|--delete flag
-  # TODO: Refactor
   if [ -z "${1}" ]; then
     echo "You need to pass virtual environment name"
     _setv_help_
@@ -159,6 +163,7 @@ function setv() {
     -n | --new) _setv_create "${2}" ;;
     -d | --delete) _setv_delete "${2}" ;;
     -l | --list) _setv_list ;;
+    -p | --python) _setv_custom_python_path "${2}" "${3}" ;;
     *)
       if [ -d "${SETV_VIRTUAL_DIR_PATH}/${1}" ]; then
         # Activate the virtual environment
