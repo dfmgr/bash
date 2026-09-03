@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090 # sources the venv's own activate script; path is inherently dynamic
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202103251632-git
 # @Author        : Sachin (psachin)
@@ -61,12 +62,10 @@ SETV_PY_PATH=$(command -v python${SETV_PYTHON_VERSION} 2>/dev/null)
 function _setvcomplete_() {
   # Bash-autocompletion.
   # This ensures Tab-auto-completions work for virtual environment names.
-  local cmd="${1##*/}" # to handle command(s).
-  # Not necessary as such. 'setv' is the only command
+  # 'setv' is the only command, so no need to inspect "$1" here.
 
-  local word=${COMP_WORDS[COMP_CWORD]} # Words thats being completed
-  local xpat='${word}'                 # Filter pattern. Include
-  # only words in variable '$names'
+  # Word thats being completed
+  local word=${COMP_WORDS[COMP_CWORD]}
   # Virtual environment names
   local names
   names=$(
@@ -75,7 +74,8 @@ function _setvcomplete_() {
     done
   )
 
-  COMPREPLY=($(compgen -W "$names" -X "$xpat" -- "$word")) # compgen generates the results
+  # compgen generates the results
+  mapfile -t COMPREPLY < <(compgen -W "$names" -- "$word")
 }
 
 function _setv_help_() {
@@ -92,13 +92,13 @@ function _setv_help_() {
 
 function _setv_custom_python_path() {
   if [ -f "${1}" ]; then
-    if [ "$(expr $1 : '.*python\([2,3]\)')" = "3" ]; then
+    if [ "$(expr "$1" : '.*python\([2,3]\)')" = "3" ]; then
       SETV_PYTHON_VERSION=3
     else
       SETV_PYTHON_VERSION=2
     fi
     SETV_PY_PATH=${1}
-    _setv_create $2
+    _setv_create "$2"
   else
     echo "Error: Path ${1} does not exist!"
   fi
@@ -130,9 +130,9 @@ function _setv_delete() {
     _setv_help_
   else
     if [ -d "${SETV_VIRTUAL_DIR_PATH}/${1}" ]; then
-      read -p "Really delete this virtual environment(Y/N)? " yes_no
+      read -r -p "Really delete this virtual environment(Y/N)? " yes_no
       case $yes_no in
-      Y | y) rm -rvf "${SETV_VIRTUAL_DIR_PATH}/${1}" ;;
+      Y | y) rm -rvf "${SETV_VIRTUAL_DIR_PATH}/${1:?}" ;;
       N | n) echo "Leaving the virtual environment as it is." ;;
       *) echo "You need to enter either Y/y or N/n" ;;
       esac
