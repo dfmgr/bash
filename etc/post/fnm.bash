@@ -15,9 +15,8 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Load fnm if not loaded
 if [ "$NODE_MANAGER" = "fnm" ] && [ -z "$FNM_MULTISHELL_PATH" ]; then
-  if [ -n "$(builtin type fnm 2>/dev/null)" ]; then 
+  if command -v fnm >/dev/null 2>&1; then
     eval "$(fnm env)"
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
