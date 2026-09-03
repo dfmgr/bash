@@ -15,7 +15,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 orig_command_not_found_handle() {
   local cmd=$1
-  local possibilities=""
+  local possibilities="" exact=""
   printf_red "$cmd: command not found"
   if type -P pkmgr &>/dev/null; then
     printf_green "Searching the repo for $cmd"
@@ -30,10 +30,10 @@ orig_command_not_found_handle() {
     possibilities="$(timeout 5 pkmgr search show-raw "$cmd" 2>/dev/null | grep -a "$cmd" | sort -u | head -n20 | grep '^' || echo '')"
     exact="$(echo "$possibilities" | awk -F ' ' '{print $1}' | sed 's| ||g' | grep -x "$cmd")"
     [ -n "$exact" ] && timeout 30 pkmgr silent install "$exact" 2>/dev/null
-    if type -P "$exact" &>/dev/null || [[ $? = 0 ]]; then
+    if type -P "$exact" &>/dev/null; then
       printf_green "$exact has been Installed"
       sleep 2
-      eval "$*"
+      "$@"
       return $?
     else
       printf_red "Sorry install of package $cmd failed"
@@ -54,10 +54,10 @@ orig_command_not_found_handle() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 command_not_found_handle() {
-  cmd="$1"
-  args=("$@")
+  local cmd="$1"
+  local args=("$@")
   if [ -f "$cmd" ]; then
-    if echo " ${_suffix_vi[*]} " | grep -q " ${cmd##*.} "; then
+    if echo " ${_suffix_vi[*]:-} " | grep -q " ${cmd##*.} "; then
       if type vi >&/dev/null; then
         vi "${args[@]}" && return 0 || return 1
       fi
