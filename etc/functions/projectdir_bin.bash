@@ -13,20 +13,24 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# set-project-path() {
-#   BASH_PATH=${BASH_PATH:-$PATH} # only set variable if unset
-#   SEARCH_PATH="$(find "$PWD/" -maxdepth 1 -type d 2>/dev/null | grep '^')"
-#   [[ -n "$SEARCH_PATH" ]] || return 0
-#   for DIR in .. ../.. $SEARCH_PATH; do # set to required lookup depth
-#     DIR="$DIR/node_modules/.bin"
-#     if [[ -d "$DIR" ]]; then
-#       PATH=$(pwd "$DIR"):$BASH_PATH
-#       [[ $1 != quit ]] || echo "set-project-path(): \$PATH += $(pwd $DIR)"
-#       break
-#     fi
-#   done
-# }
-# unset-project-path() {
-#   PATH="${BASH_PATH:-$PATH}" # reset to $BASH_PATH if previously set
-# }
+# prepends the nearest node_modules/.bin (., .., ../..) to PATH so
+# project-local CLIs (eslint, jest, etc.) resolve without npx
+set_project_path() {
+  local dir bindir
+  PROJECTDIR_BASH_PATH="${PROJECTDIR_BASH_PATH:-$PATH}"
+  for dir in . .. ../..; do
+    bindir="$PWD/$dir/node_modules/.bin"
+    if [[ -d "$bindir" ]]; then
+      bindir="$(cd "$bindir" && pwd)"
+      PATH="$bindir:$PROJECTDIR_BASH_PATH"
+      [[ "$1" == quiet ]] || echo "set_project_path(): \$PATH += $bindir"
+      return 0
+    fi
+  done
+  return 1
+}
+# restores PATH to its value before the last set_project_path call
+unset_project_path() {
+  PATH="${PROJECTDIR_BASH_PATH:-$PATH}"
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
