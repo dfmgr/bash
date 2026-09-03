@@ -35,29 +35,6 @@ unset _compl_first_line
 shopt -u nullglob
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Use bash glob instead of slow find for OS-specific completions
-case "$(uname -s)" in
-CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  shopt -s nullglob
-  for f in "$HOME/.config/bash/completions"/*.win; do
-    [ -f "$f" ] && . "$f"
-  done
-  shopt -u nullglob
-  ;;
-Darwin)
-  shopt -s nullglob
-  for f in "$HOME/.config/bash/completions"/*.mac; do
-    [ -f "$f" ] && . "$f"
-  done
-  shopt -u nullglob
-  ;;
-Linux)
-  shopt -s nullglob
-  for f in "$HOME/.config/bash/completions"/*.lin; do
-    [ -f "$f" ] && . "$f"
-  done
-  shopt -u nullglob
-  ;;
-*) ;;
-esac
+__source_os_files "$HOME/.config/bash/completions"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

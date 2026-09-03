@@ -13,24 +13,6 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Use glob expansion instead of slow find command
-case "$(uname -s)" in
-CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  for f in ~/.config/bash/prompt/*.win; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-Darwin)
-  for f in ~/.config/bash/prompt/*.mac; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-Linux)
-  for f in ~/.config/bash/prompt/*.lin; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-*) ;;
-esac
+__source_os_files "$HOME/.config/bash/prompt"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end

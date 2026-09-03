@@ -17,6 +17,24 @@
 # @@Resource         :
 # @@sudo/root        :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Shared OS-routing helper for the *.load files (profile/aliases/exports/
+# completions/prompt): sources every file in "$1" matching the current
+# OS's extension (.win/.mac/.lin); silently returns on an unknown OS
+__source_os_files() {
+  local dir="$1" ext
+  case "$(uname -s)" in
+  CYGWIN* | MINGW32* | MSYS* | MINGW*) ext="win" ;;
+  Darwin) ext="mac" ;;
+  Linux) ext="lin" ;;
+  *) return 0 ;;
+  esac
+  shopt -s nullglob
+  for f in "$dir"/*."$ext"; do
+    [ -f "$f" ] && . "$f"
+  done
+  shopt -u nullglob
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Icons
 ICON_INFO="${ICON_INFO:-[ ❕ ]}"
 ICON_GOOD="${ICON_GOOD:-[ ✅ ]}"
@@ -55,7 +73,6 @@ printf_error() {
 }
 # Bright yellow for warnings
 printf_warning() { printf_color "$ICON_WARN $1\n" 11; }
-printf_question() { printf_color "$ICON_QUESTION $1 " 6; }
 printf_error_stream() { while read -r line; do printf_error "↳ ERROR: $line"; done; }
 printf_execute_success() { printf_color "$ICON_ERROR $1  \n" 2; }
 # Execute error - use adaptive red
@@ -201,7 +218,8 @@ cd() {
   else
     local dir=""
     if [[ $# -ge 4 ]]; then
-      printf_return "Usage: cd ~/location/to/dir"
+      printf_error "Usage: cd ~/location/to/dir"
+      return 1
     elif [[ "$2" = "\--" ]]; then
       dir="$3"
       shift 3
@@ -223,8 +241,11 @@ cd() {
     fi
     [[ -n "$dir" ]] || dir="$PWD"
     [[ -d "$dir" ]] || mkdir -p "$dir"
-    [[ -f "$dir" ]] && printf_return "$dir is a file"
-    [[ -d "$dir" ]] && builtin cd "$dir" || printf_return "Failed cd into $dir"
+    if [[ -f "$dir" ]]; then
+      printf_error "$dir is a file"
+      return 1
+    fi
+    [[ -d "$dir" ]] && builtin cd "$dir" || printf_error "Failed cd into $dir"
     return $?
   fi
 }

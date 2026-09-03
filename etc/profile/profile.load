@@ -13,23 +13,6 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-case "$(uname -s)" in
-CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  for f in "$HOME/.config/bash/profile"/*.win; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-Darwin)
-  for f in "$HOME/.config/bash/profile"/*.mac; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-Linux)
-  for f in "$HOME/.config/bash/profile"/*.lin; do
-    [ -f "$f" ] && . "$f"
-  done
-  ;;
-*) ;;
-esac
+__source_os_files "$HOME/.config/bash/profile"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
