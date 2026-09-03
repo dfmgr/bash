@@ -23,7 +23,7 @@ set_project_path() {
     if [[ -d "$bindir" ]]; then
       bindir="$(cd "$bindir" && pwd)"
       PATH="$bindir:$PROJECTDIR_BASH_PATH"
-      [[ "$1" == quiet ]] || echo "set_project_path(): \$PATH += $bindir"
+      [[ "$1" == quiet ]] || echo "set_project_path(): \$PATH += $bindir" >&2
       return 0
     fi
   done
@@ -32,5 +32,6 @@ set_project_path() {
 # restores PATH to its value before the last set_project_path call
 unset_project_path() {
   PATH="${PROJECTDIR_BASH_PATH:-$PATH}"
+  unset PROJECTDIR_BASH_PATH
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
