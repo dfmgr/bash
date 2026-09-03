@@ -1,22 +1,26 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
-# shellcheck disable=SC2317
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202207161759-git
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
 # @@Author           :  Jason Hempstead
-# @@Contact          :  jason@casjaysdev.pro
+# @@Contact          :  git-admin@casjaysdev.pro
 # @@License          :  WTFPL
-# @@ReadME           :  00-functions.bash --help
+# @@ReadME           :  README.md
 # @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
 # @@Created          :  Saturday, Jul 16, 2022 17:59 EDT
 # @@File             :  00-functions.bash
 # @@Description      :  Default function for bash
-# @@Changelog        :
+# @@Changelog        :  standardized header to WTFPL @@-field template
 # @@TODO             :
 # @@Other            :
 # @@Resource         :
+# @@Terminal App     :  no
 # @@sudo/root        :  no
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 # Shared OS-routing helper for the *.load files (profile/aliases/exports/
 # completions/prompt): sources every file in "$1" matching the current
 # OS's extension (.win/.mac/.lin); silently returns on an unknown OS

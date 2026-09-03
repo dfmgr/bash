@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
-# shellcheck disable=SC1090 # re-sources this same file at runtime to reload after noprompt changes; path is $BASH_SOURCE, not dynamic
-# shellcheck disable=SC2317
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version          :  202207161759-git
-# @Author           :  Jason Hempstead
-# @Contact          :  jason@casjaysdev.pro
-# @License          :  WTFPL
-# @ReadME           :  noprompt.bash --help
-# @Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
-# @Created          :  Saturday, Jul 16, 2022 17:59 EDT
-# @File             :  noprompt.bash
-# @Description      :  set the bash prompt
-# @Changelog        :
-# @TODO             :
-# @Other            :
-# @Resource         :
-# @sudo/root        :  no
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @@Created          :  Saturday, Jul 16, 2022 17:59 EDT
+# @@File             :  noprompt.bash
+# @@Description      :  set the bash prompt
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC1090,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 # Disable/enable the bash prompt versions
 noprompt() {
   local setopts=""

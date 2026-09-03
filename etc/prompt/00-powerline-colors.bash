@@ -1,20 +1,27 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2026 Jason Hempstead, Casjays Developments
+# @@Created          :  Thursday, Sep 03, 2026 12:00 EDT
+# @@File             :  00-powerline-colors.bash
+# @@Description      :  Shared tput palette for 01-powerline.bash and 01-powerline.win
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
 # shellcheck disable=SC2034 # palette vars are used via PS1 interpolation by callers
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202609031200-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : 00-powerline-colors.bash --help
-# @Copyright     : Copyright: (c) 2026 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Sep 03, 2026 12:00 EDT
-# @File          : 00-powerline-colors.bash
-# @Description   : Shared tput palette for 01-powerline.bash and 01-powerline.win
-# @TODO          :
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 # quiets tput on terminals without the requested capability
 __powerline_tput() { tput "$@" 2>/dev/null; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

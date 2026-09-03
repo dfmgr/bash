@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202108030344-git
-# @Author        : Jason
-# @Contact       : jason@casjaysdev.pro
-# @License       : WTFPL
-# @ReadME        : zoxide --help
-# @Copyright     : Copyright (c) 2021, Casjays Developments
-# @Created       : Tuesday Aug 03, 2021 03:45:21 EDT
-# @File          : zoxide
-# @Description   :
-# @TODO          :
-# @Other         :
-# @Resource      : https://github.com/ajeetdsouza/zoxide
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2021 Jason Hempstead, Casjays Developments
+# @@Created          :  Tuesday Aug 03, 2021 03:45:21 EDT
+# @@File             :  zoxide.bash
+# @@Description      :  loads zoxide, or offers to install it on first use
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :  https://github.com/ajeetdsouza/zoxide
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 if command -v zoxide &>/dev/null; then
   eval "$(zoxide init bash)"
 else
@@ -27,4 +35,4 @@ else
     fi
   }
 fi
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -

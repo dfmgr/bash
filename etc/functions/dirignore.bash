@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202111051202-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : WTFPL
-# @ReadME        : dirignore.bash --help
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, Casjays Developments
-# @Created       : Friday, Nov 05, 2021 12:02 EDT
-# @File          : dirignore.bash
-# @Description   : add dirignore message to .gitignore file
-# @TODO          :
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2021 Jason Hempstead, Casjays Developments
+# @@Created          :  Friday, Nov 05, 2021 12:02 EDT
+# @@File             :  dirignore.bash
+# @@Description      :  add dirignore message to .gitignore file
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 dirignore() {
   local IGNORE_FILE DATE_FMT
   if [ "$1" == "--help" ]; then

@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202103251632-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : fzf.bash
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 16:42 EDT
-# @File          : fzf.bash
-# @Description   :
-# @TODO          :
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2021 Jason Hempstead, Casjays Developments
+# @@Created          :  Thursday, Mar 25, 2021 16:42 EDT
+# @@File             :  fzf.bash
+# @@Description      :  fzf color options and helper functions
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=dark --color=fg:-1,bg:-1,hl:#5fff87,fg+:-1,bg+:-1,hl+:#ffaf5f --color=info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 __fd() { command -v fd || command -v fdfind || return 1; }

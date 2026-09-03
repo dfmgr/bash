@@ -1,19 +1,26 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202208122212-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : python.bash --help
-# @Copyright     : Copyright: (c) 2022 Jason Hempstead, CasjaysDev
-# @Created       : Friday, Aug 19, 2022 04:42 EDT
-# @File          : python.bash
-# @Description   : activate a python virtual environment
-# @TODO          : Refactor code
-# @Other         :
-# @Resource      :
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @@Created          :  Friday, Aug 19, 2022 04:42 EDT
+# @@File             :  python.bash
+# @@Description      :  activate a python virtual environment
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :  Refactor code
+# @@Other            :
+# @@Resource         :
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 setup_poetry() {
   curl -sSL https://install.python-poetry.org | python3 - --preview
   [ -n "$(builtin type -P poetry)" ] && poetry completions bash >"$HOME/.local/share/bash-completion/completions/poetry"

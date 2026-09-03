@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202609031422-git
+# @@Author           :  Jason Hempstead
+# @@Contact          :  git-admin@casjaysdev.pro
+# @@License          :  WTFPL
+# @@ReadME           :  README.md
+# @@Copyright        :  Copyright: (c) 2021 Jason Hempstead, Casjays Developments
+# @@Created          :  Thursday, Mar 25, 2021 18:00 EDT
+# @@File             :  01-powerline.bash
+# @@Description      :  A highly informative prompt
+# @@Changelog        :  standardized header to WTFPL @@-field template
+# @@TODO             :  Refactor this to be more efficient
+# @@Other            :
+# @@Resource         :  Borrowed and customized from https://github.com/riobard/bash-powerline
+# @@Terminal App     :  no
+# @@sudo/root        :  no
+# @@Template         :  shell/bash
+# - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
 # shellcheck disable=SC1090,SC1091 # dynamic sourcing of powerline/python activate is intentional
 # shellcheck disable=SC2034        # palette vars (FG_*, BG_*, DIM, REVERSE, BOLD) are used across prompt functions via PS1 interpolation
-# shellcheck disable=SC2329        # prompt helpers are conditionally redefined and invoked via PROMPT_COMMAND
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202103251632-git
-# @Author        : Jason Hempstead
-# @Contact       : jason@casjaysdev.pro
-# @License       : LICENSE.md
-# @ReadME        : 01-powerline.bash --help
-# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Thursday, Mar 25, 2021 18:00 EDT
-# @File          : 01-powerline.bash
-# @Description   : A highly informative prompt
-# @TODO          : Refactor this to be more efficient
-# @Other         :
-# @Resource      : Borrowed and customized from https://github.com/riobard/bash-powerline
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - -
+VERSION="202609031422-git"
 # Windows terminals get the dedicated 01-powerline.win prompt (sourced by
 # prompt.load, which runs after this file); skip the heavier setup here so
 # it isn't wasted work immediately overwritten by that prompt's PROMPT_COMMAND
