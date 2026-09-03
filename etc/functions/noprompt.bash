@@ -1,30 +1,31 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+# shellcheck disable=SC1090 # re-sources this same file at runtime to reload after noprompt changes; path is $BASH_SOURCE, not dynamic
 # shellcheck disable=SC2317
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202207161759-git
-# @@Author           :  Jason Hempstead
-# @@Contact          :  jason@casjaysdev.pro
-# @@License          :  WTFPL
-# @@ReadME           :  noprompt.bash --help
-# @@Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
-# @@Created          :  Saturday, Jul 16, 2022 17:59 EDT
-# @@File             :  noprompt.bash
-# @@Description      :  set the bash prompt
-# @@Changelog        :
-# @@TODO             :
-# @@Other            :
-# @@Resource         :
-# @@sudo/root        :  no
+##@Version          :  202207161759-git
+# @Author           :  Jason Hempstead
+# @Contact          :  jason@casjaysdev.pro
+# @License          :  WTFPL
+# @ReadME           :  noprompt.bash --help
+# @Copyright        :  Copyright: (c) 2022 Jason Hempstead, Casjays Developments
+# @Created          :  Saturday, Jul 16, 2022 17:59 EDT
+# @File             :  noprompt.bash
+# @Description      :  set the bash prompt
+# @Changelog        :
+# @TODO             :
+# @Other            :
+# @Resource         :
+# @sudo/root        :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Disable/enablr the bash prompt versions
+# Disable/enable the bash prompt versions
 noprompt() {
   local setopts=""
   local action="touch"
   local message="Disabled"
-  local shortopts="e,s,d"
+  local shortopts="esdh"
   local longopts="enable,show,disable,help,disable-all,enable-all"
-  local array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
+  local array_str="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
   [ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt"
   # enhanced (GNU) getopt returns 4 for -T; BSD getopt (macOS) does not
   # support --long at all, so fall back to short options only there
@@ -34,7 +35,7 @@ noprompt() {
   else
     setopts=$(getopt -o "$shortopts" -a -n "noprompt" -- "$@" 2>/dev/null)
   fi
-  eval set -- "${setopts[@]}" 2>/dev/null
+  eval set -- "$setopts" 2>/dev/null
   while :; do
     case "$1" in
     --disable | -d)
@@ -45,39 +46,39 @@ noprompt() {
       action="rm -Rf"
       message="Enabled"
       ;;
-    --help)
+    --help | -h)
       shift 1
       printf_blue "Disable prompt messages"
-      printf_blue "${array}"
+      printf_blue "${array_str}"
       return
       ;;
     --disable-all)
       shift 1
-      for f in ${array}; do
+      for f in ${array_str}; do
         printf_blue "Disabled ${f}"
         touch "$HOME/.config/bash/noprompt/$f"
       done
       if [ -f "${BASH_SOURCE[0]}" ]; then
-        printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
-        exec bash -s "${BASH_SOURCE[0]}"
+        printf '%sUpdating prompt from: %s\n' "$GREEN" "${BASH_SOURCE[0]}"
+        . "${BASH_SOURCE[0]}"
       fi
       return
       ;;
     --enable-all)
       shift 1
-      for f in ${array}; do
+      for f in ${array_str}; do
         printf_blue "Enabled ${f}"
         [ -f "$HOME/.config/bash/noprompt/$f" ] && rm -Rf "$HOME/.config/bash/noprompt/$f"
       done
       if [ -f "${BASH_SOURCE[0]}" ]; then
-        printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
-        exec bash -s "${BASH_SOURCE[0]}"
+        printf '%sUpdating prompt from: %s\n' "$GREEN" "${BASH_SOURCE[0]}"
+        . "${BASH_SOURCE[0]}"
       fi
       return
       ;;
     --show)
       shift 1
-      for f in ${array}; do
+      for f in ${array_str}; do
         [ -f "$HOME/.config/bash/noprompt/$f" ] && printf_yellow "$f is disabled" || printf_green "$f is enabled"
       done
       ;;
@@ -128,8 +129,8 @@ noprompt() {
     [ $# -ne 0 ] || break
   done
   if [ -f "${BASH_SOURCE[0]}" ]; then
-    printf "${GREEN}Updating prompt from: %s\n" "${BASH_SOURCE[0]}"
-    exec bash -s "${BASH_SOURCE[0]}"
+    printf '%sUpdating prompt from: %s\n' "$GREEN" "${BASH_SOURCE[0]}"
+    . "${BASH_SOURCE[0]}"
   fi
   return
 }
