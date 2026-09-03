@@ -26,7 +26,14 @@ noprompt() {
   local longopts="enable,show,disable,help,disable-all,enable-all"
   local array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
   [ -d "$HOME/.config/bash/noprompt" ] || mkdir -p "$HOME/.config/bash/noprompt"
-  setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
+  # enhanced (GNU) getopt returns 4 for -T; BSD getopt (macOS) does not
+  # support --long at all, so fall back to short options only there
+  getopt -T >/dev/null 2>&1
+  if [ $? -eq 4 ]; then
+    setopts=$(getopt -o "$shortopts" --long "$longopts" -a -n "noprompt" -- "$@" 2>/dev/null)
+  else
+    setopts=$(getopt -o "$shortopts" -a -n "noprompt" -- "$@" 2>/dev/null)
+  fi
   eval set -- "${setopts[@]}" 2>/dev/null
   while :; do
     case "$1" in
@@ -76,6 +83,9 @@ noprompt() {
       ;;
     --)
       shift 1
+      break
+      ;;
+    *)
       break
       ;;
     esac
