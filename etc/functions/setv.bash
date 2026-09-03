@@ -51,7 +51,9 @@
 # $ deactivate
 
 # Path to virtual environment directory
-SETV_VIRTUAL_DIR_PATH="${SETV_VIRTUAL_DIR_PATH:-$HOME/.local/share/python/venvs/}"
+# always stored without a trailing slash; callers append "/" explicitly
+SETV_VIRTUAL_DIR_PATH="${SETV_VIRTUAL_DIR_PATH:-$HOME/.local/share/python/venvs}"
+SETV_VIRTUAL_DIR_PATH="${SETV_VIRTUAL_DIR_PATH%/}"
 # Default python version to use. This decides whether to use `virtualenv` or `python3 -m venv`
 SETV_PYTHON_VERSION=3 # Defaults to Python3
 SETV_PY_PATH=$(command -v python${SETV_PYTHON_VERSION} 2>/dev/null)
@@ -65,7 +67,13 @@ function _setvcomplete_() {
   local word=${COMP_WORDS[COMP_CWORD]} # Words thats being completed
   local xpat='${word}'                 # Filter pattern. Include
   # only words in variable '$names'
-  local names=$(ls -l "${SETV_VIRTUAL_DIR_PATH}" | grep -E '^d' | awk -F " " '{print $NF}') # Virtual environment names
+  # Virtual environment names
+  local names
+  names=$(
+    for d in "${SETV_VIRTUAL_DIR_PATH}"/*/; do
+      [ -d "$d" ] && basename "$d"
+    done
+  )
 
   COMPREPLY=($(compgen -W "$names" -X "$xpat" -- "$word")) # compgen generates the results
 }
@@ -105,9 +113,9 @@ function _setv_create() {
     echo "Creating new virtual environment with the name: $1"
 
     if [ "${SETV_PYTHON_VERSION}" -eq 3 ]; then
-      "${SETV_PY_PATH}" -m venv "${SETV_VIRTUAL_DIR_PATH}${1}"
+      "${SETV_PY_PATH}" -m venv "${SETV_VIRTUAL_DIR_PATH}/${1}"
     else
-      virtualenv -p "${SETV_PY_PATH}" "${SETV_VIRTUAL_DIR_PATH}${1}"
+      virtualenv -p "${SETV_PY_PATH}" "${SETV_VIRTUAL_DIR_PATH}/${1}"
     fi
 
     echo "You can now activate the Python virtual environment by typing: setv ${1}"
@@ -121,10 +129,10 @@ function _setv_delete() {
     echo "You need to pass virtual environment name"
     _setv_help_
   else
-    if [ -d "${SETV_VIRTUAL_DIR_PATH}${1}" ]; then
+    if [ -d "${SETV_VIRTUAL_DIR_PATH}/${1}" ]; then
       read -p "Really delete this virtual environment(Y/N)? " yes_no
       case $yes_no in
-      Y | y) rm -rvf "${SETV_VIRTUAL_DIR_PATH}${1}" ;;
+      Y | y) rm -rvf "${SETV_VIRTUAL_DIR_PATH}/${1}" ;;
       N | n) echo "Leaving the virtual environment as it is." ;;
       *) echo "You need to enter either Y/y or N/n" ;;
       esac
@@ -137,8 +145,8 @@ function _setv_delete() {
 function _setv_list() {
   # Lists all virtual environments if ran with -l|--list flag
   echo -e "List of virtual environments you have under ${SETV_VIRTUAL_DIR_PATH}:\n"
-  for virt in $(ls -l "${SETV_VIRTUAL_DIR_PATH}" | grep -E '^d' | awk -F " " '{print $NF}'); do
-    echo "${virt}"
+  for d in "${SETV_VIRTUAL_DIR_PATH}"/*/; do
+    [ -d "$d" ] && basename "$d"
   done
 }
 
@@ -152,9 +160,9 @@ function setv() {
     -d | --delete) _setv_delete "${2}" ;;
     -l | --list) _setv_list ;;
     *)
-      if [ -d "${SETV_VIRTUAL_DIR_PATH}${1}" ]; then
+      if [ -d "${SETV_VIRTUAL_DIR_PATH}/${1}" ]; then
         # Activate the virtual environment
-        source "${SETV_VIRTUAL_DIR_PATH}${1}/bin/activate"
+        source "${SETV_VIRTUAL_DIR_PATH}/${1}/bin/activate"
       else
         # Else throw an error message
         echo "Sorry, you don't have any virtual environment with the name: ${1}"
