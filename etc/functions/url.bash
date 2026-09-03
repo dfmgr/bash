@@ -13,28 +13,38 @@
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#urlencode() {
-#  # needs liburi-perl to be installed
-#  local url="$1"
-#  [[ -z "$url" ]] && url=$(cat -)
-#  perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$url"
-#  echo ""
-#}
+urlencode() {
+  local url="$1" c i out=""
+  [[ -z "$url" ]] && url=$(cat -)
+  for ((i = 0; i < ${#url}; i++)); do
+    c="${url:i:1}"
+    case "$c" in
+    [a-zA-Z0-9.~_-]) out+="$c" ;;
+    *) out+=$(printf '%%%02X' "'$c") ;;
+    esac
+  done
+  printf '%s\n' "$out"
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-#urldecode() {
-#  # needs liburi-perl to be installed
-#  local url="$1"
-#  [[ -z "$url" ]] && url=$(cat -)
-#  perl -MURI::Escape -e 'print uri_unescape($ARGV[0]);' "$url"
-#  echo ""
-#}
+urldecode() {
+  local url="$1" encoded
+  [[ -z "$url" ]] && url=$(cat -)
+  encoded="${url//+/ }"
+  printf '%b\n' "${encoded//%/\\x}"
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#expandurl() {
-#  local url=$1
-#  [[ -z "$url" ]] && url=$(printclip)
-#  [[ -z "$url" ]] && echo "Nothing to expand" && return 1
-#  wget -S "$url" 2>&1 | grep ^Location | awk '{print $2}' | tee >(putclip)
-#}
+# expandurl needs a network fetch, so curl is a necessary external command
+expandurl() {
+  local url="$1"
+  if [[ -z "$url" ]]; then
+    echo "Usage: expandurl <url>"
+    return 1
+  fi
+  if ! type -P curl >&/dev/null; then
+    echo "expandurl: curl is required" >&2
+    return 1
+  fi
+  curl -sSL -o /dev/null -w '%{url_effective}\n' "$url"
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
