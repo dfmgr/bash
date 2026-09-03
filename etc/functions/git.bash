@@ -55,6 +55,7 @@ hub() {
     local BRANCH="${2:-main}"
     git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
     git push origin "$BRANCH:$BRANCH" 1>/dev/null
+    # shellcheck disable=SC1083 # literal braces for hub repos/{owner}/{repo} syntax, not brace expansion
     hub api repos/{owner}/{repo} -X PATCH -F default_branch="$BRANCH" 1>/dev/null
     git branch -D master 2>/dev/null
     git push origin :master 2>/dev/null
