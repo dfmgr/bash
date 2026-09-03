@@ -209,7 +209,7 @@ fi
 # Send an e-mail every time you login
 if [ "$BASHRC_SEND_NOTIFY" != "no" ]; then
   if builtin type -P mailx &>/dev/null || builtin type -P mail &>/dev/null; then
-    echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" | mail -r "ALERTS <no-reply@$HOSTNAME>" -s "Alert: Access from $USER" $USER@$HOSTNAME
+    echo "ALERT - Shell Access on $HOSTNAME from $USER on: $(date +'%Y-%m-%d at %H:%M')" | mail -r "ALERTS <no-reply@$HOSTNAME>" -s "Alert: Access from $USER" "$USER@$HOSTNAME"
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
