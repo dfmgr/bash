@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034 # words/cword are unused directly but required
+# locals for bash-completion's _init_completion to populate
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version           :  202207100807-git
 # @Author            :  Jason Hempstead
@@ -15,25 +17,24 @@
 # @sudo/root         :  no
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # noprompt completion
-_noprompt_completion() {
+__noprompt_completion() {
   local cur prev words cword array shortopts longopts
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  shortopts="-e -s -d"
+  shortopts="-e -s -d -h"
   longopts="--enable --show --disable --help --disable-all --enable-all"
   array="date git go lua node path perl php python reminder ruby rust timer wakatime bashprompt"
   _init_completion || return
   if [[ ${cur} == --* ]]; then
-    COMPREPLY=($(compgen -W "${longopts}" -- ${cur}))
+    mapfile -t COMPREPLY < <(compgen -W "${longopts}" -- "${cur}")
   elif [[ ${cur} == -* ]]; then
-    COMPREPLY=($(compgen -W "${shortopts}" -- ${cur}))
+    mapfile -t COMPREPLY < <(compgen -W "${shortopts}" -- "${cur}")
   else
     case $prev in
-    --help)
-      COMPREPLY=($(compgen -W '' -- ${cur}))
+    --help | -h)
+      COMPREPLY=()
       ;;
     *)
-      COMPREPLY=($(compgen -W "${array}" -- "$cur"))
+      mapfile -t COMPREPLY < <(compgen -W "${array}" -- "${cur}")
       ;;
     esac
   fi
-} && complete -F _noprompt_completion -o default noprompt
+} && complete -F __noprompt_completion -o default noprompt
