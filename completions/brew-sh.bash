@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091 # homebrew paths are external, guarded by -r checks, not part of this repo
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 202103251632-git
 # @Author        : Jason Hempstead
